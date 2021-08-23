@@ -22,17 +22,36 @@
     <!-- Nav Item - PCF Request Menu -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('PCF') }}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <i class="fas fa-list"></i>
             <span>PCF Request</span></a>
+    </li>
+    <!-- Nav Item - Setting user management Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage_users" aria-expanded="true"
+            aria-controls="manageUsers">
+            <i class="fas fa-users"></i>
+            <span>Manage Users</span>
+        </a>
+        <div id="manage_users" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="#">Users</a>
+            </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="#">Roles</a>
+            </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="#">Permissions</a>
+            </div>
+        </div>
     </li>
     <!-- Nav Item - Setting Source Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-            aria-controls="collapseTwo">
-            <i class="fas fa-file-invoice"></i>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
+            aria-controls="settings">
+            <i class="fas fa-cogs"></i>
             <span>Settings</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('settings.source') }}">Source</a>
             </div>

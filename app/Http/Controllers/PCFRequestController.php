@@ -44,38 +44,39 @@ class PCFRequestController extends Controller
                 })
                 ->addColumn('actions', function ($data) {
 
-                    if ($data->status == 0) {
+                    if(auth()->user()->can('view') && auth()->user()->can('edit')) {
+                        if ($data->status == 0) {
 
-                        return
-                        ' 
-                        <td style="text-align: center; vertical-align: middle">
-                            <a href="#" class="badge badge-info" data-toggle="modal"
-                                data-id="'.$data->id .'"
-                                data-pcf_no="'.$data->pcf_no .'"
-                                data-date="'.$data->date .'"
-                                data-institution="'.$data->institution .'"
-                                data-duration="'.$data->duration .'"
-                                data-date_biding="'.$data->date_biding .'"
-                                data-bid_docs_price="'.$data->bid_docs_price .'"
-                                data-psr="'.$data->psr .'"
-                                data-manager="'.$data->manager .'"
-                                data-annual_profit="'.$data->profit .'"
-                                data-annual_profit_rate="'.$data->profit_rate .'"
-                                data-target="#editPCFRequestModal"
-                                onclick="editPCFRequest($(this))">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </a>
-                            <a href="#" class="badge badge-success"
-                                data-id="' . $data->id . '"
-                                onclick="ApproveRequest($(this))">
-                                <i class="fas fa-check"></i> 
-                                Approve
-                            </a>
-                        </td>
-                        ';
-                    }
-
+                            return
+                            ' 
+                            <td style="text-align: center; vertical-align: middle">
+                                <a href="#" class="badge badge-info" data-toggle="modal"
+                                    data-id="'.$data->id .'"
+                                    data-pcf_no="'.$data->pcf_no .'"
+                                    data-date="'.$data->date .'"
+                                    data-institution="'.$data->institution .'"
+                                    data-duration="'.$data->duration .'"
+                                    data-date_biding="'.$data->date_biding .'"
+                                    data-bid_docs_price="'.$data->bid_docs_price .'"
+                                    data-psr="'.$data->psr .'"
+                                    data-manager="'.$data->manager .'"
+                                    data-annual_profit="'.$data->profit .'"
+                                    data-annual_profit_rate="'.$data->profit_rate .'"
+                                    data-target="#editPCFRequestModal"
+                                    onclick="editPCFRequest($(this))">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a href="#" class="badge badge-success"
+                                    data-id="' . $data->id . '"
+                                    onclick="ApproveRequest($(this))">
+                                    <i class="fas fa-check"></i> 
+                                    Approve
+                                </a>
+                            </td>
+                            ';
+                        }
+    
                         return
                             ' 
                         <td style="text-align: center; vertical-align: middle">
@@ -104,6 +105,32 @@ class PCFRequestController extends Controller
                             </a>
                         </td>
                         ';
+
+                    } else if(auth()->user()->can('view')) {
+                        
+                        return
+                            ' 
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-info" data-toggle="modal"
+                                data-id="'.$data->id .'"
+                                data-pcf_no="'.$data->pcf_no .'"
+                                data-date="'.$data->date .'"
+                                data-institution="'.$data->institution .'"
+                                data-duration="'.$data->duration .'"
+                                data-date_biding="'.$data->date_biding .'"
+                                data-bid_docs_price="'.$data->bid_docs_price .'"
+                                data-psr="'.$data->psr .'"
+                                data-manager="'.$data->manager .'"
+                                data-annual_profit="'.$data->profit .'"
+                                data-annual_profit_rate="'.$data->profit_rate .'"
+                                data-target="#editPCFRequestModal"
+                                onclick="editPCFRequest($(this))">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                        </td>
+                        ';
+                    }
                 })
                 ->escapeColumns([])
                 ->make(true);

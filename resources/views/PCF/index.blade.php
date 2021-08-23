@@ -32,13 +32,15 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <div class="row">
-                                        <div class="col-md-4 offset-md-8">
-                                            <a href="{{ route('PCF.sub.addrequest') }}"
-                                                class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
-                                                Request</a>
+                                    @role('psr')
+                                        <div class="row">
+                                            <div class="col-md-4 offset-md-8">
+                                                <a href="{{ route('PCF.sub.addrequest') }}"
+                                                    class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
+                                                    Request</a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endrole
                                 </div>
 
                                 <div class="card-body">
