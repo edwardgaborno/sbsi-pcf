@@ -125,8 +125,8 @@ class PCFRequestController extends Controller
                                 data-annual_profit_rate="'.$data->profit_rate .'"
                                 data-target="#editPCFRequestModal"
                                 onclick="editPCFRequest($(this))">
-                                <i class="fas fa-edit"></i>
-                                Edit
+                                <i class="far fa-eye"></i>
+                                View
                             </a>
                         </td>
                         ';
