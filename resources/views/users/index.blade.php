@@ -51,6 +51,7 @@
                                                     <th>Name</th>
                                                     <th>Email</th>
                                                     <th>User Type</th>
+                                                    <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -97,6 +98,7 @@
                     { data: 'name' },
                     { data: 'email' },
                     { data: 'user_type' },
+                    { data: 'status' },
                     { data: 'actions' }
                 ],
             });
@@ -113,6 +115,174 @@
             $("#edit_name").val(edit_supplier);
             $("#edit_email").val(edit_description);
             $("#edit_user_type").val(edit_unit_price);
+        }
+
+        function approveUser(data) {
+            Swal.fire({
+                title: 'Approve User Account',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    var id = data.data('id');
+
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/approve-user-account/' + id,
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            //reload table 
+                            $("#dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been approved successfully!',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
+                    });
+                }
+            })
+        }
+        
+        function enableUser(data) {
+            Swal.fire({
+                title: 'Enable User Account',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    var id = data.data('id');
+
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/enable-user-account/' + id,
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            //reload table 
+                            $("#dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been enabled successfully!',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
+                    });
+                }
+            })
+        }
+
+        function disableUser(data) {
+            Swal.fire({
+                title: 'Disable User Account',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    var id = data.data('id');
+
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/disable-user-account/' + id,
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            //reload table 
+                            $("#dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been disabled successfully!',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
+                    });
+                }
+            })
+        }
+
+        function deleteUser(data) {
+            Swal.fire({
+                title: 'Delete User Account',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    var id = data.data('id');
+
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/delete-user-account/' + id,
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            //reload table 
+                            $("#dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been deleted successfully!',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
+                    });
+                }
+            })
         }
     </script>
 @endsection

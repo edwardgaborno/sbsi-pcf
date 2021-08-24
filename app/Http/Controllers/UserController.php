@@ -35,10 +35,109 @@ class UserController extends Controller
                 ->addColumn('user_type', function ($data) {
                     return $data->user_type;
                 })
+                ->addColumn('status', function ($data) {
+
+                    if ($data->status == 1 && $data->is_approve == 1) {
+                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-success">Approved</span>';
+                    } else if($data->status == 1 && $data->is_approve == 0) {
+                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-warning">Pending</span>';
+                    } else if($data->status == 0 && $data->is_approve == 1) {
+                        $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-success">Approved</span>';
+                    } else {
+                        $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-warning">Pending</span>';
+                    }
+
+                    return $status;
+                })
                 ->addColumn('actions', function ($data) {
+                    if($data->status == 0 && $data->is_approve == 0) {
+                        return
+                        ' 
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-success"
+                                data-id="' . $data->id . '"
+                                onclick="approveUser($(this))">
+                                <i class="fas fa-thumbs-up"></i>
+                                Aprove
+                            </a>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-success"
+                                data-id="' . $data->id . '"
+                                onclick="enableUser($(this))">
+                                <i class="far fa-check-circle"></i>
+                                Enable
+                            </a>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="deleteUser($(this))">
+                                <i class="far fa-trash-alt"></i>
+                                Delete
+                            </a>
+                        </td>
+                        ';
+                    } else if($data->status == 1 && $data->is_approve == 0) {
+                        return
+                        ' 
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-success"
+                                data-id="' . $data->id . '"
+                                onclick="approveUser($(this))">
+                                <i class="fas fa-thumbs-up"></i>
+                                Aprove
+                            </a>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="disableUser($(this))">
+                                <i class="fas fa-ban"></i>
+                                Disable
+                            </a>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="deleteUser($(this))">
+                                <i class="far fa-trash-alt"></i>
+                                Delete
+                            </a>
+                        </td>
+                        ';
+                    } else if($data->status == 0 && $data->is_approve == 1) {
+                        return
+                        ' 
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-success"
+                                data-id="' . $data->id . '"
+                                onclick="enableUser($(this))">
+                                <i class="far fa-check-circle"></i>
+                                Enable
+                            </a>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="deleteUser($(this))">
+                                <i class="far fa-trash-alt"></i>
+                                Delete
+                            </a>
+                        </td>
+                        ';
+                    }
 
                     return
-                    ' 
+                    '
+                    <td style="text-align: center; vertical-align: middle">
+                        <a href="#" class="badge badge-danger"
+                            data-id="' . $data->id . '"
+                            onclick="disableUser($(this))">
+                            <i class="fas fa-ban"></i>
+                            Disabled
+                        </a>
+                    </td>
                     <td style="text-align: center; vertical-align: middle">
                         <a href="#" class="badge badge-danger"
                             data-id="' . $data->id . '"
@@ -119,6 +218,52 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!empty($id)) {
+            $deleteUser = User::find($id);
+            $deleteUser->delete();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+
+        return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function approveUser($id)
+    {
+        if (!empty($id)) {
+            $approveUser = User::find($id);
+            $approveUser->is_approve = 1;
+            $approveUser->save();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+
+        return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function enableUser($id)
+    {
+        if (!empty($id)) {
+            $enableUser = User::find($id);
+            $enableUser->status = 1;
+            $enableUser->save();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+
+        return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function disableUser($id)
+    {
+        if (!empty($id)) {
+            $disableUser = User::find($id);
+            $disableUser->status = 0;
+            $disableUser->save();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+
+        return response()->json(['error' => 'invalid'], 401);
     }
 }
