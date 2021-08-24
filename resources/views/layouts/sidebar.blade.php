@@ -25,37 +25,39 @@
             <i class="fas fa-list"></i>
             <span>PCF Request</span></a>
     </li>
-    <!-- Nav Item - Setting user management Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage_users" aria-expanded="true"
-            aria-controls="manageUsers">
-            <i class="fas fa-users"></i>
-            <span>Manage Users</span>
-        </a>
-        <div id="manage_users" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Users</a>
+    @hasrole('administrator')
+        <!-- Nav Item - Setting user management Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage_users" aria-expanded="true"
+                aria-controls="manageUsers">
+                <i class="fas fa-users"></i>
+                <span>Manage Users</span>
+            </a>
+            <div id="manage_users" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('users') }}">Users</a>
+                </div>
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="#">Roles</a>
+                </div>
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="#">Permissions</a>
+                </div>
             </div>
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Roles</a>
-            </div>
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Permissions</a>
-            </div>
-        </div>
-    </li>
+        </li>
     <!-- Nav Item - Setting Source Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
-            aria-controls="settings">
-            <i class="fas fa-cogs"></i>
-            <span>Settings</span>
-        </a>
-        <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('settings.source') }}">Source</a>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
+                aria-controls="settings">
+                <i class="fas fa-cogs"></i>
+                <span>Settings</span>
+            </a>
+            <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('settings.source') }}">Source</a>
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    @endhasrole
 </ul>
 <!-- End of Sidebar -->

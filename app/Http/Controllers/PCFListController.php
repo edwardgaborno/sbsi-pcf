@@ -46,17 +46,19 @@ class PCFListController extends Controller
                     return number_format($data->total_sales);
                 })
                 ->addColumn('action', function ($data) {
-                    return
+                    if (auth()->user()->can('delete')) {
+                        return
                         ' 
-                    <td>
-                        <a href="#" class="badge badge-danger"
-                            data-id="' . $data->id . '"
-                            onclick="removeAddedItem($(this))"><i
-                                class="fas fa-trash-alt"></i> 
-                            Remove
-                        </a>
-                    </td>
-                    ';
+                        <td>
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="removeAddedItem($(this))"><i
+                                    class="fas fa-trash-alt"></i> 
+                                Remove
+                            </a>
+                        </td>
+                        ';
+                    }
                 })
                 ->escapeColumns([])
                 ->make(true);
@@ -88,17 +90,19 @@ class PCFListController extends Controller
                     return $data->quantity;
                 })
                 ->addColumn('action', function ($data) {
-                    return
-                        ' 
-                    <td>
-                        <a href="#" class="badge badge-danger"
-                            data-id="' . $data->id . '"
-                            onclick="removeAddedInclusion($(this))"><i
-                                class="fas fa-trash-alt"></i> 
-                            Remove
-                        </a>
-                    </td>
-                    ';
+                    if (auth()->user()->can('delete')) {
+                        return
+                            ' 
+                        <td>
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="removeAddedInclusion($(this))"><i
+                                    class="fas fa-trash-alt"></i> 
+                                Remove
+                            </a>
+                        </td>
+                        ';
+                    }
                 })
                 ->escapeColumns([])
                 ->make(true);

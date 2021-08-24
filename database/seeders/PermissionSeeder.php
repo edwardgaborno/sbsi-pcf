@@ -24,7 +24,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'enable'],
             ['name' => 'disable'],
             ['name' => 'approve'],
+            ['name' => 'second approve'],
+            ['name' => 'final approve'],
             ['name' => 'disapprove'],
+            ['name' => 'second disapprove'],
+            ['name' => 'final disapprove'],
         ]; 
 
         //create method only accept single array so you have to looop the first array 

@@ -1,0 +1,118 @@
+@extends('layouts.app')
+@section('title','PCF - User Accounts')
+
+@section('content')
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    @include('layouts.sidebar')
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            @include('layouts.navbar')
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">User List</h1>
+                </div>
+
+                    <!-- Content Row -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- DataTales Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <div class="row">
+                                        <div class="col-md-4 offset-md-8">
+                                            <a href="#" data-toggle="modal" data-target="#addNewUserModal"
+                                                class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
+                                                User</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="dataTable" width="100%"
+                                            cellspacing="0">
+                                            <thead>
+                                                <tr bgcolor="gray" class="text-white">
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>User Type</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Content Row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Modal Component -->
+        @include('modals.users.add')
+        @include('modals.users.edit')
+        <!-- End of Modal Component -->
+        <!-- Footer -->
+        @include('layouts.footer')
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "stripeClasses": [],
+                processing: false,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    "url": '{!! route('users.list') !!}'
+                },
+                "columns": [
+                    { data: 'id' },
+                    { data: 'name' },
+                    { data: 'email' },
+                    { data: 'user_type' },
+                    { data: 'actions' }
+                ],
+            });
+
+        });
+
+        function editUser(data) {
+            var user_id = data.data('id');
+            var name = data.data('name');
+            var email = data.data('email');
+            var user_type = data.data('user_type');
+
+            $("#user_id").val(user_id);
+            $("#edit_name").val(edit_supplier);
+            $("#edit_email").val(edit_description);
+            $("#edit_user_type").val(edit_unit_price);
+        }
+    </script>
+@endsection

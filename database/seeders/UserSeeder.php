@@ -15,14 +15,19 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //
-        User::create([
+        //create default user
+        $user = User::create([
             'name' => 'Ardison Pagulayan',
             'email' => 'ardi.pagulayan@sbsi.com.ph',
-            'username' => 'ardi.pagulayan@sbsi.com.ph',
             'password' => \Hash::make('admin'),
             'user_type' => 'administrator',
+            'is_approve' => true,
+            'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
+
+        //create default user permission
+        $user->assignRole('administrator');
+        //permissions will be set on authservice provider Boot function
     }
 }

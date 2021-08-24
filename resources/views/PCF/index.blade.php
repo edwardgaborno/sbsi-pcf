@@ -32,7 +32,7 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    @role('psr')
+                                    @can('add')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
                                                 <a href="{{ route('PCF.sub.addrequest') }}"
@@ -40,7 +40,7 @@
                                                     Request</a>
                                             </div>
                                         </div>
-                                    @endrole
+                                    @endcan
                                 </div>
 
                                 <div class="card-body">

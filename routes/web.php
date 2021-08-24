@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PCFRequestController;
 use App\Http\Controllers\PCFListController;
 use App\Http\Controllers\SourceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +61,16 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/ajax/remove-added-item/{id}', [PCFListController::class, 'removeAddedItem'])->name('.remove_added_item');
             Route::get('/ajax/remove-added-inclusion/{id}', [PCFListController::class, 'removeAddedInclusion'])->name('.remove_added_inclusion');
             Route::get('/ajax/get-grand-totals/{pcf_no}', [PCFListController::class, 'getGrandTotals'])->name('.get_grand_totals');
+        });
+    });
+
+    // user management
+    Route::prefix('user-management/users')->group(function () {
+        Route::name('users')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('');
+            Route::get('/ajax/list', [UserController::class, 'index'])->name('.list');
+            Route::post('/add', [SourceController::class, 'store'])->name('.add');
+            Route::post('/update', [SourceController::class, 'update'])->name('.update');
         });
     });
 

@@ -45,6 +45,18 @@
                                 name="password_confirmation" required />
             </div>
 
+            <!-- User Type -->
+            <div class="mt-4">
+                <x-label for="email" :value="__('User Type')" />
+                <select class="block mt-1 w-full" name="user_type" id="user_type" required>
+                    <option value="">Please select user type</option>
+                    <option value="psr">PSR</option>
+                    <option value="nsm">NSM</option>
+                    <option value="accounting">ACCOUNTING</option>
+                    <option value="accounting manager">ACCOUNTING MANAGER</option>
+                </select>
+            </div>
+
             <div class="flex items-center justify-end mt-4">
                 <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
                     {{ __('Already registered?') }}

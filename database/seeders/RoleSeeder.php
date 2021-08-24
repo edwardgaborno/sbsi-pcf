@@ -17,9 +17,10 @@ class RoleSeeder extends Seeder
         //create array of arrays
         $roles = [
             ['name' => 'psr'],
-            ['name' => 'manager'],
+            ['name' => 'nsm'],
             ['name' => 'accounting'],
-            ['name' => 'administrator']
+            ['name' => 'accounting manager'],
+            ['name' => 'administrator'],
         ]; 
 
         //create method only accept single array so you have to looop the first array 
