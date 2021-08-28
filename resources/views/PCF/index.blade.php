@@ -230,6 +230,39 @@
             })
         }
 
+        // function downloadFile(response) {
+        //     var blob = new Blob([response], {type: 'application/pdf'})
+        //     var url = URL.createObjectURL(blob);
+        //     location.assign(url);
+        // } 
+
+        // function generatePdf(data) {
+        //     var id = data.data('created_by_id');
+        //     $.ajax({
+        //         type: 'GET',
+        //         dataType: 'json',
+        //         url: '/PCF/ajax/download-pdf/' + id,
+        //         headers: {
+        //             'X-CSRF-Token': '{{ csrf_token() }}',
+        //         },
+        //         success: function(response) {
+        //             Swal.fire(
+        //                 'Download Success!',
+        //                 'PDF File has been downloaded successfully!',
+        //                 'success'
+        //             )
+        //         },
+        //         error: function(response) {
+        //             Swal.fire(
+        //                 'Something went wrong!',
+        //                 'Please contact your system administrator!',
+        //                 'error'
+        //             )
+        //         }
+        //     })
+        //     .done(downloadFile);
+        // }
+
         function loadAddItemTable(pcf_no) {
             //delete first the table before reinitialize
             $("#addItemDatatable").dataTable().fnDestroy();

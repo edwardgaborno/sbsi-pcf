@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Alert;
 use Validator;
 use Yajra\Datatables\Datatables;
+use PDF;
 
 class PCFRequestController extends Controller
 {
@@ -72,6 +73,10 @@ class PCFRequestController extends Controller
                                     onclick="ApproveRequest($(this))">
                                     <i class="fas fa-check"></i> 
                                     Approve
+                                </a>
+                                <a href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success">
+                                    <i class="far fa-file-pdf"></i>
+                                    Download PDF
                                 </a>
                             </td>
                             ';
@@ -298,5 +303,20 @@ class PCFRequestController extends Controller
         }
 
         return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function downloadPdf($pcf_no)
+    {
+        //check if valid request and authorized user
+        if (\Auth::check() && !empty($pcf_no)) {
+            $get_pcf_list = PCFList::where('pcf_no', $pcf_no)->orderBy('id', 'DESC')->get();
+
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list'));
+            $pdf->setPaper('legal', 'landscape');
+            return $pdf->download('pcf_request.pdf');
+        }
+
+        //return bad request error
+        return resonponse()->json(['error' => 'invalid request'], 400);
     }
 }

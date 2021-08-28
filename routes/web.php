@@ -34,6 +34,10 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get("/testing-pdf", function(){
+        return view('PCF.pdf.index');
+     });
+
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // PCF Index View
@@ -45,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update', [PCFRequestController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
             Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
+            Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
         });
     });
 

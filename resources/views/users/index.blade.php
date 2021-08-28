@@ -34,7 +34,7 @@
                                 <div class="card-header py-3">
                                     <div class="row">
                                         <div class="col-md-4 offset-md-8">
-                                            <a href="#" data-toggle="modal" data-target="#addNewUserModal"
+                                            <a href="#" data-toggle="modal" data-target="#addUserModal"
                                                 class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
                                                 User</a>
                                         </div>
