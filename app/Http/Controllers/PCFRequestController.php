@@ -6,6 +6,7 @@ use App\Models\PCFRequest;
 use App\Models\PCFList;
 use Illuminate\Http\Request;
 use Alert;
+use App\Models\PCFInclusion;
 use Validator;
 use Yajra\Datatables\Datatables;
 use PDF;
@@ -169,7 +170,6 @@ class PCFRequestController extends Controller
             'duration_contract'   => 'required|string',
             'date_bidding'   => 'required|string',
             'bid_docs_price'   => 'required|string',
-            // 'psr'   => 'required|string',
             'manager'   => 'required|string',
             'annual_profit'   => 'required|string',
             'annual_profit_rate'   => 'nullable|string'
@@ -309,9 +309,36 @@ class PCFRequestController extends Controller
     {
         //check if valid request and authorized user
         if (\Auth::check() && !empty($pcf_no)) {
-            $get_pcf_list = PCFList::where('pcf_no', $pcf_no)->orderBy('id', 'DESC')->get();
 
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list'));
+            $get_pcf_list = PCFList::select(
+                'p_c_f_lists.item_code AS item_code',
+                'p_c_f_lists.description AS description',
+                'p_c_f_lists.quantity AS quantity',
+                'p_c_f_lists.sales AS sales',
+                'p_c_f_lists.total_sales AS total_sales',
+                'p_c_f_requests.date AS date',
+                'p_c_f_requests.institution AS institution',
+                'p_c_f_requests.duration AS duration',
+                'p_c_f_requests.date_biding AS date_biding',
+                'p_c_f_requests.bid_docs_price AS bid_docs_price',
+                'p_c_f_requests.psr AS psr',
+                'p_c_f_requests.manager AS manager',
+                'p_c_f_requests.profit AS annual_profit',
+                'p_c_f_requests.profit_rate AS annual_profit_rate',
+                'p_c_f_inclusions.item_code AS inclusions_item_code',
+                'p_c_f_inclusions.description AS inclusions_description',
+                'p_c_f_inclusions.type AS inclusions_type',
+                'p_c_f_inclusions.quantity AS inclusions_qty',
+            )
+            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
+            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
+            ->where('p_c_f_lists.pcf_no', $pcf_no)
+            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->get();
+
+            $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
+            
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->download('pcf_request.pdf');
         }

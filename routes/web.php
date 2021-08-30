@@ -34,10 +34,6 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get("/testing-pdf", function(){
-        return view('PCF.pdf.index');
-     });
-
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // PCF Index View
