@@ -18,17 +18,17 @@ class CreatePCFListsTable extends Migration
             $table->string('pcf_no');
             $table->string('item_code');
             $table->string('description');
-            $table->integer('quantity');
-            $table->double('sales', 11, 2)->default(0.00);
-            $table->double('total_sales', 11, 2)->default(0.00);
-            $table->double('transfer_price', 11, 2)->default(0.00);
-            $table->double('mandatory_peripherals', 11, 2)->default(0.00);
-            $table->double('opex', 11, 2)->default(0.00);
-            $table->double('net_sales', 11, 2)->default(0.00);
-            $table->double('gross_profit', 11, 2)->default(0.00);
-            $table->double('total_gross_profit', 11, 2)->default(0.00);
-            $table->double('total_net_sales', 11, 2)->default(0.00);
-            $table->double('profit_rate', 11, 2)->default(0.00);
+            $table->mediumInteger('quantity');
+            $table->decimal('sales', 11, 2)->default(0.00);
+            $table->decimal('total_sales', 14, 2)->default(0.00);
+            $table->decimal('transfer_price', 12, 2)->nullable()->default(0.00);
+            $table->decimal('mandatory_peripherals', 11, 2)->nullable()->default(0.00);
+            $table->decimal('opex', 11, 2)->nullable()->default(0.00);
+            $table->decimal('net_sales', 11, 2)->nullable()->default(0.00);
+            $table->decimal('gross_profit', 12, 2)->nullable()->default(0.00);
+            $table->decimal('total_gross_profit', 12, 2)->nullable()->default(0.00);
+            $table->decimal('total_net_sales', 11, 2)->nullable()->default(0.00);
+            $table->decimal('profit_rate', 11, 2)->nullable()->default(0.00);
             $table->timestamps();
         });
     }

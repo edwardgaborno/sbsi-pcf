@@ -43,7 +43,7 @@
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-striped" id="dataTable" width="100%"
+                                        <table class="table table-bordered table-striped" id="source_dataTable" width="100%"
                                             cellspacing="0">
                                             <thead>
                                                 <tr bgcolor="gray" class="text-white">
@@ -53,7 +53,7 @@
                                                     <th>Description</th>
                                                     <th>Unit Price</th>
                                                     <th>Currency Rate</th>
-                                                    <th>Total Price pHp</th>
+                                                    <th>Total Price (Php)</th>
                                                     <th>Item Group</th>
                                                     <th>UOM</th>
                                                     <th>Mandatory Peripherals</th>
@@ -62,7 +62,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -90,16 +89,21 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
-            $('#dataTable').DataTable({
+        $(function() {
+            $('#source_dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
+                responsive: true,
+                searchable: true,
                 ordering: true,
                 ajax: {
-                    "url": '{!! route('settings.source.list') !!}'
+                    url: "{{ route('settings.source.list') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                 },
-                "columns": [
+                columns: [
                     { data: 'id' },
                     { data: 'supplier' },
                     { data: 'item_code' },
@@ -110,57 +114,85 @@
                     { data: 'item_group' },
                     { data: 'uom' },
                     { data: 'mandatory_peripherals' },
-                    { data: 'cost_periph' },
-                    { data: 'actions' }
+                    { data: 'cost_of_peripherals' },
+                    { data: 'actions', orderable: false, searchable: false }
                 ],
             });
 
         });
 
-        function editSource(data) {
-            var edit_id = data.data('id');
-            var edit_supplier = data.data('supplier');
-            var edit_item_code = data.data('item_code');
-            var edit_description = data.data('description');
-            var edit_unit_price = data.data('unit_price');
-            var edit_currency_rate = data.data('currency_rate');
-            var edit_tp_php = data.data('tp_php');
-            var edit_item_group = data.data('item_group');
-            var edit_uom = data.data('uom');
-            var edit_mandatory_peripherals = data.data('mandatory_peripherals');
-            var edit_cost_periph = data.data('cost_periph');
+        let source_id;
 
-            $("#edit_id").val(edit_id);
-            $("#edit_supplier").val(edit_supplier);
-            $("#edit_item_code").val(edit_item_code);
-            $("#edit_description").val(edit_description);
-            $("#edit_unit_price").val(edit_unit_price);
-            $("#edit_currency_rate").val(edit_currency_rate);
-            $("#edit_tp_php").val(edit_tp_php);
-            $("#edit_item_group").val(edit_item_group);
-            $("#edit_uom").val(edit_uom);
-            $("#edit_mandatory_peripherals").val(edit_mandatory_peripherals);
-            $("#edit_cost_periph").val(edit_cost_periph);
-        }
+        $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
+            e.preventDefault();
+            source_id = $(this).data('id');
+            if (source_id){
+                $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/get/source=' + source_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(data) {
+                    $('#editSourceModal').modal('show');
+                    $('#edit_source_id').val(data.id);
+                    $('#edit_supplier').val(data.supplier);
+                    $('#edit_item_code').val(data.item_code);
+                    $('#edit_description').val(data.description);
+                    $('#edit_unit_price').val(data.unit_price);
+                    $('#edit_currency_rate').val(data.currency_rate);
+                    $('#edit_tp_php').val(data.tp_php);
+                    $('#edit_item_group').val(data.item_group);
+                    $('#edit_uom').val(data.uom);
+                    $('#edit_mandatory_peripherals').val(data.mandatory_peripherals);
+                    $('#edit_cost_of_peripherals').val(data.cost_of_peripherals);
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                });
+            }
+        })
 
-        function getTotalPrice() {
-            var unit_price = $("#unit_price").val();
-            var currency_rate = $("#currency_rate").val();
-            // var total_price = $("#tp_php").val();
-           var  total_price = unit_price * currency_rate;
-           $("#tp_php").val(total_price);
-        }
+        const element = document.querySelectorAll('#unit_price, #currency_rate, #edit_unit_price, #edit_currency_rate');
+        element.forEach(i => {
+            i.addEventListener('input', function() {
+                calculate();
+            });
+        });
 
-        function getTotalPriceEdit() {
-            var unit_price = $("#edit_unit_price").val();
-            var currency_rate = $("#edit_currency_rate").val();
-            // var total_price = $("#tp_php").val();
-           var  total_price = unit_price * currency_rate;
-           $("#edit_tp_php").val(total_price);
-        }
+        function calculate()
+        {
+            const unit_price = parseFloat(document.getElementById("unit_price").value);
+            const currency_rate = parseFloat(document.getElementById("currency_rate").value);
+            const edit_unit_price = parseFloat(document.getElementById("edit_unit_price").value);
+            const edit_currency_rate = parseFloat(document.getElementById("edit_currency_rate").value);
 
-        function formatNumber (num) {
-            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            const tp_php = document.getElementById("tp_php");
+            const edit_tp_php = document.getElementById("edit_tp_php");
+
+            if (!isNaN(unit_price) && !isNaN(currency_rate)) {
+                tp_php.value = (unit_price * currency_rate).toFixed(2);
+            }
+            else if (!isNaN(edit_unit_price) && !isNaN(edit_currency_rate)) {
+                edit_tp_php.value = (edit_unit_price * edit_currency_rate).toFixed(2);
+            }
+            else {
+                tp_php.value = '';
+                edit_tp_php.value = '';
+            }
         }
+    </script>
+
+    <script>
+        @if (count($errors) > 0)
+            $('#editSourceModal').modal('show');
+            $('#addSourceModal').modal('show');
+        @endif
     </script>
 @endsection

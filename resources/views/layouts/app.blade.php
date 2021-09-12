@@ -11,7 +11,7 @@
         <meta name="description" content="Scientific Biotech Specialties Web Laboratory Information System" />
         <link rel="icon" href="{{ asset('img/sbsi-32px-favicon-1.png') }}">
         <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.css"/>
         @stack('styles')
         <link rel="stylesheet" href="{{ asset('dist/dropify/css/dropify.min.css') }}">
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -52,7 +52,7 @@
         <!-- Bootstrap core JavaScript-->
         <script src="{{ asset('dist/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('dist/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.js"></script>
         @stack('scripts')
         <!-- Core plugin JavaScript-->
         <script src="{{ asset('dist/jquery-easing/jquery.easing.min.js') }}"></script>

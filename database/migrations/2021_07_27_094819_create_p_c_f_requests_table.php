@@ -20,13 +20,19 @@ class CreatePCFRequestsTable extends Migration
             $table->string('institution');
             $table->string('duration');
             $table->date('date_biding');
-            $table->double('bid_docs_price')->default(0.00);
-            $table->string('psr');
+            // decimal are great for storing prices, money; stores exact value
+            $table->decimal('bid_docs_price')->default(0.00);
+            // $table->string('psr'); // we'll get the name of the PSR by using the column created by;
             $table->string('manager');
-            $table->double('profit', 11, 2)->default(0.00);
-            $table->double('profit_rate', 11, 2)->default(0.00);
-            $table->integer('status')->default(0);
-            $table->integer('created_by');
+            $table->decimal('profit', 12, 2)->default(0.00);
+            $table->decimal('profit_rate', 12, 2)->default(0.00);
+            $table->tinyInteger('status')->default(0);
+            // $table->integer('created_by');
+            $table->foreignId('created_by') // user_id
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

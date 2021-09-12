@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('settings.source.add') }}" method="post">
+            <form action="{{ route('settings.source.store') }}" method="post">
                 @csrf
                 <div class="modal-body">
                     <!-- Left Element -->
@@ -40,22 +40,22 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="specimen_type">Unit Price</label>
-                                <input type="text" class="form-control" name="unit_price" id="unit_price" onkeyup="getTotalPrice()"
-                                    value="{{ old('unit_price') }}" required>
+                                <input type="number" class="form-control" name="unit_price" id="unit_price"
+                                    step=".01" value="{{ old('unit_price') }}" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="specimen_type">Currency Rate</label>
-                                <input type="text" class="form-control" name="currency_rate" id="currency_rate" onkeyup="getTotalPrice()"
-                                    value="{{ old('currency_rate') }}" required>
+                                <input type="number" class="form-control" name="currency_rate" id="currency_rate"
+                                    step=".01" value="{{ old('currency_rate') }}" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="specimen_type">Total Price pHp</label>
-                                <input type="text" class="form-control" name="tp_php" id="tp_php"
-                                    value="{{ old('tp_php') }}" required>
+                                <label for="specimen_type">Total Price (Php)</label>
+                                <input type="number" class="form-control" name="tp_php" id="tp_php"
+                                    step=".01" value="{{ old('tp_php') }}" required readonly>
                             </div>
                         </div>
                     </div>
@@ -90,8 +90,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="specimen_type">Cost of Peripherals</label>
-                                <input type="text" class="form-control" name="cost_periph" id="cost_periph"
-                                    value="{{ old('cost_periph') }}" required>
+                                <input type="text" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals"
+                                    value="{{ old('cost_of_peripherals') }}" required>
                             </div>
                         </div>
                     </div>

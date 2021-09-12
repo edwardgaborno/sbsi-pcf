@@ -20,12 +20,14 @@
     </li>
 
     <!-- Nav Item - PCF Request Menu -->
+    @can('psr_access')
     <li class="nav-item">
         <a class="nav-link" href="{{ route('PCF') }}">
             <i class="fas fa-list"></i>
             <span>PCF Request</span></a>
     </li>
-    @hasrole('administrator')
+    @endcan
+    @can('user_management_access')
         <!-- Nav Item - Setting user management Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage_users" aria-expanded="true"
@@ -45,7 +47,9 @@
                 </div>
             </div>
         </li>
+    @endcan
     <!-- Nav Item - Setting Source Menu -->
+    @can('source_access')
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
                 aria-controls="settings">
@@ -58,6 +62,6 @@
                 </div>
             </div>
         </li>
-    @endhasrole
+    @endcan
 </ul>
 <!-- End of Sidebar -->

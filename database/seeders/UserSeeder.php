@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
@@ -19,7 +20,7 @@ class UserSeeder extends Seeder
         $user = User::create([
             'name' => 'Ardison Pagulayan',
             'email' => 'ardi.pagulayan@sbsi.com.ph',
-            'password' => \Hash::make('admin'),
+            'password' => Hash::make('admin'),
             'user_type' => 'administrator',
             'is_approve' => true,
             'status' => true,
@@ -27,7 +28,7 @@ class UserSeeder extends Seeder
         ]);
 
         //create default user permission
-        $user->assignRole('administrator');
+        $user->assignRole('Super Administrator');
         //permissions will be set on authservice provider Boot function
     }
 }

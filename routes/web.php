@@ -83,9 +83,10 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
             Route::get('/', [SourceController::class, 'index'])->name('');
-            Route::get('/ajax/list', [SourceController::class, 'index'])->name('.list');
-            Route::post('/add', [SourceController::class, 'store'])->name('.add');
-            Route::post('/update', [SourceController::class, 'update'])->name('.update');
+            Route::get('/ajax/source_list', [SourceController::class, 'sourceList'])->name('.list');
+            Route::get('/get/source={source_id}', [SourceController::class, 'getSourceDetails'])->name('.get-source-details');
+            Route::post('/store', [SourceController::class, 'store'])->name('.store');
+            Route::put('/update', [SourceController::class, 'update'])->name('.update');
         });
     });
 

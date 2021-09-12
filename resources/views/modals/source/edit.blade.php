@@ -9,17 +9,23 @@
             </div>
             <form action="{{ route('settings.source.update') }}" method="post">
                 @csrf
+                @method('PUT')
                 <div class="modal-body">
                     <!-- Left Element -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="specimen_type">Supplier</label>
-                                <input type="hidden" class="form-control" name="id" id="edit_id"
-                                    value="{{ old('id') }}" required>
-                                <input type="text" class="form-control" name="supplier" id="edit_supplier"
-                                    value="{{ old('supplier') }}" required>
+                                <input type="hidden" class="form-control" name="source_id" id="edit_source_id">
+                                <input type="text" class="form-control @error('supplier') is-invalid @enderror" 
+                                    name="supplier" id="edit_supplier" value="{{ old('supplier') }}" required>
                             </div>
+
+                            @error('supplier')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
@@ -42,22 +48,22 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="specimen_type">Unit Price</label>
-                                <input type="text" class="form-control" name="unit_price" id="edit_unit_price" onkeyup="getTotalPriceEdit()"
-                                    value="{{ old('unit_price') }}" required>
+                                <input type="number" class="form-control" name="unit_price" id="edit_unit_price"
+                                    step=".01" value="{{ old('unit_price') }}" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="specimen_type">Currency Rate</label>
-                                <input type="text" class="form-control" name="currency_rate" id="edit_currency_rate" onkeyup="getTotalPriceEdit()"
-                                    value="{{ old('currency_rate') }}" required>
+                                <input type="number" class="form-control" name="currency_rate" id="edit_currency_rate"
+                                    step=".01" value="{{ old('currency_rate') }}" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="specimen_type">Total Price pHp</label>
-                                <input type="text" class="form-control" name="tp_php" id="edit_tp_php"
-                                    value="{{ old('tp_php') }}" required>
+                                <label for="specimen_type">Total Price (Php)</label>
+                                <input type="number" class="form-control" name="tp_php" id="edit_tp_php"
+                                    step=".01" value="{{ old('tp_php') }}" required readonly>
                             </div>
                         </div>
                     </div>
@@ -92,7 +98,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="specimen_type">Cost of Peripherals</label>
-                                <input type="text" class="form-control" name="cost_periph" id="edit_cost_periph"
+                                <input type="text" class="form-control" name="cost_of_peripherals" id="edit_cost_of_peripherals"
                                     value="{{ old('cost_periph') }}" required>
                             </div>
                         </div>
