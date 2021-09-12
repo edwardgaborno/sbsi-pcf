@@ -3,38 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
-use Alert;
-use Validator;
+use Spatie\Permission\Models\Role;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Requests\UserManagementAccess\User\StoreUserRequest;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
+        $this->authorize('user_access');
+
+        return view('users.index');
+    }
+
+    public function store(StoreUserRequest $request)
+    {
+        $this->authorize('user_create');
+
+        DB::beginTransaction();
+
+        $data = $request->validated();
+
+        //get role name
+        $role = Role::find($data['role']);
+
+        try {
+            $user = User::firstOrCreate([
+                'email' => $data['email'], // this will check if email exists in the database;
+            ],[
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'user_type' => $role->name,
+            ]);
+
+            $user->assignRole($role->name);
+            DB::commit();
+
+            Alert::success('Success', 'User has been created.');
+        }
+        catch (Exception $ex) {
+            DB::rollBack();
+            throw $ex; // use better error handling, for now this will do;
+        }
+
+        return back();
+    }
+
+    public function destroy($id)
+    {
+        $this->authorize('user_delete');
+
+        if (!empty($id)) {
+            $deleteUser = User::find($id);
+            $deleteUser->delete();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+
+        return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function usersList(Request $request)
+    {
+        $this->authorize('user_access');
+
         if ($request->ajax()) {
 
             $getUsers = User::where('id','!=', auth()->user()->id)->orderBy('id')->get();
 
             return Datatables::of($getUsers)
                 ->addIndexColumn()
-                ->addColumn('id', function ($data) {
-                    return $data->id;
-                })
-                ->addColumn('name', function ($data) {
-                    return $data->name;
-                })
-                ->addColumn('email', function ($data) {
-                    return $data->email;
-                })
-                ->addColumn('user_type', function ($data) {
-                    return $data->user_type;
-                })
                 ->addColumn('status', function ($data) {
 
                     if ($data->status == 1 && $data->is_approve == 1) {
@@ -148,88 +192,15 @@ class UserController extends Controller
                     </td>
                     ';
                 })
-                ->escapeColumns([])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
-
-        return view('users.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        if (!empty($id)) {
-            $deleteUser = User::find($id);
-            $deleteUser->delete();
-
-            return response()->json(['success' => 'success'], 200);
-        }
-
-        return response()->json(['error' => 'invalid'], 401);
     }
 
     public function approveUser($id)
     {
+        $this->authorize('approve_user');
+
         if (!empty($id)) {
             $approveUser = User::find($id);
             $approveUser->is_approve = 1;
@@ -243,6 +214,8 @@ class UserController extends Controller
 
     public function enableUser($id)
     {
+        $this->authorize('enable_user');
+
         if (!empty($id)) {
             $enableUser = User::find($id);
             $enableUser->status = 1;
@@ -256,6 +229,8 @@ class UserController extends Controller
 
     public function disableUser($id)
     {
+        $this->authorize('disable_user');
+
         if (!empty($id)) {
             $disableUser = User::find($id);
             $disableUser->status = 0;

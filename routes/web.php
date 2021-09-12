@@ -69,9 +69,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('user-management/users')->group(function () {
         Route::name('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('');
-            Route::get('/ajax/list', [UserController::class, 'index'])->name('.list');
-            Route::post('/add', [UserController::class, 'store'])->name('.add');
-            Route::post('/update', [UserController::class, 'update'])->name('.update');
+            Route::get('/ajax/list', [UserController::class, 'usersList'])->name('.list');
+            Route::post('/store', [UserController::class, 'store'])->name('.store');
+            Route::put('/update', [UserController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-user-account/{id}', [UserController::class, 'approveUser'])->name('.approve_user');
             Route::get('/ajax/enable-user-account/{id}', [UserController::class, 'enableUser'])->name('.enable_user');
             Route::get('/ajax/disable-user-account/{id}', [UserController::class, 'disableUser'])->name('.disable_user');

@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('settings.source.add') }}" method="post">
+            <form action="" method="post">
                 @csrf
                 <div class="modal-body">
                     <!-- Left Element -->

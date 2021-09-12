@@ -9,12 +9,5 @@ class PCFList extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'pcf_no',
-        'item_code',
-        'description',
-        'quantity',
-        'sales',
-        'total_sales'
-    ];
+    protected $guarded = [];
 }

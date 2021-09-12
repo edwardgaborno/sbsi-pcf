@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('users.add') }}" method="post">
+            <form action="{{ route('users.store') }}" method="post">
                 @csrf
                 <div class="modal-body">
                     <!-- Left Element -->
@@ -48,22 +48,19 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="specimen_type">Item Group</label>
-                                <input type="text" class="form-control" name="item_group" id="item_group"
-                                    value="{{ old('item_group') }}" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="user_type">User Type</label>
-                                <select class="form-control" name="user_type" id="user_type" required>
-                                    <option value="">Please select user type</option>
-                                    <option value="psr">PSR</option>
-                                    <option value="nsm">NSM</option>
-                                    <option value="accounting">ACCOUNTING</option>
-                                    <option value="accounting manager">ACCOUNTING MANAGER</option>
+                                <label for="role">User Role</label>
+                                <select class="form-control" name="role" id="role" required>
+                                    <option value="" selected disabled>Select user role</option>
+                                    @if(auth()->user()->hasRole('Super Administrator'))
+                                        @foreach(\Spatie\Permission\Models\Role::orderBy('name', 'asc')->get() as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    @elseif(auth()->user()->hasRole('Administrator'))
+                                        @foreach(\Spatie\Permission\Models\Role::where('name', '!=', 'Super Administrator')
+                                            ->orderBy('name', 'asc')->get() as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                         </div>
