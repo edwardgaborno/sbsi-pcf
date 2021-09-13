@@ -12,6 +12,7 @@
         <link rel="icon" href="{{ asset('img/sbsi-32px-favicon-1.png') }}">
         <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.css"/>
+        <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
         @stack('styles')
         <link rel="stylesheet" href="{{ asset('dist/dropify/css/dropify.min.css') }}">
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -59,6 +60,8 @@
 
         <!-- Custom scripts for all pages-->
         <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+        <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 
         <!-- sbsi js -->
         <script src="{{ asset('js/sbsi.js') }}"></script>

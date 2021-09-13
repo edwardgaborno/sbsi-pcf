@@ -47,6 +47,7 @@ class RolesAndPermissionSeeder extends Seeder
             'psr_access',
             'psr_download_pcf',
             'psr_upload_pcf',
+            'psr_view_pcf',
             'source_create',
             'source_edit',
             'source_show',
@@ -88,6 +89,8 @@ class RolesAndPermissionSeeder extends Seeder
             'psr_show',
             'psr_delete',
             'psr_access',
+            'psr_download_pcf',
+            'psr_upload_pcf',
         ]);
 
         $acctRole = Role::create(['name' => 'Accounting']);
@@ -97,6 +100,7 @@ class RolesAndPermissionSeeder extends Seeder
             // 'accounting_show',
             // 'accounting_delete',
             'psr_access',
+            'psr_view_pcf',
             'accounting_access',
             'accounting_approve_pcf',
             'accounting_reject_pcf',

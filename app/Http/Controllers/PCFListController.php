@@ -46,7 +46,7 @@ class PCFListController extends Controller
                     return number_format($data->total_sales);
                 })
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('delete')) {
+                    if (auth()->user()->can('psr_delete')) {
                         return
                         ' 
                         <td>
@@ -90,7 +90,7 @@ class PCFListController extends Controller
                     return $data->quantity;
                 })
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('delete')) {
+                    if (auth()->user()->can('psr_delete')) {
                         return
                             ' 
                         <td>

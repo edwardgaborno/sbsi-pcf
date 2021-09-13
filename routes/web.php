@@ -5,6 +5,7 @@ use App\Http\Controllers\PCFRequestController;
 use App\Http\Controllers\PCFListController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FilepondController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
+    //route for file upload feature for temporary location
+    Route::prefix('tmp')->group(function (){
+        Route::name('store')->group(function () {
+            Route::post('/pcf-document', [FilepondController::class, 'storePCFDocument'])->name('.pcf-document');
+        });
+    });
+
     // PCF Index View
     Route::prefix('PCF')->group(function () {
         Route::name('PCF')->group(function () {
@@ -46,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
             Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
             Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
+            Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
+            Route::post('/store-pcf-file', [PCFRequestController::class, 'storePCFPdfFile'])->name('.storeFile');
         });
     });
 

@@ -63,9 +63,9 @@
                                                 value="{{ old('tp_php_foc') }}" placeholder="trasfer price" required>    
                                             <input type="hidden" class="form-control" name="cost_periph_foc" id="cost_periph_add_item"
                                                 value="{{ old('cost_periph_foc') }}" placeholder="cost peripherals" required>
-                                            {{-- <input type="text" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
+                                            {{-- <input type="hidden" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
                                                 value="{{ old('transfer_price_foc') }}" placeholder="transfer price" required>
-                                            <input type="text" class="form-control" name="mandatory_peripherals_foc" id="mandatory_peripherals_add_item"
+                                            <input type="hidden" class="form-control" name="mandatory_peripherals_foc" id="mandatory_peripherals_add_item"
                                                 value="{{ old('mandatory_peripherals_foc') }}" placeholder="mandatory peripherals" required> --}}
                                             <input type="hidden" class="form-control" name="opex_foc" id="opex_add_item"
                                                 value="{{ old('opex_foc') }}" placeholder="opex" required>
@@ -354,6 +354,7 @@
         $(document).ready(function() {
             var pcf_no_old = $("#pcf_no").val();
             var pcf_no = $("#pcf_no_add_item").val(pcf_no_old);
+            
             $('#addItemDatatable').DataTable({
                 "stripeClasses": [],
                 processing: false,
@@ -388,7 +389,7 @@
                 ordering: true,
                 ajax: {
                     // "url": '{!! route('PCF.sub.list') !!}',
-                    url : '/PCF.sub/ajax/foc-list/'+pcf_no,
+                    url : '/PCF.sub/ajax/foc-list/' + pcf_no,
                     data : function(data){
                         return data;
                     }
@@ -707,7 +708,7 @@
                         $("#description_add_item").val(response.description);
                         $("#rate_add_item").val(response.currency_rate);
                         $("#tp_php_add_item").val(response.tp_php);
-                        $("#cost_periph_add_item").val(response.cost_periph);
+                        $("#cost_periph_add_item").val(response.cost_of_peripherals);
                     },
                     error: function(response) {
                         Swal.fire(
@@ -742,7 +743,7 @@
                         $("#item_description_foc").val(response.description);
                         $("#rate_foc").val(response.currency_rate);
                         $("#tp_php_foc").val(response.tp_php);
-                        $("#cost_periph_foc").val(response.cost_periph);
+                        $("#cost_periph_foc").val(response.cost_of_peripherals);
                     },
                     error: function(response) {
                         Swal.fire(

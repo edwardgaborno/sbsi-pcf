@@ -32,7 +32,7 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    @can('add')
+                                    @can('psr_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
                                                 <a href="{{ route('PCF.sub.addrequest') }}"
@@ -55,6 +55,7 @@
                                                     <th>PSR</th>
                                                     <th>Annual Profit</th>
                                                     <th>Annual Profit Rate</th>
+                                                    <th>Document Status</th>
                                                     <th>Actions</th>
                                                 </tr> 
                                             </thead>
@@ -103,6 +104,7 @@
                     { data: 'psr' },
                     { data: 'profit' },
                     { data: 'profit_rate' },
+                    { data: 'status' },
                     { data: 'actions' }
                 ],
             });
@@ -694,7 +696,6 @@
                 if (result.isConfirmed) {
 
                     var id = data.data('id');
-
                     $.ajax({
                         type: 'GET',
                         dataType: 'json',
@@ -737,6 +738,8 @@
                 if (result.isConfirmed) {
 
                     var id = data.data('id');
+
+                    console.log(id);
                     $.ajax({
                         type: 'GET',
                         dataType: 'json',
@@ -767,5 +770,28 @@
             })
         }
 
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputElement = document.querySelector('input[name="upload_file"]');
+            var store = FilePond.create((inputElement),
+            {
+                labelIdle: `Drag & Drop document file or <span class="filepond--label-action">Browse</span>`,
+                imagePreviewHeight: 170,
+            });
+            
+            store.setOptions({
+                allowPdfPreview: true,
+                pdfPreviewHeight: 320,
+                pdfComponentExtraParams: 'toolbar=0&view=fit&page=1',
+                server: {
+                    url: '{{ route('store.pcf-document') }}',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                },
+            });
+        });
     </script>
 @endsection

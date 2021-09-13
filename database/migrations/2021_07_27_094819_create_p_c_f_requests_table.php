@@ -22,7 +22,7 @@ class CreatePCFRequestsTable extends Migration
             $table->date('date_biding');
             // decimal are great for storing prices, money; stores exact value
             $table->decimal('bid_docs_price')->default(0.00);
-            // $table->string('psr'); // we'll get the name of the PSR by using the column created by;
+            $table->string('psr'); // we'll get the name of the PSR by using the column created by;
             $table->string('manager');
             $table->decimal('profit', 12, 2)->default(0.00);
             $table->decimal('profit_rate', 12, 2)->default(0.00);

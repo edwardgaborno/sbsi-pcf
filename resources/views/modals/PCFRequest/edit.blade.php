@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit PCF Request </h5>
-                @hasanyrole('nsm|accounting|accounting manager')
+                @hasanyrole('National Sales Manager|Accounting|Accounting manager')
                     <span class="badge badge-danger mt-2 ml-5">Only PSR have permission to update the details of this request</span>
                 @endhasanyrole
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -21,8 +21,45 @@
                     <li class="nav-item">
                         <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Machines & Inclusions</a>
                     </li>
+                    @can('psr_upload_pcf')
+                    <li class="nav-item">
+                        <a class="nav-link" id="upload-tab" data-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload PCF Document</a>
+                    </li>
+                    @endcan
                 </ul>
                 <div class="tab-content" id="myTabContent">
+                    @can('psr_upload_pcf')
+                    <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                        <form action="{{ route('PCF.sub.storeFile') }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="upload_file"></label>
+                                                <!--  For single file upload  -->
+                                                <input type="file" name="upload_file" 
+                                                    accept="application/pdf"
+                                                    class="@error('upload_file') is-invalid @enderror" 
+                                                    data-max-file-size="5MB" 
+                                                    credits="false"/>
+            
+                                                @error('upload_file')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                    @endcan
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <form action="{{ route('PCF.update') }}" method="post">
                             @csrf
@@ -116,14 +153,14 @@
                             <!-- Content Row -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
-                                @can('update')
+                                @can('psr_edit')
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
                                 @endcan
                             </div>
                         </form>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        @can('add')
+                        @can('psr_create')
                             <form id="first_table">
                                 @csrf
                                 <div class="modal-body">
@@ -226,7 +263,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                        @can('add')
+                        @can('psr_create')
                             <form id="second_table">
                                 @csrf
                                 <div class="modal-body">
