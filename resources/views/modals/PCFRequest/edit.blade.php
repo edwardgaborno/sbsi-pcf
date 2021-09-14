@@ -30,7 +30,7 @@
                 <div class="tab-content" id="myTabContent">
                     @can('psr_upload_pcf')
                     <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
-                        <form action="{{ route('PCF.sub.storeFile') }}" method="POST">
+                        <form action="{{ route('PCF.storeFile') }}" method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="row">
@@ -49,6 +49,8 @@
                                                         <strong>{{ $message }}</strong>
                                                     </span>
                                                 @enderror
+
+                                                <input type="hidden" name="pcf_id" id="for_upload_id">
                                         </div>
                                     </div>
                                 </div>
@@ -85,24 +87,99 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="description">Institutuion</label>
+                                            <label for="edit_institution">Institution</label>
                                             <input type="text" class="form-control" name="institution" id="edit_institution"
-                                                value="{{ old('institution') }}" required>
+                                                value="{{ old('edit_institution') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="edit_address">Address</label>
+                                            <textarea class="form-control" name="address" id="edit_address" cols="5"
+                                                rows="3">{{ old('edit_address') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="edit_contact_person">Contact Person</label>
+                                            <input type="text" class="form-control" name="contact_person" id="edit_contact_person"
+                                                value="{{ old('edit_contact_person') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="edit_designation">Designation</label>
+                                            <input type="text" class="form-control" name="designation" id="edit_designation"
+                                                value="{{ old('edit_designation') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="edit_thru_designation">Thru Designation</label>
+                                            <input type="text" class="form-control" name="thru_designation" id="edit_thru_designation"
+                                                value="{{ old('edit_thru_designation') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="edit_supplier">Supplier/Manufacturer</label>
+                                            <input type="text" class="form-control" name="supplier" id="edit_supplier"
+                                                value="{{ old('edit_supplier') }}" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="specimen_type">Duration of Contract</label>
-                                            <input type="text" class="form-control" name="duration" id="edit_duration" 
-                                                value="{{ old('duration') }}" required>
+                                            <label for="edit_terms">Terms</label>
+                                            <input type="text" class="form-control" name="terms" id="edit_terms"
+                                                value="{{ old('edit_terms') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="edit_date_biding">Date of Bidding</label>
-                                            <input type="date" class="form-control" name="date_biding" id="edit_date_biding"
+                                            <label for="edit_validity">Validity</label>
+                                            <input type="text" class="form-control" name="validity" id="edit_validity"
+                                                value="{{ old('edit_validity') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="edit_delivery">Delivery</label>
+                                            <input type="text" class="form-control" name="delivery" id="edit_delivery"
+                                                value="{{ old('edit_delivery') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="edit_warranty">Warranty (For Machines Only)</label>
+                                            <input type="text" class="form-control" name="warranty" id="edit_warranty"
+                                                value="{{ old('edit_warranty') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="edit_duration">Duration of Contract</label>
+                                            <input type="text" class="form-control" name="duration" id="edit_duration" 
+                                                value="{{ old('edit_duration') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="edit_date_bidding">Date of Bidding</label>
+                                            <input type="date" class="form-control" name="date_bidding" id="edit_date_bidding"
                                                 value="{{ old('date_bidding') }}" required>
                                         </div>
                                     </div>
@@ -136,14 +213,14 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="specimen_type">Annual Profit</label>
-                                            <input type="text" class="form-control" name="profit" id="edit_annual_profit"
+                                            <input type="text" class="form-control" name="annual_profit" id="edit_annual_profit"
                                                 value="{{ old('profit') }}" readonly required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="specimen_type">Anual Profit Rate</label>
-                                            <input type="text" class="form-control" name="profit_rate" id="edit_annual_profit_rate"
+                                            <input type="text" class="form-control" name="annual_profit_rate" id="edit_annual_profit_rate"
                                                 value="{{ old('profit_rate') }}" readonly required>
                                         </div>
                                     </div>

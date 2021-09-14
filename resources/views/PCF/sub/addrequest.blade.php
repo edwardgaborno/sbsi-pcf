@@ -245,7 +245,7 @@
                                         <div class="form-group">
                                             <label for="pcf_no">PCF No.</label>
                                             <input type="text" class="form-control" name="pcf_no" id="pcf_no"
-                                                value="{{ old('pcf_no', $pcf_no) }}" required>
+                                                value="{{ old('pcf_no', $pcf_no) }}" required readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -262,6 +262,81 @@
                                             <label for="institution">Institution</label>
                                             <textarea class="form-control" name="institution" id="institution" cols="5"
                                                 rows="3">{{ old('institution') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="address">Address</label>
+                                            <textarea class="form-control" name="address" id="address" cols="5"
+                                                rows="3">{{ old('address') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="contact_person">Contact Person</label>
+                                            <input type="text" class="form-control" name="contact_person" id="contact_person"
+                                                value="{{ old('duration_contract') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="duration_contract">Designation</label>
+                                            <input type="text" class="form-control" name="designation" id="designation"
+                                                value="{{ old('duration_contract') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="date_bidding">Thru Designation</label>
+                                            <input type="text" class="form-control" name="thru_designation" id="thru_duration_contract"
+                                                value="{{ old('duration_contract') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="institution">Supplier/Manufacturer</label>
+                                            <input type="text" class="form-control" name="supplier" id="supplier"
+                                                value="{{ old('supplier') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="terms">Terms</label>
+                                            <input type="text" class="form-control" name="terms" id="terms"
+                                                value="{{ old('supplier') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="validity">Validity</label>
+                                            <input type="text" class="form-control" name="validity" id="validity"
+                                                value="{{ old('validity') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="delivery">Delivery</label>
+                                            <input type="text" class="form-control" name="delivery" id="delivery"
+                                                value="{{ old('delivery') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="warranty">Warranty (For Machines Only)</label>
+                                            <input type="text" class="form-control" name="warranty" id="warranty"
+                                                value="{{ old('supplier') }}" required>
                                         </div>
                                     </div>
                                 </div>

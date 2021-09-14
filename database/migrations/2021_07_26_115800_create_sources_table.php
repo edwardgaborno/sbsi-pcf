@@ -15,16 +15,20 @@ class CreateSourcesTable extends Migration
     {
         Schema::create('sources', function (Blueprint $table) {
             $table->id();
-            $table->string('supplier')->nullable();
-            $table->string('item_code')->nullable();
-            $table->string('description')->nullable();
-            $table->decimal('unit_price', 11, 2)->nullable();
-            $table->decimal('currency_rate')->nullable();
-            $table->decimal('tp_php', 12, 2)->nullable();
-            $table->string('item_group')->nullable();
-            $table->string('uom')->nullable();
-            $table->string('mandatory_peripherals')->nullable();
-            $table->decimal('cost_of_peripherals', 11, 2)->nullable()->default(0.00);
+            $table->string('supplier');
+            $table->string('item_code');
+            $table->string('description');
+            $table->decimal('unit_price', 11, 2);
+            $table->decimal('currency_rate');
+            $table->decimal('tp_php', 12, 2);
+            $table->string('item_group');
+            $table->string('uom');
+            $table->string('mandatory_peripherals');
+            $table->decimal('cost_of_peripherals', 11, 2);
+            $table->string('segment')->nullable();
+            $table->string('item_category');
+            $table->decimal('standard_price', 11, 2);
+            $table->string('profitability');
             $table->timestamps();
         });
     }

@@ -18,15 +18,25 @@ class CreatePCFRequestsTable extends Migration
             $table->string('pcf_no');
             $table->date('date');
             $table->string('institution');
+            $table->string('address');
+            $table->string('contact_person');
+            $table->string('designation');
+            $table->string('thru_designation'); 
+            $table->string('supplier');
+            $table->string('terms');
+            $table->string('validity');
+            $table->string('delivery');
+            $table->string('warranty')->nullable();
             $table->string('duration');
-            $table->date('date_biding');
+            $table->date('date_bidding');
             // decimal are great for storing prices, money; stores exact value
             $table->decimal('bid_docs_price')->default(0.00);
             $table->string('psr'); // we'll get the name of the PSR by using the column created by;
             $table->string('manager');
-            $table->decimal('profit', 12, 2)->default(0.00);
-            $table->decimal('profit_rate', 12, 2)->default(0.00);
+            $table->decimal('annual_profit', 12, 2)->default(0.00);
+            $table->decimal('annual_profit_rate', 12, 2)->default(0.00);
             $table->tinyInteger('status')->default(0);
+            $table->string('pcf_document')->nullable();
             // $table->integer('created_by');
             $table->foreignId('created_by') // user_id
                 ->nullable()

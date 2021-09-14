@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFRequest;
 use App\Models\PCFList;
+use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
 use Alert;
 use App\Models\PCFInclusion;
@@ -54,7 +55,7 @@ class PCFRequestController extends Controller
                     return $status;
                 })
                 ->addColumn('actions', function ($data) {
-                    if(auth()->user()->hasRole('PSR') && $data->status == 0
+                    if((auth()->user()->hasRole('PSR') && $data->status == 0)
                         || (auth()->user()->hasRole('PSR') && $data->status == 1)) {
                         return
                         ' 
@@ -64,13 +65,22 @@ class PCFRequestController extends Controller
                                 data-pcf_no="'.$data->pcf_no .'"
                                 data-date="'.$data->date .'"
                                 data-institution="'.$data->institution .'"
+                                data-address="'.$data->address .'"
+                                data-contact_person="'.$data->contact_person .'"
+                                data-designation="'.$data->designation .'"
+                                data-thru_designation="'.$data->thru_designation .'"
+                                data-supplier="'.$data->supplier .'"
+                                data-terms="'.$data->terms .'"
+                                data-validity="'.$data->validity .'"
+                                data-delivery="'.$data->delivery .'"
+                                data-warranty="'.$data->warranty .'"
                                 data-duration="'.$data->duration .'"
-                                data-date_biding="'.$data->date_biding .'"
+                                data-date_bidding="'.$data->date_bidding .'"
                                 data-bid_docs_price="'.$data->bid_docs_price .'"
                                 data-psr="'.$data->psr .'"
                                 data-manager="'.$data->manager .'"
-                                data-annual_profit="'.$data->profit .'"
-                                data-annual_profit_rate="'.$data->profit_rate .'"
+                                data-annual_profit="'.$data->annual_profit .'"
+                                data-annual_profit_rate="'.$data->annual_profit_rate .'"
                                 data-target="#editPCFRequestModal"
                                 onclick="editPCFRequest($(this))">
                                 <i class="fas fa-edit"></i>
@@ -83,8 +93,8 @@ class PCFRequestController extends Controller
                         </td>
                         ';
                     }   
-                    else if(auth()->user()->hasRole('Accounting') && $data->status == 0
-                            || auth()->user()->hasRole('Accounting') && $data->status == 1
+                    else if((auth()->user()->hasRole('Accounting') && $data->status == 0)
+                            || (auth()->user()->hasRole('Accounting') && $data->status == 1)
                             || auth()->user()->hasRole('Accounting') && $data->status == 3) {
                         return
                         ' 
@@ -118,35 +128,18 @@ class PCFRequestController extends Controller
                                     <i class="fas fa-times"></i> 
                                     Disapprove
                                 </a>
-                                <a href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success">
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
                                     <i class="far fa-file-pdf"></i>
                                     View PCF
                                 </a>
                             </td>
                         ';
                     }
-                    else if(auth()->user()->hasRole('National Sales Manager') && $data->status == 2
-                            || auth()->user()->hasRole('National Sales Manager') && $data->status == 5) {
+                    else if((auth()->user()->hasRole('National Sales Manager') && $data->status == 2)
+                            || (auth()->user()->hasRole('National Sales Manager') && $data->status == 5)) {
                         return
                         ' 
                             <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-info" data-toggle="modal"
-                                    data-id="'.$data->id .'"
-                                    data-pcf_no="'.$data->pcf_no .'"
-                                    data-date="'.$data->date .'"
-                                    data-institution="'.$data->institution .'"
-                                    data-duration="'.$data->duration .'"
-                                    data-date_biding="'.$data->date_biding .'"
-                                    data-bid_docs_price="'.$data->bid_docs_price .'"
-                                    data-psr="'.$data->psr .'"
-                                    data-manager="'.$data->manager .'"
-                                    data-annual_profit="'.$data->profit .'"
-                                    data-annual_profit_rate="'.$data->profit_rate .'"
-                                    data-target="#editPCFRequestModal"
-                                    onclick="editPCFRequest($(this))">
-                                    <i class="fas fa-edit"></i>
-                                    View
-                                </a>
                                 <a href="#" class="badge badge-success"
                                     data-id="' . $data->id . '"
                                     onclick="ApproveRequest($(this))">
@@ -159,7 +152,7 @@ class PCFRequestController extends Controller
                                     <i class="fas fa-times"></i> 
                                     Disapprove
                                 </a>
-                                <a href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success">
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
                                     <i class="far fa-file-pdf"></i>
                                     View PCF
                                 </a>
@@ -170,23 +163,6 @@ class PCFRequestController extends Controller
                         return
                         ' 
                             <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-info" data-toggle="modal"
-                                    data-id="'.$data->id .'"
-                                    data-pcf_no="'.$data->pcf_no .'"
-                                    data-date="'.$data->date .'"
-                                    data-institution="'.$data->institution .'"
-                                    data-duration="'.$data->duration .'"
-                                    data-date_biding="'.$data->date_biding .'"
-                                    data-bid_docs_price="'.$data->bid_docs_price .'"
-                                    data-psr="'.$data->psr .'"
-                                    data-manager="'.$data->manager .'"
-                                    data-annual_profit="'.$data->profit .'"
-                                    data-annual_profit_rate="'.$data->profit_rate .'"
-                                    data-target="#editPCFRequestModal"
-                                    onclick="editPCFRequest($(this))">
-                                    <i class="fas fa-edit"></i>
-                                    View
-                                </a>
                                 <a href="#" class="badge badge-success"
                                     data-id="' . $data->id . '"
                                     onclick="ApproveRequest($(this))">
@@ -199,7 +175,7 @@ class PCFRequestController extends Controller
                                     <i class="fas fa-times"></i> 
                                     Disapprove
                                 </a>
-                                <a href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success">
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
                                     <i class="far fa-file-pdf"></i>
                                     View PCF
                                 </a>
@@ -207,7 +183,7 @@ class PCFRequestController extends Controller
                         ';
                     }
                 })
-                ->escapeColumns([])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
 
@@ -236,6 +212,15 @@ class PCFRequestController extends Controller
             'pcf_no'   => 'required|string',
             'date'   => 'required|string',
             'institution'   => 'nullable|string',
+            'address' => 'nullable|string',
+            'contact_person' => 'nullable|string',
+            'designation' => 'nullable|string',
+            'thru_designation' => 'nullable|string',
+            'supplier' => 'required|string',
+            'terms' => 'required|string',
+            'validity' => 'required|string',
+            'delivery' => 'required|string',
+            'warranty' => 'nullable|string',
             'duration_contract'   => 'required|string',
             'date_bidding'   => 'required|string',
             'bid_docs_price'   => 'required|string',
@@ -253,13 +238,22 @@ class PCFRequestController extends Controller
         $savePcfRequest->pcf_no = $request->pcf_no;
         $savePcfRequest->date = $request->date;
         $savePcfRequest->institution = $request->institution;
+        $savePcfRequest->address = $request->address;
+        $savePcfRequest->contact_person = $request->contact_person;
+        $savePcfRequest->designation = $request->designation;
+        $savePcfRequest->thru_designation = $request->thru_designation;
+        $savePcfRequest->supplier = $request->supplier;
+        $savePcfRequest->terms = $request->terms;
+        $savePcfRequest->validity = $request->validity;
+        $savePcfRequest->delivery = $request->delivery;
+        $savePcfRequest->warranty = $request->warranty;
         $savePcfRequest->duration = $request->duration_contract;
-        $savePcfRequest->date_biding = $request->date_bidding;
+        $savePcfRequest->date_bidding = $request->date_bidding;
         $savePcfRequest->bid_docs_price = $request->bid_docs_price;
         $savePcfRequest->psr = \Auth::user()->name;
         $savePcfRequest->manager = $request->manager;
-        $savePcfRequest->profit = $request->annual_profit;
-        $savePcfRequest->profit_rate = $request->annual_profit_rate;
+        $savePcfRequest->annual_profit = $request->annual_profit;
+        $savePcfRequest->annual_profit_rate = $request->annual_profit_rate;
         $savePcfRequest->created_by = \Auth::user()->id;
         $savePcfRequest->save();
 
@@ -300,17 +294,24 @@ class PCFRequestController extends Controller
     public function update(Request $request, PCFRequest $PCFRequest)
     {
         $validator = Validator::make($request->all(), [ 
-            'pcf_request_id' => 'required|numeric',
             'pcf_no'   => 'required|string',
             'date'   => 'required|string',
             'institution'   => 'nullable|string',
-            'duration'  => 'required|string',
-            'date_biding'   => 'required|string',
+            'address' => 'nullable|string',
+            'contact_person' => 'nullable|string',
+            'designation' => 'nullable|string',
+            'thru_designation' => 'nullable|string',
+            'supplier' => 'required|string',
+            'terms' => 'required|string',
+            'validity' => 'required|string',
+            'delivery' => 'required|string',
+            'warranty' => 'nullable|string',
+            'duration'   => 'required|string',
+            'date_bidding'   => 'required|string',
             'bid_docs_price'   => 'required|string',
-            'psr'   => 'required|string',
             'manager'   => 'required|string',
-            'profit'   => 'required|string',
-            'profit_rate'   => 'nullable|string'
+            'annual_profit'   => 'nullable|string',
+            'annual_profit_rate'   => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -318,17 +319,29 @@ class PCFRequestController extends Controller
             return redirect()->route('PCF');
         }
 
-        $savePcfRequest = PCFRequest::findOrFail($request->pcf_request_id);
-        $savePcfRequest->date = $request->date;
-        $savePcfRequest->institution = $request->institution;
-        $savePcfRequest->duration = $request->duration;
-        $savePcfRequest->date_biding = $request->date_biding;
-        $savePcfRequest->bid_docs_price = $request->bid_docs_price;
-        $savePcfRequest->psr = $request->psr;
-        $savePcfRequest->manager = $request->manager;
-        $savePcfRequest->profit = $request->profit;
-        $savePcfRequest->profit_rate = $request->profit_rate;
-        $savePcfRequest->save();
+        $updatePCFRequest = PCFRequest::findOrFail($request->pcf_request_id);
+        $updatePCFRequest->pcf_no = $request->pcf_no;
+        $updatePCFRequest->date = $request->date;
+        $updatePCFRequest->institution = $request->institution;
+        $updatePCFRequest->address = $request->address;
+        $updatePCFRequest->contact_person = $request->contact_person;
+        $updatePCFRequest->designation = $request->designation;
+        $updatePCFRequest->thru_designation = $request->thru_designation;
+        $updatePCFRequest->supplier = $request->supplier;
+        $updatePCFRequest->terms = $request->terms;
+        $updatePCFRequest->validity = $request->validity;
+        $updatePCFRequest->delivery = $request->delivery;
+        $updatePCFRequest->warranty = $request->warranty;
+        $updatePCFRequest->duration = $request->duration;
+        $updatePCFRequest->date_bidding = $request->date_bidding;
+        $updatePCFRequest->bid_docs_price = $request->bid_docs_price;
+        $updatePCFRequest->psr = \Auth::user()->name;
+        $updatePCFRequest->manager = $request->manager;
+        $updatePCFRequest->annual_profit = $request->annual_profit;
+        $updatePCFRequest->annual_profit_rate = $request->annual_profit_rate;
+        $updatePCFRequest->status = 0;
+        $updatePCFRequest->created_by = \Auth::user()->id;
+        $updatePCFRequest->save();
 
         Alert::success('PCF Request Details', 'Updated successfully'); 
 
@@ -350,11 +363,13 @@ class PCFRequestController extends Controller
     {
         if (!empty($id)) {
             $request = PCFRequest::find($id);
-            if(auth()->user()->hasRole('Accounting') && $request->status == 0) {
+            if ( (auth()->user()->hasRole('Accounting') && $request->status == 0) ||
+                (auth()->user()->hasRole('Accounting') && $request->status == 3)) {
                 $request->status = 2;
                 $request->save();
             }
-            if(auth()->user()->hasRole('National Sales Manager') && $request->status == 2){
+            if((auth()->user()->hasRole('National Sales Manager') && $request->status == 2) ||
+                (auth()->user()->hasRole('National Sales Manager') && $request->status == 5)) {
                 $request->status = 4;
                 $request->save();
             }
@@ -373,11 +388,13 @@ class PCFRequestController extends Controller
     {
         if (!empty($id)) {
             $request = PCFRequest::find($id);
-            if(auth()->user()->hasRole('Accounting') && $request->status == 3) {
+            if((auth()->user()->hasRole('Accounting') && $request->status == 0) ||
+                (auth()->user()->hasRole('Accounting') && $request->status == 3)) {
                 $request->status = 1;
                 $request->save();
             }
-            if(auth()->user()->hasRole('National Sales Manager') && $request->status == 5){
+            if((auth()->user()->hasRole('National Sales Manager') && $request->status == 2) ||
+                (auth()->user()->hasRole('National Sales Manager') && $request->status == 5)) {
                 $request->status = 3;
                 $request->save();
             }
@@ -490,18 +507,23 @@ class PCFRequestController extends Controller
             return redirect()->route('PCF');
         }
 
-        $pcf_request = PCFRequest::create($request->upload_file);
+        $pcf_request = PCFRequest::findOrFail($request->pcf_id);
     
         $temporaryFile = TemporaryFile::where('folder', $request->upload_file)->first();
         if ($temporaryFile) {
-            $company_profile->addMedia(storage_path('pcf_documents/files/tmp/' . $request->company_logo . '/' . $temporaryFile->file_name))
+
+            $pcf_request->update([
+                'pcf_document' => $temporaryFile->file_name,
+            ]);
+
+            $pcf_request->addMedia(storage_path('pcf_documents/files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
                     ->toMediaCollection('pcf_request_file');
 
             rmdir(storage_path('pcf_documents/files/tmp/' . $request->upload_file));
             $temporaryFile->delete();
         }
 
-        Alert::success('PCF Document', 'The file has been uploaded.');
+        Alert::success('Success', 'The PCF file has been uploaded.');
 
         return back();
     }

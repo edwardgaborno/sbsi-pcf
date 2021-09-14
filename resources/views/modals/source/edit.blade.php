@@ -103,6 +103,80 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="segment">Segment</label>
+                                <select class="form-control @error('segment') is-invalid @enderror" name="segment" id="edit_segment">
+                                    <option value="" selected disabled>Select Segment</option>
+                                    <option value="CHEM">CHEM</option>
+                                    <option value="COAG">COAG</option>
+                                    <option value="HEMA">HEMA</option>
+                                    <option value="HEMA & CHEM">HEMA and CHEM</option>
+                                    <option value="IMMUNO">IMMUNO</option>
+                                    <option value="INDUSTRIAL MICRO">INDUSTRIAL MICRO</option>
+                                    <option value="MOLECULAR">MOLECULAR</option>
+                                    <option value="SPECIAL LINES">SPECIAL LINES</option>
+                                    <option value=NULL>NONE</option>
+                                </select>
+                            </div>
+
+                            @error('sgement')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="item_category">Item Category</label>
+                                <select class="form-control @error('item_category') is-invalid @enderror" name="item_category" id="edit_item_category">
+                                    <option value="" selected disabled>Select Item Category</option>
+                                    <option value="ACCESSORIES">ACCESSORIES</option>
+                                    <option value="CONSUMABLES">CONSUMABLES</option>
+                                    <option value="MACHINE">MACHINE</option>
+                                    <option value="PIPETORS">PIPETORS</option>
+                                    <option value="SPAREPARTS">SPAREPARTS</option>
+                                    <option value="REAGENTS">REAGENTS</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                </select>
+                            </div>
+                            
+                            @error('item_category')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="standard_price">Standard Price</label>
+                                <input type="text" class="form-control @error('standard_price') is-invalid @enderror" name="standard_price" id="edit_standard_price"
+                                    value="{{ old('standard_price') }}" required>
+                            </div>
+                            
+                            @error('standard_price')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="profitability">Profitability</label>
+                                <input type="text" class="form-control @error('profitability') is-invalid @enderror" name="profitability" id="edit_profitability"
+                                    value="{{ old('profitability') }}" required readonly>
+                            </div>
+                            
+                            @error('profitability')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    </div>
                     <!-- End Right Element -->
                 </div>
                 <div class="modal-footer">

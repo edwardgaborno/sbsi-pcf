@@ -102,8 +102,8 @@
                     { data: 'date' },
                     { data: 'institution' },
                     { data: 'psr' },
-                    { data: 'profit' },
-                    { data: 'profit_rate' },
+                    { data: 'annual_profit' },
+                    { data: 'annual_profit_rate' },
                     { data: 'status' },
                     { data: 'actions' }
                 ],
@@ -116,8 +116,19 @@
             var pcf_no = data.data('pcf_no');
             var date = data.data('date');
             var institution = data.data('institution');
+
+            var address = data.data('address');
+            var contact_person = data.data('contact_person');
+            var designation = data.data('designation');
+            var thru_designation = data.data('thru_designation');
+            var supplier = data.data('supplier');
+            var terms = data.data('terms');
+            var validity = data.data('validity');
+            var delivery = data.data('delivery');
+            var warranty = data.data('warranty');
+
             var duration = data.data('duration');
-            var date_biding = data.data('date_biding');
+            var date_bidding = data.data('date_bidding');
             var bid_docs_price = data.data('bid_docs_price');
             var psr = data.data('psr');
             var manager = data.data('manager');
@@ -128,13 +139,25 @@
             $("#edit_pcf_no").val(pcf_no);
             $("#edit_date").val(date);
             $("#edit_institution").val(institution);
+
+            $("#edit_address").val(address);
+            $("#edit_contact_person").val(contact_person);
+            $("#edit_designation").val(designation);
+            $("#edit_thru_designation").val(thru_designation);
+            $("#edit_supplier").val(supplier);
+            $("#edit_terms").val(terms);
+            $("#edit_validity").val(validity);
+            $("#edit_delivery").val(delivery);
+            $("#edit_warranty").val(warranty);
+
             $("#edit_duration").val(duration);
-            $("#edit_date_biding").val(date_biding);
+            $("#edit_date_bidding").val(date_bidding);
             $("#edit_bid_docs_price").val(bid_docs_price);
             $("#edit_psr").val(psr);
             $("#edit_manager").val(manager);
             $("#edit_annual_profit").val(annual_profit);
             $("#edit_annual_profit_rate").val(annual_profit_rate);
+            $("#for_upload_id").val(id);
 
             //load added item list
             loadAddItemTable(pcf_no);

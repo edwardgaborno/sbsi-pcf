@@ -95,10 +95,6 @@ class RolesAndPermissionSeeder extends Seeder
 
         $acctRole = Role::create(['name' => 'Accounting']);
         $acctRole->givePermissionTo([
-            // 'accounting_create',
-            // 'accounting_edit',
-            // 'accounting_show',
-            // 'accounting_delete',
             'psr_access',
             'psr_view_pcf',
             'accounting_access',
@@ -108,11 +104,8 @@ class RolesAndPermissionSeeder extends Seeder
 
         $acct_mgrRole = Role::create(['name' => 'Accounting Manager']);
         $acct_mgrRole->givePermissionTo([
-            // 'accounting_manager_create',
-            // 'accounting_manager_edit',
-            // 'accounting_manager_show',
-            // 'accounting_manager_delete',
             'psr_access',
+            'psr_view_pcf',
             'accounting_manager_access',
             'accounting_manager_approve_pcf',
             'accounting_manager_reject_pcf',
@@ -120,11 +113,8 @@ class RolesAndPermissionSeeder extends Seeder
 
         $nsmRole = Role::create(['name' => 'National Sales Manager']);
         $nsmRole->givePermissionTo([
-            // 'national_sales_manager_create', 
-            // 'national_sales_manager_edit',
-            // 'national_sales_manager_show',
-            // 'national_sales_manager_delete',
             'psr_access',
+            'psr_view_pcf',
             'national_sales_manager_access',
             'national_sales_manager_approve_pcf',
             'national_sales_manager_reject_pcf',

@@ -58,6 +58,10 @@
                                                     <th>UOM</th>
                                                     <th>Mandatory Peripherals</th>
                                                     <th>Cost Of Peripherals</th>
+                                                    <th>Segment</th>
+                                                    <th>Item Category</th>
+                                                    <th>Standard Price</th>
+                                                    <th>Profitability</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -115,6 +119,10 @@
                     { data: 'uom' },
                     { data: 'mandatory_peripherals' },
                     { data: 'cost_of_peripherals' },
+                    { data: 'segment' },
+                    { data: 'item_category' },
+                    { data: 'standard_price' },
+                    { data: 'profitability' },
                     { data: 'actions', orderable: false, searchable: false }
                 ],
             });
@@ -149,6 +157,10 @@
                     $('#edit_uom').val(data.uom);
                     $('#edit_mandatory_peripherals').val(data.mandatory_peripherals);
                     $('#edit_cost_of_peripherals').val(data.cost_of_peripherals);
+                    $('#edit_segment').val(data.segment);
+                    $('#edit_item_category').val(data.item_category);
+                    $('#edit_standard_price').val(data.standard_price);
+                    $('#edit_profitability').val(data.profitability);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Something went wrong!',
@@ -162,11 +174,16 @@
         const element = document.querySelectorAll('#unit_price, #currency_rate, #edit_unit_price, #edit_currency_rate');
         element.forEach(i => {
             i.addEventListener('input', function() {
-                calculate();
+                calculateTP();
             });
         });
 
-        function calculate()
+        $("#item_category").change(function(){
+            calculateStandardPrice();
+            profitability();
+        });
+
+        function calculateTP()
         {
             const unit_price = parseFloat(document.getElementById("unit_price").value);
             const currency_rate = parseFloat(document.getElementById("currency_rate").value);
@@ -187,12 +204,64 @@
                 edit_tp_php.value = '';
             }
         }
+
+        function calculateStandardPrice()
+        {
+            const currency_rate = document.getElementById("currency_rate").value;
+            const tp_php = parseFloat(document.getElementById("tp_php").value);
+            const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value);
+            const item_category = document.getElementById("item_category").value;
+
+            const standard_price = document.getElementById("standard_price");
+
+            if (currency_rate == 1) {
+                if (!isNaN(cost_of_peripherals) && item_category == "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(cost_of_peripherals) && item_category == "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+            }
+            else {
+                if (!isNaN(cost_of_peripherals) && item_category == "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(cost_of_peripherals) && item_category == "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+            }
+        }
+
+        function profitability() 
+        {
+            const item_category = document.getElementById("item_category").value;
+            const profitability = document.getElementById("profitability");
+
+            if (item_category == "MACHINE") {
+                profitability.value = "30%"
+            }
+            else {
+                profitability.value = "50%"
+            }
+        }
     </script>
 
-    <script>
+    {{-- <script>
         @if (count($errors) > 0)
             $('#editSourceModal').modal('show');
             $('#addSourceModal').modal('show');
         @endif
-    </script>
+    </script> --}}
 @endsection
