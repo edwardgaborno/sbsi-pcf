@@ -76,6 +76,17 @@
             <div class="pdf-details">
                 <span>DATE: {{ $get_pcf_list[0]->date }}</span>
                 <span>INSTITUTION: {{ $get_pcf_list[0]->institution }}</span>
+
+                <span>ADDRESS: {{ $get_pcf_list[0]->address }}</span>
+                <span>CONTACT PERSON: {{ $get_pcf_list[0]->contact_person }}</span>
+                <span>DESIGNATION: {{ $get_pcf_list[0]->designation }}</span>
+                <span>THRU DESIGNATION: {{ $get_pcf_list[0]->thru_designation }}</span>
+                <span>SUPPLIER: {{ $get_pcf_list[0]->supplier }}</span>
+                <span>TERMS: {{ $get_pcf_list[0]->terms }}</span>
+                <span>VALIDITY: {{ $get_pcf_list[0]->validity }}</span>
+                <span>DELIVERY: {{ $get_pcf_list[0]->delivery }}</span>
+                <span>WARRANT (FOR MACHINES ONLY): {{ $get_pcf_list[0]->warranty }}</span>
+
                 <span>DURATION OF CONTRACT (NO. OF YEARS): {{ $get_pcf_list[0]->duration }}</span>
                 <span>DATE OF BIDDING: {{ $get_pcf_list[0]->date_biding }}</span>
                 <span>BID DOCS PRICE: {{ number_format($get_pcf_list[0]->bid_docs_price,2) }}</span>
@@ -92,6 +103,7 @@
                     <th>QTY (PER YEAR)</th>
                     <th>SALES</th>
                     <th>TOTAL SALES</th>
+                    <th>ABOVE STANDARD PRICE?</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,6 +117,7 @@
                         <td style="text-align: center">{{ $request->quantity }}</td>
                         <td style="text-align: right">{{ number_format($request->sales,2) }}</td>
                         <td style="text-align: right">{{ number_format($request->total_sales,2) }}</td>
+                        <td style="text-align: right">{{ $request->above_standard_price }}</td>
                     </tr>
                     @php
                         $grand_total_sales += $request->total_sales; 

@@ -105,7 +105,7 @@ class PCFRequestController extends Controller
                                     data-date="'.$data->date .'"
                                     data-institution="'.$data->institution .'"
                                     data-duration="'.$data->duration .'"
-                                    data-date_biding="'.$data->date_biding .'"
+                                    data-date_biding="'.$data->date_bidding .'"
                                     data-bid_docs_price="'.$data->bid_docs_price .'"
                                     data-psr="'.$data->psr .'"
                                     data-manager="'.$data->manager .'"
@@ -421,15 +421,27 @@ class PCFRequestController extends Controller
                 'p_c_f_lists.quantity AS quantity',
                 'p_c_f_lists.sales AS sales',
                 'p_c_f_lists.total_sales AS total_sales',
+                'p_c_f_lists.above_standard_price AS above_standard_price',
                 'p_c_f_requests.date AS date',
                 'p_c_f_requests.institution AS institution',
                 'p_c_f_requests.duration AS duration',
-                'p_c_f_requests.date_biding AS date_biding',
+
+                'p_c_f_requests.address AS address',
+                'p_c_f_requests.contact_person AS contact_person',
+                'p_c_f_requests.designation AS designation',
+                'p_c_f_requests.thru_designation AS thru_designation',
+                'p_c_f_requests.supplier AS supplier',
+                'p_c_f_requests.terms AS terms',
+                'p_c_f_requests.validity AS validity',
+                'p_c_f_requests.delivery AS delivery',
+                'p_c_f_requests.warranty AS warranty',
+
+                'p_c_f_requests.date_bidding AS date_biding',
                 'p_c_f_requests.bid_docs_price AS bid_docs_price',
                 'p_c_f_requests.psr AS psr',
                 'p_c_f_requests.manager AS manager',
-                'p_c_f_requests.profit AS annual_profit',
-                'p_c_f_requests.profit_rate AS annual_profit_rate',
+                'p_c_f_requests.annual_profit AS annual_profit',
+                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
                 'p_c_f_inclusions.item_code AS inclusions_item_code',
                 'p_c_f_inclusions.description AS inclusions_description',
                 'p_c_f_inclusions.type AS inclusions_type',
@@ -468,12 +480,23 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.date AS date',
                 'p_c_f_requests.institution AS institution',
                 'p_c_f_requests.duration AS duration',
-                'p_c_f_requests.date_biding AS date_biding',
+
+                'p_c_f_requests.address AS address',
+                'p_c_f_requests.contact_person AS contact_person',
+                'p_c_f_requests.designation AS designation',
+                'p_c_f_requests.thru_designation AS thru_designation',
+                'p_c_f_requests.supplier AS supplier',
+                'p_c_f_requests.terms AS terms',
+                'p_c_f_requests.validity AS validity',
+                'p_c_f_requests.delivery AS delivery',
+                'p_c_f_requests.warranty AS warranty',
+
+                'p_c_f_requests.date_bidding AS date_biding',
                 'p_c_f_requests.bid_docs_price AS bid_docs_price',
                 'p_c_f_requests.psr AS psr',
                 'p_c_f_requests.manager AS manager',
-                'p_c_f_requests.profit AS annual_profit',
-                'p_c_f_requests.profit_rate AS annual_profit_rate',
+                'p_c_f_requests.annual_profit AS annual_profit',
+                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
                 'p_c_f_inclusions.item_code AS inclusions_item_code',
                 'p_c_f_inclusions.description AS inclusions_description',
                 'p_c_f_inclusions.type AS inclusions_type',

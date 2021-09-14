@@ -147,6 +147,14 @@ class PCFListController extends Controller
 
         if ($validator->passes()) {
 
+            $source = Source::select('standard_price')->get();
+
+            if($request->sales <= $source) {
+                $above_standard = 'YES';
+            }
+            else {
+                $above_standard = 'NO';
+            }
             // Store Data in DATABASE from HERE 
             $savePCFList = new PCFList;
             $savePCFList->pcf_no = $request->pcf_no;
@@ -163,6 +171,7 @@ class PCFListController extends Controller
             $savePCFList->total_gross_profit = $request->total_gross_profit;
             $savePCFList->total_net_sales = $request->total_net_sales;
             $savePCFList->profit_rate = $request->profit_rate;
+            $savePCFList->above_standard_price = $above_standard;
             $savePCFList->save();
 
             Alert::success('Items Saved', 'Added successfully');
