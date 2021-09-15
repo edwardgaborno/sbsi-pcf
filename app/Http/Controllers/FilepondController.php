@@ -13,7 +13,7 @@ class FilepondController extends Controller
             $file = $request->file('upload_file');
                 $filename =  $file->getClientOriginalName();
                 $folder = uniqid() . '-' .now()->timestamp;
-                $file->storeAs('pcf_documents/files/tmp/' . $folder, $filename);
+                $file->storeAs('pcf_files/tmp/' . $folder, $filename);
 
                 TemporaryFile::create([
                     'folder' => $folder,

@@ -797,6 +797,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            FilePond.registerPlugin(FilePondPluginFileValidateType);
+            
             var inputElement = document.querySelector('input[name="upload_file"]');
             var store = FilePond.create((inputElement),
             {

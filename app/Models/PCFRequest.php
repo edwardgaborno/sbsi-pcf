@@ -13,4 +13,9 @@ class PCFRequest extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $guarded = [];
+
+    public function path()
+    {
+        return url($this->getFirstMediaUrl('pcf_request_file'));
+    }
 }

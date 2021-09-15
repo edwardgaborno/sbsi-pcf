@@ -11,6 +11,8 @@ use App\Models\PCFInclusion;
 use Validator;
 use Yajra\Datatables\Datatables;
 use PDF;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class PCFRequestController extends Controller
 {
@@ -86,7 +88,7 @@ class PCFRequestController extends Controller
                                 <i class="fas fa-edit"></i>
                                 Edit
                             </a>
-                            <a href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success">
+                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
                                 <i class="far fa-file-pdf"></i>
                                 Download PDF
                             </a>
@@ -96,91 +98,149 @@ class PCFRequestController extends Controller
                     else if((auth()->user()->hasRole('Accounting') && $data->status == 0)
                             || (auth()->user()->hasRole('Accounting') && $data->status == 1)
                             || auth()->user()->hasRole('Accounting') && $data->status == 3) {
-                        return
-                        ' 
-                            <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-info" data-toggle="modal"
-                                    data-id="'.$data->id .'"
-                                    data-pcf_no="'.$data->pcf_no .'"
-                                    data-date="'.$data->date .'"
-                                    data-institution="'.$data->institution .'"
-                                    data-duration="'.$data->duration .'"
-                                    data-date_biding="'.$data->date_bidding .'"
-                                    data-bid_docs_price="'.$data->bid_docs_price .'"
-                                    data-psr="'.$data->psr .'"
-                                    data-manager="'.$data->manager .'"
-                                    data-annual_profit="'.$data->profit .'"
-                                    data-annual_profit_rate="'.$data->profit_rate .'"
-                                    data-target="#editPCFRequestModal"
-                                    onclick="editPCFRequest($(this))">
-                                    <i class="fas fa-edit"></i>
-                                    View
-                                </a>
-                                <a href="#" class="badge badge-success"
+                        if (empty($data->pcf_document)) {
+                            return
+                            ' 
+                                <td style="text-align: center; vertical-align: middle">
+                                    <a href="#" class="badge badge-success"
+                                        data-id="' . $data->id . '"
+                                        onclick="ApproveRequest($(this))">
+                                        <i class="fas fa-check"></i> 
+                                        Approve
+                                    </a>
+                                    <a href="#" class="badge badge-danger"
                                     data-id="' . $data->id . '"
-                                    onclick="ApproveRequest($(this))">
-                                    <i class="fas fa-check"></i> 
-                                    Approve
-                                </a>
-                                <a href="#" class="badge badge-danger"
-                                data-id="' . $data->id . '"
-                                    onclick="DisApproveRequest($(this))">
-                                    <i class="fas fa-times"></i> 
-                                    Disapprove
-                                </a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i>
-                                    View PCF
-                                </a>
-                            </td>
-                        ';
+                                        onclick="DisApproveRequest($(this))">
+                                        <i class="fas fa-times"></i> 
+                                        Disapprove
+                                    </a>
+                                    <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
+                                        <i class="far fa-file-pdf"></i>
+                                        View PCF
+                                    </a>
+                                </td>
+                            ';
+                        }
+                        else {
+                            return
+                            ' 
+                                <td style="text-align: center; vertical-align: middle">
+                                    <a href="#" class="badge badge-success"
+                                        data-id="' . $data->id . '"
+                                        onclick="ApproveRequest($(this))">
+                                        <i class="fas fa-check"></i> 
+                                        Approve
+                                    </a>
+                                    <a href="#" class="badge badge-danger"
+                                    data-id="' . $data->id . '"
+                                        onclick="DisApproveRequest($(this))">
+                                        <i class="fas fa-times"></i> 
+                                        Disapprove
+                                    </a>
+                                    <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
+                                        <i class="far fa-file-pdf"></i>
+                                        View PCF
+                                    </a>
+                                </td>
+                            ';
+                        }
                     }
                     else if((auth()->user()->hasRole('National Sales Manager') && $data->status == 2)
                             || (auth()->user()->hasRole('National Sales Manager') && $data->status == 5)) {
-                        return
-                        ' 
-                            <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-success"
-                                    data-id="' . $data->id . '"
-                                    onclick="ApproveRequest($(this))">
-                                    <i class="fas fa-check"></i> 
-                                    Approve
-                                </a>
-                                <a href="#" class="badge badge-danger"
-                                data-id="' . $data->id . '"
-                                    onclick="DisApproveRequest($(this))">
-                                    <i class="fas fa-times"></i> 
-                                    Disapprove
-                                </a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i>
-                                    View PCF
-                                </a>
-                            </td>
-                        ';
+                                if (empty($data->pcf_document)) {
+                                    return
+                                    ' 
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <a href="#" class="badge badge-success"
+                                                data-id="' . $data->id . '"
+                                                onclick="ApproveRequest($(this))">
+                                                <i class="fas fa-check"></i> 
+                                                Approve
+                                            </a>
+                                            <a href="#" class="badge badge-danger"
+                                            data-id="' . $data->id . '"
+                                                onclick="DisApproveRequest($(this))">
+                                                <i class="fas fa-times"></i> 
+                                                Disapprove
+                                            </a>
+                                            <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
+                                                <i class="far fa-file-pdf"></i>
+                                                View PCF
+                                            </a>
+                                        </td>
+                                    ';
+                                }
+                                else {
+                                    return
+                                    ' 
+                                        <td style="text-align: center; vertical-align: middle">
+                                            <a href="#" class="badge badge-success"
+                                                data-id="' . $data->id . '"
+                                                onclick="ApproveRequest($(this))">
+                                                <i class="fas fa-check"></i> 
+                                                Approve
+                                            </a>
+                                            <a href="#" class="badge badge-danger"
+                                            data-id="' . $data->id . '"
+                                                onclick="DisApproveRequest($(this))">
+                                                <i class="fas fa-times"></i> 
+                                                Disapprove
+                                            </a>
+                                            <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
+                                                <i class="far fa-file-pdf"></i>
+                                                View PCF
+                                            </a>
+                                        </td>
+                                    ';
+                                }
                     }
                     else if(auth()->user()->hasRole('Accounting Manager') && $data->status == 4) {
-                        return
-                        ' 
-                            <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-success"
+                        if (empty($data->pcf_document)) {
+                            return
+                            ' 
+                                <td style="text-align: center; vertical-align: middle">
+                                    <a href="#" class="badge badge-success"
+                                        data-id="' . $data->id . '"
+                                        onclick="ApproveRequest($(this))">
+                                        <i class="fas fa-check"></i> 
+                                        Approve
+                                    </a>
+                                    <a href="#" class="badge badge-danger"
                                     data-id="' . $data->id . '"
-                                    onclick="ApproveRequest($(this))">
-                                    <i class="fas fa-check"></i> 
-                                    Approve
-                                </a>
-                                <a href="#" class="badge badge-danger"
+                                        onclick="DisApproveRequest($(this))">
+                                        <i class="fas fa-times"></i> 
+                                        Disapprove
+                                    </a>
+                                    <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
+                                        <i class="far fa-file-pdf"></i>
+                                        View PCF
+                                    </a>
+                                </td>
+                            ';
+                        }
+                        else {
+                            return
+                            ' 
+                                <td style="text-align: center; vertical-align: middle">
+                                    <a href="#" class="badge badge-success"
+                                        data-id="' . $data->id . '"
+                                        onclick="ApproveRequest($(this))">
+                                        <i class="fas fa-check"></i> 
+                                        Approve
+                                    </a>
+                                    <a href="#" class="badge badge-danger"
                                     data-id="' . $data->id . '"
-                                    onclick="DisApproveRequest($(this))">
-                                    <i class="fas fa-times"></i> 
-                                    Disapprove
-                                </a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i>
-                                    View PCF
-                                </a>
-                            </td>
-                        ';
+                                        onclick="DisApproveRequest($(this))">
+                                        <i class="fas fa-times"></i> 
+                                        Disapprove
+                                    </a>
+                                    <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
+                                        <i class="far fa-file-pdf"></i>
+                                        View PCF
+                                    </a>
+                                </td>
+                            ';
+                        }
                     }
                 })
                 ->rawColumns(['status', 'actions'])
@@ -413,6 +473,7 @@ class PCFRequestController extends Controller
     {
         $this->authorize('psr_download_pcf');
         //check if valid request and authorized user
+
         if (\Auth::check() && !empty($pcf_no)) {
 
             $get_pcf_list = PCFList::select(
@@ -531,7 +592,7 @@ class PCFRequestController extends Controller
         }
 
         $pcf_request = PCFRequest::findOrFail($request->pcf_id);
-    
+
         $temporaryFile = TemporaryFile::where('folder', $request->upload_file)->first();
         if ($temporaryFile) {
 
@@ -539,15 +600,16 @@ class PCFRequestController extends Controller
                 'pcf_document' => $temporaryFile->file_name,
             ]);
 
-            $pcf_request->addMedia(storage_path('pcf_documents/files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
+            $pcf_request->addMedia(storage_path('app/pcf_files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
                     ->toMediaCollection('pcf_request_file');
 
-            rmdir(storage_path('pcf_documents/files/tmp/' . $request->upload_file));
+            rmdir(storage_path('app/pcf_files/tmp/' . $request->upload_file));
             $temporaryFile->delete();
         }
 
         Alert::success('Success', 'The PCF file has been uploaded.');
 
         return back();
+
     }
 }
