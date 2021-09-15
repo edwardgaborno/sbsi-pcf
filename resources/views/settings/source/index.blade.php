@@ -171,14 +171,22 @@
             }
         })
 
-        const element = document.querySelectorAll('#unit_price, #currency_rate, #edit_unit_price, #edit_currency_rate');
+        const element = document.querySelectorAll('#unit_price, #currency_rate, #cost_of_peripherals, #edit_unit_price, #edit_currency_rate');
         element.forEach(i => {
             i.addEventListener('input', function() {
                 calculateTP();
+                calculateStandardPrice();
             });
         });
 
-        $("#item_category").change(function(){
+        const edit_element = document.querySelectorAll('#edit_unit_price, #edit_currency_rate, #edit_cost_of_peripherals');
+        edit_element.forEach(j => {
+            j.addEventListener('input', function() {
+                editCalculateStandardPrice();
+            });
+        });
+
+        $("#item_category, #edit_item_category").change(function(){
             calculateStandardPrice();
             profitability();
         });
@@ -244,16 +252,65 @@
             }
         }
 
+        function editCalculateStandardPrice()
+        {
+            const edit_currency_rate = document.getElementById("edit_currency_rate").value;
+            const edit_tp_php = parseFloat(document.getElementById("edit_tp_php").value);
+            const edit_cost_of_peripherals = parseFloat(document.getElementById("edit_cost_of_peripherals").value);
+            const edit_item_category = document.getElementById("edit_item_category").value;
+
+            const edit_standard_price = document.getElementById("edit_standard_price");
+
+            if (edit_currency_rate == 1) {
+                if (!isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (!isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
+                    edit_standard_price.value = ((((tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+            }
+            else {
+                if (!isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                }
+                else if (!isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+                else if (isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
+                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                }
+            }
+        }
+
         function profitability() 
         {
             const item_category = document.getElementById("item_category").value;
             const profitability = document.getElementById("profitability");
 
-            if (item_category == "MACHINE") {
-                profitability.value = "30%"
+            const edit_item_category = document.getElementById("edit_item_category").value;
+            const edit_profitability = document.getElementById("edit_profitability");
+
+            if (item_category !== "MACHINE") {
+                profitability.value = "50%"
             }
             else {
-                profitability.value = "50%"
+                profitability.value = "30%"
+            }
+
+            if (edit_item_category !== "MACHINE") {
+                edit_profitability.value = "50%"
+            }
+            else {
+                edit_profitability.value = "30%"
             }
         }
     </script>

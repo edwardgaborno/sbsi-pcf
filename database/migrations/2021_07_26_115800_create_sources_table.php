@@ -23,8 +23,8 @@ class CreateSourcesTable extends Migration
             $table->decimal('tp_php', 12, 2);
             $table->string('item_group');
             $table->string('uom');
-            $table->string('mandatory_peripherals');
-            $table->decimal('cost_of_peripherals', 11, 2);
+            $table->string('mandatory_peripherals')->nullable();
+            $table->decimal('cost_of_peripherals', 11, 2)->nullable();
             $table->string('segment')->nullable();
             $table->string('item_category');
             $table->decimal('standard_price', 11, 2);

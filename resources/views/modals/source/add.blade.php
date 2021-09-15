@@ -133,7 +133,7 @@
                             <div class="form-group">
                                 <label for="specimen_type">Mandatory Peripherals</label>
                                 <input type="text" class="form-control @error('mandatory_peripherals') is-invalid @enderror" name="mandatory_peripherals" id="mandatory_peripherals"
-                                    value="{{ old('mandatory_peripherals') }}" required>
+                                    value="{{ old('mandatory_peripherals') }}">
                             </div>
                             
                             @error('mandatory_peripherals')
@@ -146,7 +146,7 @@
                             <div class="form-group">
                                 <label for="specimen_type">Cost of Peripherals</label>
                                 <input type="text" class="form-control @error('cost_of_peripherals') is-invalid @enderror" name="cost_of_peripherals" id="cost_of_peripherals"
-                                    value="{{ old('cost_of_peripherals') }}" required>
+                                    value="{{ old('cost_of_peripherals') }}">
                             </div>
                             
                             @error('cost_of_peripherals')

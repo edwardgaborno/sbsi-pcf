@@ -92,14 +92,14 @@
                             <div class="form-group">
                                 <label for="specimen_type">Mandatory Peripherals</label>
                                 <input type="text" class="form-control" name="mandatory_peripherals" id="edit_mandatory_peripherals"
-                                    value="{{ old('mandatory_peripherals') }}" required>
+                                    value="{{ old('mandatory_peripherals') }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="specimen_type">Cost of Peripherals</label>
                                 <input type="text" class="form-control" name="cost_of_peripherals" id="edit_cost_of_peripherals"
-                                    value="{{ old('cost_periph') }}" required>
+                                    value="{{ old('cost_periph') }}">
                             </div>
                         </div>
                     </div>
