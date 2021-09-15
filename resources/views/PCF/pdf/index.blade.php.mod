@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PCF Request</title>
     <style>
+        
+        * {
+            font-family: Arial;
+            font-size: 9;
+        }
         .container {
             margin: auto;
         }
@@ -15,11 +20,6 @@
         table, td, th {
             border: 1px solid black;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
         .pcf-no,
         .revision-container {
             float: right !important;
@@ -28,42 +28,26 @@
             text-align: center;
             text-decoration: underline;
         }
-        .header-details-container{
-            position: relative;
-            margin-bottom: 15px;
+
+        .pdf-details {
+            border: none !important;
         }
-        .header-details-container .pdf-details {
-            font: 100;
+
+        .td-column {
+            font: bold;
+            align: center;
+            width: 50%;
         }
-        .header-details-container .pdf-details > span {
-            position: relative;
-            display: block;
-            padding: 0px;
-        }
-        .div-footer-container  {
-            margin-top: 50px !important;
-            display: inline-block;
-        }
-        .div-footer-container .approve-by-container > span {
-            position: relative;
-            display: block;
-        }
-        .div-footer-container .revision-container > span{
-            display: block;
-        }
-        .docs-note {
-            font-size: 14px !important;
-            font-weight: bold !important;
-            text-align: left;
-            margin-top: 100px !important;
+        .td-details {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="grid-container">
         <div class="header-container">
             <div class="logo">
-                <img src="{{ public_path("img/sbsi-logo-mod.png") }}" height="50" width="250">
+                <img src="{{ public_path("img/sbsi-logo-mod.png") }}" height="70" width="200">
             </div>
             <div class="pcf-no">
                 <h3>PCF NO: {{ $pcf_no }}</h3>
@@ -73,28 +57,77 @@
             <div class="pdf-title">
                 <h2>PROFITABILITY COMPUTATION FORM</h2>
             </div>
-            <div class="pdf-details">
-                <span>DATE: {{ $get_pcf_list[0]->date }}</span>
-                <span>INSTITUTION: {{ $get_pcf_list[0]->institution }}</span>
-
-                <span>ADDRESS: {{ $get_pcf_list[0]->address }}</span>
-                <span>CONTACT PERSON: {{ $get_pcf_list[0]->contact_person }}</span>
-                <span>DESIGNATION: {{ $get_pcf_list[0]->designation }}</span>
-                <span>THRU DESIGNATION: {{ $get_pcf_list[0]->thru_designation }}</span>
-                <span>SUPPLIER: {{ $get_pcf_list[0]->supplier }}</span>
-                <span>TERMS: {{ $get_pcf_list[0]->terms }}</span>
-                <span>VALIDITY: {{ $get_pcf_list[0]->validity }}</span>
-                <span>DELIVERY: {{ $get_pcf_list[0]->delivery }}</span>
-                <span>WARRANT (FOR MACHINES ONLY): {{ $get_pcf_list[0]->warranty }}</span>
-
-                <span>DURATION OF CONTRACT (NO. OF YEARS): {{ $get_pcf_list[0]->duration }}</span>
-                <span>DATE OF BIDDING: {{ $get_pcf_list[0]->date_biding }}</span>
-                <span>BID DOCS PRICE: {{ number_format($get_pcf_list[0]->bid_docs_price,2) }}</span>
-                <span>PSR and Manager: {{ $get_pcf_list[0]->psr .' ,'. $get_pcf_list[0]->manager }}</span>
-                <span>Annual Profit: {{ number_format($get_pcf_list[0]->annual_profit,2) }}</span>
-                <span>Annual Profit Rate: {{ $get_pcf_list[0]->annual_profit_rate.'%' }}</span>
-            </div>
         </div>
+        <table class="pdf-details">
+            <tr>
+                <td class="td-column">DATE: </td>
+                <td class="td-details">{{ $get_pcf_list[0]->date }}</td>
+            </tr>
+            <tr>
+                <td>INSTITUTION: </td>
+                <td>{{ $get_pcf_list[0]->institution }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">ADDRESS: </td>
+                <td>{{ $get_pcf_list[0]->address }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">CONTACT PERSON: </td>
+                <td>{{ $get_pcf_list[0]->contact_person }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">DESIGNATION: </td>
+                <td>{{ $get_pcf_list[0]->designation }}</td>
+            <tr>
+            <tr>
+                <td class="td-column">THRU DESIGNATION: </td>
+                <td>{{ $get_pcf_list[0]->thru_designation }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">SUPPLIER: </td>
+                <td>{{ $get_pcf_list[0]->supplier }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">TERMS: </td>
+                <td>{{ $get_pcf_list[0]->terms }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">VALIDITY: </td>
+                <td>{{ $get_pcf_list[0]->validity }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">DELIVERY: </td>
+                <td>{{ $get_pcf_list[0]->delivery }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">WARRANT (FOR MACHINES ONLY): </td>
+                <td>{{ $get_pcf_list[0]->warranty }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">DURATION OF CONTRACT (NO. OF YEARS): </td>
+                <td>{{ $get_pcf_list[0]->duration }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">DATE OF BIDDING: </td>
+                <td>{{ $get_pcf_list[0]->date_biding }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">BID DOCS PRICE: </td>
+                <td>{{ number_format($get_pcf_list[0]->bid_docs_price,2) }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">PSR and Manager: </td>
+                <td>{{ $get_pcf_list[0]->psr .' ,'. $get_pcf_list[0]->manager }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">Annual Profit: </td>
+                <td style="text-align: right; background-color: #fff200;">{{ number_format($get_pcf_list[0]->annual_profit,2) }}</td>
+            </tr>
+            <tr>
+                <td class="td-column">Annual Profit Rate: </td>
+                <td style="text-align: right; background-color: #fff200;">{{ $get_pcf_list[0]->annual_profit_rate.'%' }}</td>
+            </tr>
+        <table>
         <table>
             <thead>
                 <tr>
@@ -151,15 +184,24 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="revision-container" style="margin-top: 20px;">
+            <table class="table-revision">
+                <tr>
+                    <td align="center">FM-ACC-07</td>
+                </tr>
+                <tr>
+                    <td>Revision No. 002</td>
+                </tr>
+                <tr>
+                    <td>Effective Date: 07/12/2021</td>
+                </tr>
+            </table>
+        </div>
         <div class="div-footer-container">
             <div class="approve-by-container">
                 <span>Approve By: _____________</span>
                 <span style="padding-left: 85px;">Accounting</span>
-            </div>
-            <div class="revision-container" style="margin-top: -100px;">
-                <span>FM-ACC-07</span>
-                <span>Revision No. 00</span>
-                <span>Effective Date: 03/25/2020</span>
             </div>
         </div>
         <div class="docs-note">

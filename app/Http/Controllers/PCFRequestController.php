@@ -59,41 +59,80 @@ class PCFRequestController extends Controller
                 ->addColumn('actions', function ($data) {
                     if((auth()->user()->hasRole('PSR') && $data->status == 0)
                         || (auth()->user()->hasRole('PSR') && $data->status == 1)) {
-                        return
-                        ' 
-                        <td style="text-align: center; vertical-align: middle">
-                            <a href="#" class="badge badge-info" data-toggle="modal"
-                                data-id="'.$data->id .'"
-                                data-pcf_no="'.$data->pcf_no .'"
-                                data-date="'.$data->date .'"
-                                data-institution="'.$data->institution .'"
-                                data-address="'.$data->address .'"
-                                data-contact_person="'.$data->contact_person .'"
-                                data-designation="'.$data->designation .'"
-                                data-thru_designation="'.$data->thru_designation .'"
-                                data-supplier="'.$data->supplier .'"
-                                data-terms="'.$data->terms .'"
-                                data-validity="'.$data->validity .'"
-                                data-delivery="'.$data->delivery .'"
-                                data-warranty="'.$data->warranty .'"
-                                data-duration="'.$data->duration .'"
-                                data-date_bidding="'.$data->date_bidding .'"
-                                data-bid_docs_price="'.$data->bid_docs_price .'"
-                                data-psr="'.$data->psr .'"
-                                data-manager="'.$data->manager .'"
-                                data-annual_profit="'.$data->annual_profit .'"
-                                data-annual_profit_rate="'.$data->annual_profit_rate .'"
-                                data-target="#editPCFRequestModal"
-                                onclick="editPCFRequest($(this))">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </a>
-                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                <i class="far fa-file-pdf"></i>
-                                Download PDF
-                            </a>
-                        </td>
-                        ';
+                        if (empty($data->pcf_document)) {
+                            return
+                            ' 
+                            <td style="text-align: center; vertical-align: middle">
+                                <a href="#" class="badge badge-info" data-toggle="modal"
+                                    data-id="'.$data->id .'"
+                                    data-pcf_no="'.$data->pcf_no .'"
+                                    data-date="'.$data->date .'"
+                                    data-institution="'.$data->institution .'"
+                                    data-address="'.$data->address .'"
+                                    data-contact_person="'.$data->contact_person .'"
+                                    data-designation="'.$data->designation .'"
+                                    data-thru_designation="'.$data->thru_designation .'"
+                                    data-supplier="'.$data->supplier .'"
+                                    data-terms="'.$data->terms .'"
+                                    data-validity="'.$data->validity .'"
+                                    data-delivery="'.$data->delivery .'"
+                                    data-warranty="'.$data->warranty .'"
+                                    data-duration="'.$data->duration .'"
+                                    data-date_bidding="'.$data->date_bidding .'"
+                                    data-bid_docs_price="'.$data->bid_docs_price .'"
+                                    data-psr="'.$data->psr .'"
+                                    data-manager="'.$data->manager .'"
+                                    data-annual_profit="'.$data->annual_profit .'"
+                                    data-annual_profit_rate="'.$data->annual_profit_rate .'"
+                                    data-target="#editPCFRequestModal"
+                                    onclick="editPCFRequest($(this))">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
+                                    <i class="far fa-file-pdf"></i>
+                                    Download PDF
+                                </a>
+                            </td>
+                            ';
+                        }
+                        else {
+                            return
+                            ' 
+                            <td style="text-align: center; vertical-align: middle">
+                                <a href="#" class="badge badge-info" data-toggle="modal"
+                                    data-id="'.$data->id .'"
+                                    data-pcf_no="'.$data->pcf_no .'"
+                                    data-date="'.$data->date .'"
+                                    data-institution="'.$data->institution .'"
+                                    data-address="'.$data->address .'"
+                                    data-contact_person="'.$data->contact_person .'"
+                                    data-designation="'.$data->designation .'"
+                                    data-thru_designation="'.$data->thru_designation .'"
+                                    data-supplier="'.$data->supplier .'"
+                                    data-terms="'.$data->terms .'"
+                                    data-validity="'.$data->validity .'"
+                                    data-delivery="'.$data->delivery .'"
+                                    data-warranty="'.$data->warranty .'"
+                                    data-duration="'.$data->duration .'"
+                                    data-date_bidding="'.$data->date_bidding .'"
+                                    data-bid_docs_price="'.$data->bid_docs_price .'"
+                                    data-psr="'.$data->psr .'"
+                                    data-manager="'.$data->manager .'"
+                                    data-annual_profit="'.$data->annual_profit .'"
+                                    data-annual_profit_rate="'.$data->annual_profit_rate .'"
+                                    data-target="#editPCFRequestModal"
+                                    onclick="editPCFRequest($(this))">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
+                                    <i class="far fa-file-pdf"></i>
+                                    Download PDF
+                                </a>
+                            </td>
+                            ';
+                        }
                     }   
                     else if((auth()->user()->hasRole('Accounting') && $data->status == 0)
                             || (auth()->user()->hasRole('Accounting') && $data->status == 1)
@@ -517,7 +556,7 @@ class PCFRequestController extends Controller
             $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
             
             $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
-            $pdf->setPaper('legal', 'landscape');
+            $pdf->setPaper('legal', 'portrait');
             return $pdf->download('pcf_request.pdf');
         }
 
@@ -572,7 +611,7 @@ class PCFRequestController extends Controller
             $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
             
             $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
-            $pdf->setPaper('legal', 'landscape');
+            $pdf->setPaper('legal', 'portrait');
             return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
         }
 
