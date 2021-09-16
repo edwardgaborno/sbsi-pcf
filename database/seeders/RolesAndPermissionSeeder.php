@@ -41,7 +41,9 @@ class RolesAndPermissionSeeder extends Seeder
             'user_access',
 
             'source_create',
+            'source_store',
             'source_edit',
+            'source_update',
             'source_show',
             'source_delete',
             'source_access',
@@ -51,7 +53,9 @@ class RolesAndPermissionSeeder extends Seeder
             'disable_user',
 
             'psr_request_create',
+            'psr_request_store',
             'psr_request_edit',
+            'psr_request_update',
             'psr_request_show',
             'psr_request_delete',
             'psr_request_access',
@@ -95,7 +99,9 @@ class RolesAndPermissionSeeder extends Seeder
         $psrRole = Role::create(['name' => 'PSR']);
         $psrRole->givePermissionTo([
             'psr_request_create',
+            'psr_request_store',
             'psr_request_edit',
+            'psr_request_update',
             'psr_request_show',
             'psr_request_delete',
             'psr_request_access',
@@ -168,12 +174,18 @@ class RolesAndPermissionSeeder extends Seeder
         $adminRole = Role::create(['name' => 'Administrator']);
         $adminRole->givePermissionTo([
             'psr_request_create',
+            'psr_request_store',
             'psr_request_edit',
+            'psr_request_update',
             'psr_request_show',
             'psr_request_delete',
             'psr_request_access',
+            'download_pcf',
+            'upload_pcf',
             'source_create',
+            'source_store',
             'source_edit',
+            'source_update',
             'source_show',
             'source_delete',
             'source_access',

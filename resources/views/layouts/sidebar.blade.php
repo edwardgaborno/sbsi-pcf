@@ -20,7 +20,7 @@
     </li>
 
     <!-- Nav Item - PCF Request Menu -->
-    @can('psr_access')
+    @can('psr_request_access')
     <li class="nav-item">
         <a class="nav-link" href="{{ route('PCF') }}">
             <i class="fas fa-list"></i>

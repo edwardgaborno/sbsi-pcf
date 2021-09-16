@@ -21,14 +21,14 @@
                     <li class="nav-item">
                         <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Machines & Inclusions</a>
                     </li>
-                    @can('psr_upload_pcf')
+                    @can('upload_pcf')
                     <li class="nav-item">
                         <a class="nav-link" id="upload-tab" data-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload PCF Document</a>
                     </li>
                     @endcan
                 </ul>
                 <div class="tab-content" id="myTabContent">
-                    @can('psr_upload_pcf')
+                    @can('upload_pcf')
                     <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
                         <form action="{{ route('PCF.storeFile') }}" method="POST">
                             @csrf
@@ -63,8 +63,9 @@
                     </div>
                     @endcan
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <form action="{{ route('PCF.update') }}" method="post">
+                        <form action="{{ route('PCF.update') }}" method="POST">
                             @csrf
+                            @method('PUT')
                             <div class="modal-body">
                                 <!-- Left Element -->
                                 <div class="row">
@@ -78,7 +79,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="specimen_type">Date</label>
+                                            <label for="edit_date">Date</label>
                                             <input type="date" class="form-control" name="date" id="edit_date"
                                                 value="{{ old('date') }}" required>
                                         </div>
@@ -171,9 +172,9 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="edit_duration">Duration of Contract</label>
-                                            <input type="text" class="form-control" name="duration" id="edit_duration" 
-                                                value="{{ old('edit_duration') }}" required>
+                                            <label for="edit_contract_duration">Duration of Contract</label>
+                                            <input type="text" class="form-control" name="contract_duration" id="edit_contract_duration" 
+                                                value="{{ old('edit_contract_duration') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -230,14 +231,14 @@
                             <!-- Content Row -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
-                                @can('psr_edit')
+                                @can('psr_request_edit')
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
                                 @endcan
                             </div>
                         </form>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        @can('psr_create')
+                        @can('psr_request_create')
                             <form id="first_table">
                                 @csrf
                                 <div class="modal-body">
@@ -340,7 +341,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                        @can('psr_create')
+                        @can('psr_request_create')
                             <form id="second_table">
                                 @csrf
                                 <div class="modal-body">

@@ -32,7 +32,7 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    @can('psr_create')
+                                    @can('psr_request_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
                                                 <a href="{{ route('PCF.sub.addrequest') }}"
@@ -45,7 +45,7 @@
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-striped" id="dataTable" width="100%"
+                                        <table class="table table-bordered table-striped" id="pcf_dataTable" width="100%"
                                             cellspacing="0">
                                             <thead>
                                                 <tr bgcolor="gray" class="text-white">
@@ -55,8 +55,7 @@
                                                     <th>PSR</th>
                                                     <th>Annual Profit</th>
                                                     <th>Annual Profit Rate</th>
-                                                    <th>Document Status</th>
-                                                    <th>Actions</th>
+                                                    <th style="text-align: center; vertical-align: middle">Actions</th>
                                                 </tr> 
                                             </thead>
                                             <tbody>
@@ -88,82 +87,73 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
-            $('#dataTable').DataTable({
+        $(function() {
+            $('#pcf_dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    "url": '{!! route('PCF.list') !!}'
+                    url: "{{ route('PCF.list') }}",
                 },
-                "columns": [
+                columns: [
                     { data: 'pcf_no' },
                     { data: 'date' },
                     { data: 'institution' },
                     { data: 'psr' },
                     { data: 'annual_profit' },
                     { data: 'annual_profit_rate' },
-                    { data: 'status' },
-                    { data: 'actions' }
+                    { data: 'actions', orderable: false, searchable: false }
                 ],
             });
-
         });
+        
+        let pcf_id;
 
-        function editPCFRequest(data) {
-            var id = data.data('id');
-            var pcf_no = data.data('pcf_no');
-            var date = data.data('date');
-            var institution = data.data('institution');
-
-            var address = data.data('address');
-            var contact_person = data.data('contact_person');
-            var designation = data.data('designation');
-            var thru_designation = data.data('thru_designation');
-            var supplier = data.data('supplier');
-            var terms = data.data('terms');
-            var validity = data.data('validity');
-            var delivery = data.data('delivery');
-            var warranty = data.data('warranty');
-
-            var duration = data.data('duration');
-            var date_bidding = data.data('date_bidding');
-            var bid_docs_price = data.data('bid_docs_price');
-            var psr = data.data('psr');
-            var manager = data.data('manager');
-            var annual_profit = data.data('annual_profit');
-            var annual_profit_rate = data.data('annual_profit_rate');
-
-            $("#pcf_request_id").val(id);
-            $("#edit_pcf_no").val(pcf_no);
-            $("#edit_date").val(date);
-            $("#edit_institution").val(institution);
-
-            $("#edit_address").val(address);
-            $("#edit_contact_person").val(contact_person);
-            $("#edit_designation").val(designation);
-            $("#edit_thru_designation").val(thru_designation);
-            $("#edit_supplier").val(supplier);
-            $("#edit_terms").val(terms);
-            $("#edit_validity").val(validity);
-            $("#edit_delivery").val(delivery);
-            $("#edit_warranty").val(warranty);
-
-            $("#edit_duration").val(duration);
-            $("#edit_date_bidding").val(date_bidding);
-            $("#edit_bid_docs_price").val(bid_docs_price);
-            $("#edit_psr").val(psr);
-            $("#edit_manager").val(manager);
-            $("#edit_annual_profit").val(annual_profit);
-            $("#edit_annual_profit_rate").val(annual_profit_rate);
-            $("#for_upload_id").val(id);
-
-            //load added item list
-            loadAddItemTable(pcf_no);
-            //load added foc item list
-            loadAddedFocItemTable(pcf_no);
-        }
+        $('#pcf_dataTable').on('click', '.editPCFRequest', function (e) {
+            e.preventDefault();
+            pcf_id = $(this).data('id');
+            if (pcf_id){
+                $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/PCF/get/pcf_details=' + pcf_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(data) {
+                    $('#pcf_request_id').val(data.id);
+                    $('#edit_pcf_no').val(data.pcf_no);
+                    $('#edit_date').val(data.date);
+                    $('#edit_institution').val(data.institution);
+                    $('#edit_address').val(data.address);
+                    $('#edit_contact_person').val(data.contact_person);
+                    $('#edit_designation').val(data.designation);
+                    $('#edit_thru_designation').val(data.thru_designation);
+                    $('#edit_supplier').val(data.supplier);
+                    $('#edit_terms').val(data.terms);
+                    $('#edit_validity').val(data.validity);
+                    $('#edit_warranty').val(data.warranty);
+                    $('#edit_delivery').val(data.delivery);
+                    $("#edit_contract_duration").val(data.contract_duration);
+                    $('#edit_date_bidding').val(data.date_bidding);
+                    $('#edit_bid_docs_price').val(data.bid_docs_price);
+                    $('#edit_psr').val(data.psr);
+                    $('#edit_manager').val(data.manager);
+                    $('#edit_annual_profit').val(data.annual_profit);
+                    $('#edit_annual_profit_rate').val(data.annual_profit_rate);
+                    $('#editPCFRequestModal').modal('show');
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                });
+            }
+        })
 
         function removeAddedItem(data) {
             var pcf_no = $("#pcf_no_add_item").val();
@@ -254,39 +244,6 @@
                 }
             })
         }
-
-        // function downloadFile(response) {
-        //     var blob = new Blob([response], {type: 'application/pdf'})
-        //     var url = URL.createObjectURL(blob);
-        //     location.assign(url);
-        // } 
-
-        // function generatePdf(data) {
-        //     var id = data.data('created_by_id');
-        //     $.ajax({
-        //         type: 'GET',
-        //         dataType: 'json',
-        //         url: '/PCF/ajax/download-pdf/' + id,
-        //         headers: {
-        //             'X-CSRF-Token': '{{ csrf_token() }}',
-        //         },
-        //         success: function(response) {
-        //             Swal.fire(
-        //                 'Download Success!',
-        //                 'PDF File has been downloaded successfully!',
-        //                 'success'
-        //             )
-        //         },
-        //         error: function(response) {
-        //             Swal.fire(
-        //                 'Something went wrong!',
-        //                 'Please contact your system administrator!',
-        //                 'error'
-        //             )
-        //         }
-        //     })
-        //     .done(downloadFile);
-        // }
 
         function loadAddItemTable(pcf_no) {
             //delete first the table before reinitialize
@@ -812,7 +769,7 @@
                 pdfPreviewHeight: 320,
                 pdfComponentExtraParams: 'toolbar=0&view=fit&page=1',
                 server: {
-                    url: '{{ route('store.pcf-document') }}',
+                    url: "{{ route('store.pcf-document') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }

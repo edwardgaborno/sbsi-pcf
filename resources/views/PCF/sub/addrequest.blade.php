@@ -44,18 +44,14 @@
                                             <label for="test_name_id">Test Code</label>
                                             <input type="hidden" class="form-control" name="pcf_no_add_items" id="pcf_no_add_item"> <!-- pcf no --> 
                                             <input type="hidden" class="form-control" name="hidden_item_code" id="hidden_item_code"> <!-- item code --> 
-                                            <select class="form-control" name="item_code_add_item" id="item_code_add_item">
-                                                <option value="" selected>Please select Item Code</option>
-                                                @foreach ($sources as $source)
-                                                    <option value="{{ $source->id }}">{{ $source->item_code }}</option>
-                                                @endforeach
-                                            </select>
+
+                                            <select class="form-control" name="source_item_code" id="source_item_code-i"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="description_add_item">Item Description</label>
-                                            <input type="text" class="form-control" name="description" id="description_add_item"
+                                            <input type="text" class="form-control" name="description" id="description-i"
                                                 value="{{ old('description') }}" placeholder="source description" readonly required>
                                             <input type="hidden" class="form-control" name="rate_foc" id="rate_add_item"
                                                 value="{{ old('rate_foc') }}" placeholder="currency rate" required>
@@ -279,23 +275,23 @@
                                         <div class="form-group">
                                             <label for="contact_person">Contact Person</label>
                                             <input type="text" class="form-control" name="contact_person" id="contact_person"
-                                                value="{{ old('duration_contract') }}" required>
+                                                value="{{ old('contact_person') }}" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="duration_contract">Designation</label>
+                                            <label for="designation">Designation</label>
                                             <input type="text" class="form-control" name="designation" id="designation"
-                                                value="{{ old('duration_contract') }}" required>
+                                                value="{{ old('designation') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="date_bidding">Thru Designation</label>
+                                            <label for="thru_duration_contract">Thru Designation</label>
                                             <input type="text" class="form-control" name="thru_designation" id="thru_duration_contract"
-                                                value="{{ old('duration_contract') }}" required>
+                                                value="{{ old('thru_duration_contract') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -343,9 +339,9 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="duration_contract">Duration of Contract</label>
-                                            <input type="number" class="form-control" name="duration_contract" id="duration_contract"
-                                                value="{{ old('duration_contract') }}" required>
+                                            <label for="contract_duration">Duration of Contract</label>
+                                            <input type="number" class="form-control" name="contract_duration" id="contract_duration"
+                                                value="{{ old('contract_duration') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -479,6 +475,27 @@
                 ],
             });
         });
+
+
+        $('.source_item_code-i').select2({
+            placeholder: 'Item Code',
+            ajax: {
+                url: '/ajax/get-descriptions',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.item_code,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            }
+        })
 
         function getTotalSales() {
             var quantity = $("#quantity_add_item").val();

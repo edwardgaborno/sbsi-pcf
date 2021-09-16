@@ -30,7 +30,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="description">Institutuion</label>
+                                <label for="description">Institution</label>
                                 <input type="text" class="form-control" name="institution" id="institution"
                                     value="{{ old('institution') }}" required>
                             </div>

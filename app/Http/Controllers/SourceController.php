@@ -22,7 +22,7 @@ class SourceController extends Controller
 
     public function store(StoreSourceRequest $request)
     {
-        $this->authorize('source_create');
+        $this->authorize('source_store');
 
         DB::beginTransaction();
 
@@ -45,7 +45,7 @@ class SourceController extends Controller
 
     public function update(UpdateSourceRequest $request)
     {
-        $this->authorize('source_edit');
+        $this->authorize('source_update');
 
         DB::beginTransaction();
 

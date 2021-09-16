@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Alert;
 use Validator;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\PCFList\StoreItemPCFListRequest;
 
 class PCFListController extends Controller
 {
@@ -110,79 +111,20 @@ class PCFListController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store_item(StoreItemPCFListRequest $request)
     {
+        $this->authorize('psr_request_store');
+        
+        PCFList::create($request->validated());
 
-        $validator = Validator::make($request->all(), [
-            'pcf_no' => 'required|numeric',
-            'item_code' => 'required|string',
-            'description' => 'required|string',
-            'quantity' => 'required|numeric',
-            'sales' => 'required|string',
-            'total_sales' => 'required|string',
-            'transfer_price' => 'required|string',
-            'mandatory_peripherals' => 'required|string',
-            'opex' => 'required|string',
-            'net_sales' => 'required|string',
-            'gross_profit' => 'required|string',
-            'total_gross_profit' => 'required|string',
-            'total_net_sales' => 'required|string',
-            'profit_rate' => 'required|string',
-        ]);
+        alert()->success('Success','PCF Request Item has been added.');
 
-        if ($validator->passes()) {
-
-            $source = Source::select('standard_price')->get();
-
-            if($request->sales <= $source) {
-                $above_standard = 'YES';
-            }
-            else {
-                $above_standard = 'NO';
-            }
-            // Store Data in DATABASE from HERE 
-            $savePCFList = new PCFList;
-            $savePCFList->pcf_no = $request->pcf_no;
-            $savePCFList->item_code = $request->item_code;
-            $savePCFList->description = $request->description;
-            $savePCFList->quantity = $request->quantity;
-            $savePCFList->sales = $request->sales;
-            $savePCFList->total_sales = $request->total_sales;
-            $savePCFList->transfer_price = $request->transfer_price;
-            $savePCFList->mandatory_peripherals = $request->mandatory_peripherals;
-            $savePCFList->opex = $request->opex;
-            $savePCFList->net_sales = $request->net_sales;
-            $savePCFList->gross_profit = $request->gross_profit;
-            $savePCFList->total_gross_profit = $request->total_gross_profit;
-            $savePCFList->total_net_sales = $request->total_net_sales;
-            $savePCFList->profit_rate = $request->profit_rate;
-            $savePCFList->above_standard_price = $above_standard;
-            $savePCFList->save();
-
-            Alert::success('Items Saved', 'Added successfully');
-
-            return response()->json(['success'=>'Added new records.']);
-            
-        }
-
-        Alert::error('Invalid Data', $validator->errors()->first());
-
-        return response()->json(['error'=>$validator->errors()]);
+        return back();
     }
 
     public function savefoc(Request $request)
@@ -262,22 +204,6 @@ class PCFListController extends Controller
             // 'annual_profit' => $annual_profit,
             // 'annual_profit_rate' => $annual_profit_rate
         ]);
-    }
-
-    public function getDescription($id)
-    {
-        if (!empty($id)) {
-            $getDescription = Source::find($id);
-            return response()->json($getDescription);
-        }
-    }
-
-    public function getDescriptions($item_code)
-    {
-        if (!empty($item_code)) {
-            $getDescriptions = Source::find($item_code);
-            return response()->json($getDescriptions);
-        }
     }
 
     /**

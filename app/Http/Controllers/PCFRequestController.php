@@ -6,456 +6,118 @@ use App\Models\PCFRequest;
 use App\Models\PCFList;
 use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
-use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\PCFInclusion;
-use Validator;
 use Yajra\Datatables\Datatables;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
+use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
+use App\Http\Requests\Source\UpdateSourceRequest;
 
 class PCFRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
-        $this->authorize('psr_access');
+        $this->authorize('psr_request_access');
+    
+        return view('PCF.index');
+    }
+
+    public function store(StorePCFRequestRequest $request)
+    {
+        $this->authorize('psr_request_store');
         
-        if ($request->ajax()) {
+        PCFRequest::create($request->validated() + [
+            'psr' => auth()->user()->name,
+            'created_by' => auth()->user()->id,
+        ]);
 
-            $getPCFRequest = PCFRequest::orderBy('pcf_no')->get();
-
-            return Datatables::of($getPCFRequest)
-                ->addIndexColumn()
-                ->addColumn('status', function ($data) {
-                    if ($data->status == 0) {
-                        $status = '<span class="badge badge-secondary">For Accounting Approval</span>';
-                    }
-                    elseif ($data->status == 1) {
-                        $status = '<span class="badge badge-secondary">Disapproved by the Accounting</span>';
-                    }
-                    elseif ($data->status == 2) {
-                        $status = '<span class="badge badge-secondary">Approved by the Accounting</span>';
-                    }
-                    elseif ($data->status == 3) {
-                        $status = '<span class="badge badge-secondary">Disapproved by the National Sales Manager</span>';
-                    }
-                    elseif ($data->status == 4) {
-                        $status = '<span class="badge badge-secondary">Approved by National Sales Manager</span>';
-                    }
-                    elseif ($data->status == 5) {
-                        $status = '<span class="badge badge-secondary">Disapproved by the Accounting Manager</span>';
-                    }
-                    elseif ($data->status == 6) {
-                        $status = '<span class="badge badge-success">Approved</span>';
-                    }
-
-                    return $status;
-                })
-                ->addColumn('actions', function ($data) {
-                    if((auth()->user()->hasRole('PSR') && $data->status == 0)
-                        || (auth()->user()->hasRole('PSR') && $data->status == 1)) {
-                        if (empty($data->pcf_document)) {
-                            return
-                            ' 
-                            <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-info" data-toggle="modal"
-                                    data-id="'.$data->id .'"
-                                    data-pcf_no="'.$data->pcf_no .'"
-                                    data-date="'.$data->date .'"
-                                    data-institution="'.$data->institution .'"
-                                    data-address="'.$data->address .'"
-                                    data-contact_person="'.$data->contact_person .'"
-                                    data-designation="'.$data->designation .'"
-                                    data-thru_designation="'.$data->thru_designation .'"
-                                    data-supplier="'.$data->supplier .'"
-                                    data-terms="'.$data->terms .'"
-                                    data-validity="'.$data->validity .'"
-                                    data-delivery="'.$data->delivery .'"
-                                    data-warranty="'.$data->warranty .'"
-                                    data-duration="'.$data->duration .'"
-                                    data-date_bidding="'.$data->date_bidding .'"
-                                    data-bid_docs_price="'.$data->bid_docs_price .'"
-                                    data-psr="'.$data->psr .'"
-                                    data-manager="'.$data->manager .'"
-                                    data-annual_profit="'.$data->annual_profit .'"
-                                    data-annual_profit_rate="'.$data->annual_profit_rate .'"
-                                    data-target="#editPCFRequestModal"
-                                    onclick="editPCFRequest($(this))">
-                                    <i class="fas fa-edit"></i>
-                                    Edit
-                                </a>
-                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i>
-                                    Download PDF
-                                </a>
-                            </td>
-                            ';
-                        }
-                        else {
-                            return
-                            ' 
-                            <td style="text-align: center; vertical-align: middle">
-                                <a href="#" class="badge badge-info" data-toggle="modal"
-                                    data-id="'.$data->id .'"
-                                    data-pcf_no="'.$data->pcf_no .'"
-                                    data-date="'.$data->date .'"
-                                    data-institution="'.$data->institution .'"
-                                    data-address="'.$data->address .'"
-                                    data-contact_person="'.$data->contact_person .'"
-                                    data-designation="'.$data->designation .'"
-                                    data-thru_designation="'.$data->thru_designation .'"
-                                    data-supplier="'.$data->supplier .'"
-                                    data-terms="'.$data->terms .'"
-                                    data-validity="'.$data->validity .'"
-                                    data-delivery="'.$data->delivery .'"
-                                    data-warranty="'.$data->warranty .'"
-                                    data-duration="'.$data->duration .'"
-                                    data-date_bidding="'.$data->date_bidding .'"
-                                    data-bid_docs_price="'.$data->bid_docs_price .'"
-                                    data-psr="'.$data->psr .'"
-                                    data-manager="'.$data->manager .'"
-                                    data-annual_profit="'.$data->annual_profit .'"
-                                    data-annual_profit_rate="'.$data->annual_profit_rate .'"
-                                    data-target="#editPCFRequestModal"
-                                    onclick="editPCFRequest($(this))">
-                                    <i class="fas fa-edit"></i>
-                                    Edit
-                                </a>
-                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i>
-                                    Download PDF
-                                </a>
-                            </td>
-                            ';
-                        }
-                    }   
-                    else if((auth()->user()->hasRole('Accounting') && $data->status == 0)
-                            || (auth()->user()->hasRole('Accounting') && $data->status == 1)
-                            || auth()->user()->hasRole('Accounting') && $data->status == 3) {
-                        if (empty($data->pcf_document)) {
-                            return
-                            ' 
-                                <td style="text-align: center; vertical-align: middle">
-                                    <a href="#" class="badge badge-success"
-                                        data-id="' . $data->id . '"
-                                        onclick="ApproveRequest($(this))">
-                                        <i class="fas fa-check"></i> 
-                                        Approve
-                                    </a>
-                                    <a href="#" class="badge badge-danger"
-                                    data-id="' . $data->id . '"
-                                        onclick="DisApproveRequest($(this))">
-                                        <i class="fas fa-times"></i> 
-                                        Disapprove
-                                    </a>
-                                    <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                        <i class="far fa-file-pdf"></i>
-                                        View PCF
-                                    </a>
-                                </td>
-                            ';
-                        }
-                        else {
-                            return
-                            ' 
-                                <td style="text-align: center; vertical-align: middle">
-                                    <a href="#" class="badge badge-success"
-                                        data-id="' . $data->id . '"
-                                        onclick="ApproveRequest($(this))">
-                                        <i class="fas fa-check"></i> 
-                                        Approve
-                                    </a>
-                                    <a href="#" class="badge badge-danger"
-                                    data-id="' . $data->id . '"
-                                        onclick="DisApproveRequest($(this))">
-                                        <i class="fas fa-times"></i> 
-                                        Disapprove
-                                    </a>
-                                    <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
-                                        <i class="far fa-file-pdf"></i>
-                                        View PCF
-                                    </a>
-                                </td>
-                            ';
-                        }
-                    }
-                    else if((auth()->user()->hasRole('National Sales Manager') && $data->status == 2)
-                            || (auth()->user()->hasRole('National Sales Manager') && $data->status == 5)) {
-                                if (empty($data->pcf_document)) {
-                                    return
-                                    ' 
-                                        <td style="text-align: center; vertical-align: middle">
-                                            <a href="#" class="badge badge-success"
-                                                data-id="' . $data->id . '"
-                                                onclick="ApproveRequest($(this))">
-                                                <i class="fas fa-check"></i> 
-                                                Approve
-                                            </a>
-                                            <a href="#" class="badge badge-danger"
-                                            data-id="' . $data->id . '"
-                                                onclick="DisApproveRequest($(this))">
-                                                <i class="fas fa-times"></i> 
-                                                Disapprove
-                                            </a>
-                                            <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                                <i class="far fa-file-pdf"></i>
-                                                View PCF
-                                            </a>
-                                        </td>
-                                    ';
-                                }
-                                else {
-                                    return
-                                    ' 
-                                        <td style="text-align: center; vertical-align: middle">
-                                            <a href="#" class="badge badge-success"
-                                                data-id="' . $data->id . '"
-                                                onclick="ApproveRequest($(this))">
-                                                <i class="fas fa-check"></i> 
-                                                Approve
-                                            </a>
-                                            <a href="#" class="badge badge-danger"
-                                            data-id="' . $data->id . '"
-                                                onclick="DisApproveRequest($(this))">
-                                                <i class="fas fa-times"></i> 
-                                                Disapprove
-                                            </a>
-                                            <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
-                                                <i class="far fa-file-pdf"></i>
-                                                View PCF
-                                            </a>
-                                        </td>
-                                    ';
-                                }
-                    }
-                    else if(auth()->user()->hasRole('Accounting Manager') && $data->status == 4) {
-                        if (empty($data->pcf_document)) {
-                            return
-                            ' 
-                                <td style="text-align: center; vertical-align: middle">
-                                    <a href="#" class="badge badge-success"
-                                        data-id="' . $data->id . '"
-                                        onclick="ApproveRequest($(this))">
-                                        <i class="fas fa-check"></i> 
-                                        Approve
-                                    </a>
-                                    <a href="#" class="badge badge-danger"
-                                    data-id="' . $data->id . '"
-                                        onclick="DisApproveRequest($(this))">
-                                        <i class="fas fa-times"></i> 
-                                        Disapprove
-                                    </a>
-                                    <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" rel="noopener noreferrer">
-                                        <i class="far fa-file-pdf"></i>
-                                        View PCF
-                                    </a>
-                                </td>
-                            ';
-                        }
-                        else {
-                            return
-                            ' 
-                                <td style="text-align: center; vertical-align: middle">
-                                    <a href="#" class="badge badge-success"
-                                        data-id="' . $data->id . '"
-                                        onclick="ApproveRequest($(this))">
-                                        <i class="fas fa-check"></i> 
-                                        Approve
-                                    </a>
-                                    <a href="#" class="badge badge-danger"
-                                    data-id="' . $data->id . '"
-                                        onclick="DisApproveRequest($(this))">
-                                        <i class="fas fa-times"></i> 
-                                        Disapprove
-                                    </a>
-                                    <a target="_blank" href="' . $data->path() .'" class="badge badge-success" rel="noopener noreferrer">
-                                        <i class="far fa-file-pdf"></i>
-                                        View PCF
-                                    </a>
-                                </td>
-                            ';
-                        }
-                    }
-                })
-                ->rawColumns(['status', 'actions'])
-                ->make(true);
-        }
+        alert()->success('Success','PCF Request has been created.');
 
         return view('PCF.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function update(UpdatePCFRequestRequest $request, PCFRequest $PCFRequest)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [ 
-            'pcf_no'   => 'required|string',
-            'date'   => 'required|string',
-            'institution'   => 'nullable|string',
-            'address' => 'nullable|string',
-            'contact_person' => 'nullable|string',
-            'designation' => 'nullable|string',
-            'thru_designation' => 'nullable|string',
-            'supplier' => 'required|string',
-            'terms' => 'required|string',
-            'validity' => 'required|string',
-            'delivery' => 'required|string',
-            'warranty' => 'nullable|string',
-            'duration_contract'   => 'required|string',
-            'date_bidding'   => 'required|string',
-            'bid_docs_price'   => 'required|string',
-            'manager'   => 'required|string',
-            'annual_profit'   => 'required|string',
-            'annual_profit_rate'   => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            Alert::error('Invalid Data', $validator->errors()->first()); 
-            return view('PCF.index');
-        }
-
-        $savePcfRequest = new PCFRequest;
-        $savePcfRequest->pcf_no = $request->pcf_no;
-        $savePcfRequest->date = $request->date;
-        $savePcfRequest->institution = $request->institution;
-        $savePcfRequest->address = $request->address;
-        $savePcfRequest->contact_person = $request->contact_person;
-        $savePcfRequest->designation = $request->designation;
-        $savePcfRequest->thru_designation = $request->thru_designation;
-        $savePcfRequest->supplier = $request->supplier;
-        $savePcfRequest->terms = $request->terms;
-        $savePcfRequest->validity = $request->validity;
-        $savePcfRequest->delivery = $request->delivery;
-        $savePcfRequest->warranty = $request->warranty;
-        $savePcfRequest->duration = $request->duration_contract;
-        $savePcfRequest->date_bidding = $request->date_bidding;
-        $savePcfRequest->bid_docs_price = $request->bid_docs_price;
-        $savePcfRequest->psr = \Auth::user()->name;
-        $savePcfRequest->manager = $request->manager;
-        $savePcfRequest->annual_profit = $request->annual_profit;
-        $savePcfRequest->annual_profit_rate = $request->annual_profit_rate;
-        $savePcfRequest->created_by = \Auth::user()->id;
-        $savePcfRequest->save();
-
-        Alert::success('PCF Request Details', 'Added successfully'); 
-
-        return view('PCF.index');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PCFRequest  $pCFRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PCFRequest $pCFRequest)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PCFRequest  $pCFRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PCFRequest $pCFRequest)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PCFRequest  $pCFRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PCFRequest $PCFRequest)
-    {
-        $validator = Validator::make($request->all(), [ 
-            'pcf_no'   => 'required|string',
-            'date'   => 'required|string',
-            'institution'   => 'nullable|string',
-            'address' => 'nullable|string',
-            'contact_person' => 'nullable|string',
-            'designation' => 'nullable|string',
-            'thru_designation' => 'nullable|string',
-            'supplier' => 'required|string',
-            'terms' => 'required|string',
-            'validity' => 'required|string',
-            'delivery' => 'required|string',
-            'warranty' => 'nullable|string',
-            'duration'   => 'required|string',
-            'date_bidding'   => 'required|string',
-            'bid_docs_price'   => 'required|string',
-            'manager'   => 'required|string',
-            'annual_profit'   => 'nullable|string',
-            'annual_profit_rate'   => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            Alert::error('Invalid Data', $validator->errors()->first()); 
-            return redirect()->route('PCF');
-        }
+        $this->authorize('psr_request_update');
 
         $updatePCFRequest = PCFRequest::findOrFail($request->pcf_request_id);
-        $updatePCFRequest->pcf_no = $request->pcf_no;
-        $updatePCFRequest->date = $request->date;
-        $updatePCFRequest->institution = $request->institution;
-        $updatePCFRequest->address = $request->address;
-        $updatePCFRequest->contact_person = $request->contact_person;
-        $updatePCFRequest->designation = $request->designation;
-        $updatePCFRequest->thru_designation = $request->thru_designation;
-        $updatePCFRequest->supplier = $request->supplier;
-        $updatePCFRequest->terms = $request->terms;
-        $updatePCFRequest->validity = $request->validity;
-        $updatePCFRequest->delivery = $request->delivery;
-        $updatePCFRequest->warranty = $request->warranty;
-        $updatePCFRequest->duration = $request->duration;
-        $updatePCFRequest->date_bidding = $request->date_bidding;
-        $updatePCFRequest->bid_docs_price = $request->bid_docs_price;
-        $updatePCFRequest->psr = \Auth::user()->name;
-        $updatePCFRequest->manager = $request->manager;
-        $updatePCFRequest->annual_profit = $request->annual_profit;
-        $updatePCFRequest->annual_profit_rate = $request->annual_profit_rate;
-        $updatePCFRequest->status = 0;
-        $updatePCFRequest->created_by = \Auth::user()->id;
-        $updatePCFRequest->save();
+        $updatePCFRequest->update($request->validated() + [
+            'psr' => auth()->user()->name,
+        ]);
 
         Alert::success('PCF Request Details', 'Updated successfully'); 
 
         return redirect()->route('PCF');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PCFRequest  $pCFRequest
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(PCFRequest $pCFRequest)
     {
         //
+    }
+
+    public function pcfList(Request $request) 
+    {
+        $this->authorize('psr_request_access');
+
+        if ($request->ajax()) {
+            $PCFRequest = PCFRequest::orderBy('pcf_no')->get();
+
+            return Datatables::of($PCFRequest)
+                ->addIndexColumn()
+                ->addColumn('actions', function ($data) {
+
+                    if (empty($data->pcf_document)) {
+                        $this->authorize('psr_request_edit');
+                        return
+                        ' 
+                            <a href="#" class="badge badge-info editPCFRequest" 
+                                data-id="' . $data->id . '"
+                                data-toggle="modal">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
+                                class="badge badge-success" 
+                                rel="noopener noreferrer">
+                                <i class="far fa-file-pdf"></i>
+                                Download PDF
+                            </a>
+                        ';
+                    }
+                    else {
+                        $this->authorize('psr_request_edit');
+                        return
+                        ' 
+                            <a href="#" class="badge badge-info editPCFRequest" 
+                                data-id="' . $data->id . '"
+                                data-toggle="modal">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
+                                class="badge badge-success" 
+                                rel="noopener noreferrer">
+                                <i class="far fa-file-pdf"></i>
+                                Download PDF
+                            </a>
+                        ';
+                    }
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+    }
+
+    public function getPCFRequestDetails($pcf_id)
+    {
+        $this->authorize('psr_request_access');
+
+        $pcf_request = PCFRequest::findOrFail($pcf_id);
+        
+        return response()->json($pcf_request);
     }
 
     public function ApproveRequest($id)
@@ -561,7 +223,7 @@ class PCFRequestController extends Controller
         }
 
         //return bad request error
-        return resonponse()->json(['error' => 'invalid request'], 400);
+        return response()->json(['error' => 'invalid request'], 400);
     }
 
     public function viewPdf($pcf_no)
@@ -616,7 +278,7 @@ class PCFRequestController extends Controller
         }
 
         //return bad request error
-        return resonponse()->json(['error' => 'invalid request'], 400);
+        return response()->json(['error' => 'invalid request'], 400);
     }
 
     public function storePCFPdfFile(Request $request)

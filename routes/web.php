@@ -48,9 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('PCF')->group(function () {
         Route::name('PCF')->group(function () {
             Route::get('/', [PCFRequestController::class, 'index'])->name('');
-            Route::get('/ajax/list', [PCFRequestController::class, 'index'])->name('.list');
+            Route::get('/ajax/list', [PCFRequestController::class, 'pcfList'])->name('.list');
+            Route::get('/get/pcf_details={pcf_id}', [PCFRequestController::class, 'getPCFRequestDetails'])->name('.get-pcf-details');
             Route::post('/add', [PCFRequestController::class, 'store'])->name('.add');
-            Route::post('/update', [PCFRequestController::class, 'update'])->name('.update');
+            Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
             Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
             Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
@@ -68,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/ajax/list/{pcf_no?}', [PCFListController::class, 'index'])->name('.list');
             Route::get('/ajax/foc-list/{pcf_no?}', [PCFListController::class, 'getFocList'])->name('.foc_list');
             Route::get('/ajax/get-description/{id}', [PCFListController::class, 'getDescription'])->name('.get_description'); 
-            Route::get('/ajax/get-descriptions/{item_code}', [PCFListController::class, 'getDescriptions'])->name('.get_descriptions'); 
+            Route::post('/ajax/get-descriptions/', [PCFListController::class, 'search'])->name('.get_descriptions'); 
             Route::get('/ajax/remove-added-item/{id}', [PCFListController::class, 'removeAddedItem'])->name('.remove_added_item');
             Route::get('/ajax/remove-added-inclusion/{id}', [PCFListController::class, 'removeAddedInclusion'])->name('.remove_added_inclusion');
             Route::get('/ajax/get-grand-totals/{pcf_no}', [PCFListController::class, 'getGrandTotals'])->name('.get_grand_totals');
