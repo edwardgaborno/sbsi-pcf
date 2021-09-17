@@ -15,4 +15,9 @@ class Source extends Model
     {
         return $this->hasMany(PCFList::class);
     }
+
+    public function pcfInclusions() 
+    {
+        return $this->hasMany(PCFInclusion::class);
+    }
 }

@@ -107,6 +107,7 @@ class SourceController extends Controller
         $this->authorize('source_access');
         
         $source = Source::findOrFail($source_id);
+        
         return response()->json($source);
     }
 }

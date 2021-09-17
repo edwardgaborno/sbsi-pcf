@@ -204,7 +204,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="addFOCdataTable" width="100%"
+                            <table class="table table-bordered table-striped" id="pcfFOC_dataTable" width="100%"
                                 cellspacing="0">
                                 <thead>
                                     <tr bgcolor="gray" class="text-white">
@@ -609,20 +609,21 @@
             var pcf_no_old = $("#pcf_no").val();
             var pcf_no = $("#pcf_no_add_item_foc").val(pcf_no_old);
 
-            $('#addFOCdataTable').DataTable({
+            $('#pcfFOC_dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
+                responsive: true,
+                searchable: true,
                 ordering: true,
                 ajax: {
-                    // "url": '{!! route('PCF.sub.list') !!}',
-                    url : '/PCF.sub/ajax/foc-list/' + pcf_no,
-                    data : function(data){
-                        return data;
-                    }
+                    url : '/PCF.sub/ajax/foc-list/',
+                    headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                 },
-                "columns": [
-                    { data: 'item_code' },
+                columns: [
+                    { data: 'source.item_code' },
                     { data: 'description' },
                     { data: 'serial_no' },
                     { data: 'type' },

@@ -21,31 +21,18 @@ class PCFInclusionController extends Controller
         return back();
     }
 
-    public function pcfFOCList(Request $request, $pcf_no)
+    public function pcfFOCList(Request $request)
     {
         if ($request->ajax()) {
 
-            $PCFInclusion = PCFInclusion::where('pcf_no', $pcf_no)->get();
+            $PCFInclusion = PCFInclusion::with('source')
+                    ->select('p_c_f_inclusions.*')
+                    ->get();
 
             return Datatables::of($PCFInclusion)
                 ->addIndexColumn()
-                ->addColumn('item_code', function ($data) {
-                    return $data->item_code;
-                })
-                ->addColumn('description', function ($data) {
-                    return $data->description;
-                })
-                ->addColumn('serial_no', function ($data) {
-                    return $data->serial_no;
-                })
-                ->addColumn('type', function ($data) {
-                    return $data->type;
-                })
-                ->addColumn('quantity', function ($data) {
-                    return $data->quantity;
-                })
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('psr_delete')) {
+                    if (auth()->user()->can('psr_request_delete')) {
                         return
                             ' 
                         <td>

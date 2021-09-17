@@ -422,7 +422,7 @@
                 }
 
                 $.ajax({
-                    url: "{{ route('PCF.sub.addfoc') }}",
+                    url: "{{ route('PCF.sub.store-foc') }}",
                     type:'POST',
                     data: {
                         _token:_token, 

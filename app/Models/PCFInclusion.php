@@ -10,4 +10,9 @@ class PCFInclusion extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function source() 
+    {
+        return $this->belongsTo(Source::class);
+    }
 }
