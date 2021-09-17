@@ -16,7 +16,11 @@ class CreatePCFListsTable extends Migration
         Schema::create('p_c_f_lists', function (Blueprint $table) {
             $table->id();
             $table->string('pcf_no');
-            $table->string('item_code');
+            $table->foreignId('source_id')
+                ->nullable()
+                ->constrained('sources')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string('description');
             $table->integer('quantity');
             $table->double('sales', 11, 2)->default(0.00);

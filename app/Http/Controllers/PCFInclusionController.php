@@ -4,82 +4,64 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFInclusion;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
+use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Requests\PCFInclusion\StorePCFInclusionRequest;
 
 class PCFInclusionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function store(StorePCFInclusionRequest $request)
     {
-        //
+        $this->authorize('psr_request_store');
+        
+        PCFInclusion::create($request->validated());
+
+        alert()->success('Success','PCF Request FOC has been added.');
+
+        return back();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function pcfFOCList(Request $request, $pcf_no)
     {
-        //
+        if ($request->ajax()) {
+
+            $PCFInclusion = PCFInclusion::where('pcf_no', $pcf_no)->get();
+
+            return Datatables::of($PCFInclusion)
+                ->addIndexColumn()
+                ->addColumn('item_code', function ($data) {
+                    return $data->item_code;
+                })
+                ->addColumn('description', function ($data) {
+                    return $data->description;
+                })
+                ->addColumn('serial_no', function ($data) {
+                    return $data->serial_no;
+                })
+                ->addColumn('type', function ($data) {
+                    return $data->type;
+                })
+                ->addColumn('quantity', function ($data) {
+                    return $data->quantity;
+                })
+                ->addColumn('action', function ($data) {
+                    if (auth()->user()->can('psr_delete')) {
+                        return
+                            ' 
+                        <td>
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="removeAddedInclusion($(this))"><i
+                                    class="fas fa-trash-alt"></i> 
+                                Remove
+                            </a>
+                        </td>
+                        ';
+                    }
+                })
+                ->escapeColumns([])
+                ->make(true);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PCFInclusion  $pCFInclusion
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PCFInclusion $pCFInclusion)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PCFInclusion  $pCFInclusion
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PCFInclusion $pCFInclusion)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PCFInclusion  $pCFInclusion
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PCFInclusion $pCFInclusion)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PCFInclusion  $pCFInclusion
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PCFInclusion $pCFInclusion)
-    {
-        //
-    }
 }

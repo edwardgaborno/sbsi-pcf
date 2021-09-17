@@ -84,14 +84,14 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
+        $(function() {
             $('#dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    "url": '{!! route('users.list') !!}'
+                    url: "{{ route('users.list') }}",
                 },
                 "columns": [
                     { data: 'id' },

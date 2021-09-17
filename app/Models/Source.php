@@ -10,4 +10,9 @@ class Source extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function pcfLists() 
+    {
+        return $this->hasMany(PCFList::class);
+    }
 }

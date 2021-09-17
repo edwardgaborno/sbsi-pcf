@@ -6,6 +6,7 @@ use App\Http\Controllers\PCFListController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
+use App\Http\Controllers\PCFInclusionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -64,15 +65,18 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('PCF.sub')->group(function () {
         Route::name('PCF.sub')->group(function () {
             Route::get('/add-request', [PCFListController::class, 'show'])->name('.addrequest');
-            Route::post('/add-items', [PCFListController::class, 'store'])->name('.additems');
-            Route::post('/add-foc', [PCFListController::class, 'savefoc'])->name('.addfoc');
-            Route::get('/ajax/list/{pcf_no?}', [PCFListController::class, 'index'])->name('.list');
-            Route::get('/ajax/foc-list/{pcf_no?}', [PCFListController::class, 'getFocList'])->name('.foc_list');
+            Route::post('/store-items', [PCFListController::class, 'store'])->name('.store-items');
+            Route::get('/ajax/list/', [PCFListController::class, 'pcfItemList'])->name('.list');
             Route::get('/ajax/get-description/{id}', [PCFListController::class, 'getDescription'])->name('.get_description'); 
             Route::post('/ajax/get-descriptions/', [PCFListController::class, 'search'])->name('.get_descriptions'); 
             Route::get('/ajax/remove-added-item/{id}', [PCFListController::class, 'removeAddedItem'])->name('.remove_added_item');
             Route::get('/ajax/remove-added-inclusion/{id}', [PCFListController::class, 'removeAddedInclusion'])->name('.remove_added_inclusion');
             Route::get('/ajax/get-grand-totals/{pcf_no}', [PCFListController::class, 'getGrandTotals'])->name('.get_grand_totals');
+
+            Route::get('/source/web/search/', [PCFListController::class, 'sourceSearch'])->name('.source-search');
+
+            Route::get('/ajax/foc-list/', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
+            Route::post('/store-foc', [PCFInclusionController::class, 'store'])->name('.store-foc');
         });
     });
 

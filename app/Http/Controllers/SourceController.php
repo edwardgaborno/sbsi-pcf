@@ -87,11 +87,15 @@ class SourceController extends Controller
                     return number_format($data->cost_of_peripherals, 2, '.', ',');
                 })
                 ->addColumn('actions', function ($data) {
-                    return
-                        '<a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
+
+                    if(auth()->user()->can('source_edit')) {
+                        return
+                        '
+                        <a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
                             data-id="'. $data->id .'">
                             <i class="far fa-edit"></i> Edit
                         </a>';
+                    }
                 })
                 ->rawColumns(['actions'])
                 ->make(true);

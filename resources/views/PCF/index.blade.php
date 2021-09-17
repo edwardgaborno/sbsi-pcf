@@ -352,7 +352,7 @@
                 var profit_rate = $("#profit_rate_add_item").val();
 
                 $.ajax({
-                    url: "{{ route('PCF.sub.additems') }}",
+                    url: "{{ route('PCF.sub.store-items') }}",
                     type:'POST',
                     data: {
                         _token:_token, 

@@ -75,7 +75,7 @@ class UserController extends Controller
 
         if ($request->ajax()) {
 
-            $getUsers = User::where('id','!=', auth()->user()->id)->orderBy('id')->get();
+            $getUsers = User::where('id','!=', auth()->user()->id)->get();
 
             return Datatables::of($getUsers)
                 ->addIndexColumn()

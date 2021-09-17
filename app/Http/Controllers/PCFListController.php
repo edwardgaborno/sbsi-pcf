@@ -4,119 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFList;
 use App\Models\PCFRequest;
-use App\Models\PCFInclusion;
 use App\Models\Source;
 use Illuminate\Http\Request;
 use Alert;
-use Validator;
 use Yajra\Datatables\Datatables;
-use App\Http\Requests\PCFList\StoreItemPCFListRequest;
+use App\Http\Requests\PCFList\StorePCFListRequest;
 
 class PCFListController extends Controller
 {
     private $pcf_no;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request, $pcf_no)
-    {
-        if ($request->ajax()) {
 
-            $getPCFList = PCFList::where('pcf_no', $pcf_no)->get();
-
-            return Datatables::of($getPCFList)
-                ->addIndexColumn()
-                ->addColumn('pcf_no', function ($data) {
-                    return $data->pcf_no;
-                })
-                ->addColumn('item_code', function ($data) {
-                    return $data->item_code;
-                })
-                ->addColumn('description', function ($data) {
-                    return $data->description;
-                })
-                ->addColumn('quantity', function ($data) {
-                    return $data->quantity;
-                })
-                ->addColumn('sales', function ($data) {
-                    return number_format($data->sales);
-                })
-                ->addColumn('total_sales', function ($data) {
-                    return number_format($data->total_sales);
-                })
-                ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('psr_delete')) {
-                        return
-                        ' 
-                        <td>
-                            <a href="#" class="badge badge-danger"
-                                data-id="' . $data->id . '"
-                                onclick="removeAddedItem($(this))"><i
-                                    class="fas fa-trash-alt"></i> 
-                                Remove
-                            </a>
-                        </td>
-                        ';
-                    }
-                })
-                ->escapeColumns([])
-                ->make(true);
-        }
-
-    }
-
-    public function getFocList(Request $request, $pcf_no)
-    {
-        if ($request->ajax()) {
-
-            $getPCFInclusion = PCFInclusion::where('pcf_no', $pcf_no)->get();
-
-            return Datatables::of($getPCFInclusion)
-                ->addIndexColumn()
-                ->addColumn('item_code', function ($data) {
-                    return $data->item_code;
-                })
-                ->addColumn('description', function ($data) {
-                    return $data->description;
-                })
-                ->addColumn('serial_no', function ($data) {
-                    return $data->serial_no;
-                })
-                ->addColumn('type', function ($data) {
-                    return $data->type;
-                })
-                ->addColumn('quantity', function ($data) {
-                    return $data->quantity;
-                })
-                ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('psr_delete')) {
-                        return
-                            ' 
-                        <td>
-                            <a href="#" class="badge badge-danger"
-                                data-id="' . $data->id . '"
-                                onclick="removeAddedInclusion($(this))"><i
-                                    class="fas fa-trash-alt"></i> 
-                                Remove
-                            </a>
-                        </td>
-                        ';
-                    }
-                })
-                ->escapeColumns([])
-                ->make(true);
-        }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store_item(StoreItemPCFListRequest $request)
+    public function store(StorePCFListRequest $request)
     {
         $this->authorize('psr_request_store');
         
@@ -127,58 +25,6 @@ class PCFListController extends Controller
         return back();
     }
 
-    public function savefoc(Request $request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'pcf_foc' => 'required',
-            'item_code_foc' => 'required|string',
-            'description_foc' => 'required|string',
-            'serial_no_foc' => 'required|string',
-            'type_foc' => 'required|string',
-            'quantity_foc' => 'required|integer',
-            'mandatory_peripherals_foc' => 'required|string',
-            'opex_foc' => 'required|string',
-            'total_cost_foc' => 'required|string',
-            'depreciable_life_foc' => 'required|string',
-            'cost_year_foc' => 'required|string'
-        ]);
-
-        if ($validator->passes()) {
-
-            // Store Data in DATABASE from HERE 
-            $savePCFInclusion = new PCFInclusion;
-            $savePCFInclusion->pcf_no = $request->pcf_foc;
-            $savePCFInclusion->item_code = $request->item_code_foc;
-            $savePCFInclusion->description = $request->description_foc;
-            $savePCFInclusion->serial_no = $request->serial_no_foc;
-            $savePCFInclusion->type = $request->type_foc;
-            $savePCFInclusion->quantity = $request->quantity_foc;
-            $savePCFInclusion->mandatory_peripherals = $request->mandatory_peripherals_foc;
-            $savePCFInclusion->opex = $request->opex_foc;
-            $savePCFInclusion->total_cost = $request->total_cost_foc;
-            $savePCFInclusion->depreciable_life = $request->depreciable_life_foc;
-            $savePCFInclusion->cost_year = $request->cost_year_foc;
-            $savePCFInclusion->save();
-
-            Alert::success('Items Saved', 'Added successfully');
-
-            return response()->json(['success'=>'Added new records.']);
-            
-        }
-
-        Alert::error('Invalid Data', $validator->errors()->first());
-
-        return response()->json(['error'=>$validator->errors()]);
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\PCFList  $pCFList
-     * @return \Illuminate\Http\Response
-     */
     public function show(PCFList $pCFList)
     {
         //get max value of pcf number
@@ -204,40 +50,6 @@ class PCFListController extends Controller
             // 'annual_profit' => $annual_profit,
             // 'annual_profit_rate' => $annual_profit_rate
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PCFList  $pCFList
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PCFList $pCFList)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PCFList  $pCFList
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PCFList $pCFList)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PCFList  $pCFList
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PCFList $pCFList)
-    {
-        //
     }
 
     public function removeAddedItem($id)
@@ -286,5 +98,50 @@ class PCFListController extends Controller
         }
 
         return response()->json(['error' => 'invalid'], 401);
+    }
+
+    public function sourceSearch(Request $request)
+    {
+        $this->authorize('psr_request_access');
+
+        $sources = Source::where('item_code', 'LIKE', '%'.$request->input('term', '').'%')
+                        ->get(['id', 'item_code as text']);
+        return ['results' => $sources];
+    }
+
+    public function pcfItemList(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $PCFList = PCFList::with('source')
+                        ->select('p_c_f_lists.*')
+                        ->get();
+
+            return Datatables::of($PCFList)
+                ->addIndexColumn()
+                ->addColumn('sales', function ($data) {
+                    return number_format($data->sales, 2, '.', ',');
+                })
+                ->addColumn('total_sales', function ($data) {
+                    return number_format($data->total_sales, 2, '.', ',');
+                })
+                ->addColumn('action', function ($data) {
+                    if (auth()->user()->can('psr_request_delete')) {
+                        return
+                        ' 
+                        <td>
+                            <a href="#" class="badge badge-danger"
+                                data-id="' . $data->id . '"
+                                onclick="removeAddedItem($(this))"><i
+                                    class="fas fa-trash-alt"></i> 
+                                Remove
+                            </a>
+                        </td>
+                        ';
+                    }
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
     }
 }

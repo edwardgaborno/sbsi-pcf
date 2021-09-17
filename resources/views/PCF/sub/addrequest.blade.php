@@ -36,73 +36,75 @@
                 <div class="card shadow mb-4">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <form id="first_table">
+                            <form id="first_table" action="{{ route('PCF.sub.store-items') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="test_name_id">Test Code</label>
-                                            <input type="hidden" class="form-control" name="pcf_no_add_items" id="pcf_no_add_item"> <!-- pcf no --> 
-                                            <input type="hidden" class="form-control" name="hidden_item_code" id="hidden_item_code"> <!-- item code --> 
-
-                                            <select class="form-control" name="source_item_code" id="source_item_code-i"></select>
+                                            <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item"> <!-- pcf no -->
+                                            
+                                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="description_add_item">Item Description</label>
+                                            <label for="description">Item Description</label>
                                             <input type="text" class="form-control" name="description" id="description-i"
-                                                value="{{ old('description') }}" placeholder="source description" readonly required>
-                                            <input type="hidden" class="form-control" name="rate_foc" id="rate_add_item"
-                                                value="{{ old('rate_foc') }}" placeholder="currency rate" required>
-                                            <input type="hidden" class="form-control" name="tp_php_foc" id="tp_php_add_item"
-                                                value="{{ old('tp_php_foc') }}" placeholder="trasfer price" required>    
-                                            <input type="hidden" class="form-control" name="cost_periph_foc" id="cost_periph_add_item"
-                                                value="{{ old('cost_periph_foc') }}" placeholder="cost peripherals" required>
+                                                placeholder="source description" readonly required>
+
+                                            <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
+                                                placeholder="currency rate" >
+                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-i"
+                                                placeholder="trasfer price">    
+                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i"
+                                                placeholder="cost peripherals">
+
                                             {{-- <input type="hidden" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
-                                                value="{{ old('transfer_price_foc') }}" placeholder="transfer price" required>
-                                            <input type="hidden" class="form-control" name="mandatory_peripherals_foc" id="mandatory_peripherals_add_item"
-                                                value="{{ old('mandatory_peripherals_foc') }}" placeholder="mandatory peripherals" required> --}}
-                                            <input type="hidden" class="form-control" name="opex_foc" id="opex_add_item"
-                                                value="{{ old('opex_foc') }}" placeholder="opex" required>
-                                            <input type="hidden" class="form-control" name="net_sales_foc" id="net_sales_add_item"
-                                                value="{{ old('net_sales_foc') }}" placeholder="net sales" required>
-                                            <input type="hidden" class="form-control" name="gross_profit_foc" id="gross_profit_add_item"
-                                                value="{{ old('gross_profit_foc') }}" placeholder="gross profit" required>
-                                            <input type="hidden" class="form-control" name="total_gross_profit_foc" id="total_gross_profit_add_item"
-                                                value="{{ old('total_gross_profit_foc') }}" placeholder="total gross profit" required>
-                                            <input type="hidden" class="form-control" name="total_net_sales_foc" id="total_net_sales_add_item"
-                                                value="{{ old('total_net_sales_foc') }}" placeholder="total net sales" required>
-                                            <input type="hidden" class="form-control" name="profit_rate_foc" id="profit_rate_add_item"
-                                                value="{{ old('profit_rate_foc') }}" placeholder="profit rate" required>
+                                                placeholder="transfer price">
+                                            <input type="hidden" class="form-control" name="mandatory_peripherals" id="mandatory_peripherals_add_item"
+                                                placeholder="mandatory peripherals"> --}}
+
+                                            <input type="hidden" class="form-control" name="opex" id="opex-i"
+                                                placeholder="opex">
+                                            <input type="hidden" class="form-control" name="net_sales" id="net_sales-i"
+                                                placeholder="net sales">
+                                            <input type="hidden" class="form-control" name="gross_profit" id="gross_profit-i"
+                                                placeholder="gross profit">
+                                            <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit-i"
+                                                placeholder="total gross profit">
+                                            <input type="hidden" class="form-control" name="total_net_sales" id="total_net_sales-i"
+                                                placeholder="total net sales">
+                                            <input type="hidden" class="form-control" name="profit_rate" id="profit_rate-i"
+                                                placeholder="profit rate">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="quantity_add_item">Quantity (Per Year)</label>
-                                            <input type="number" class="form-control" name="quantity" id="quantity_add_item" onkeyup="getTotalSales()"
-                                                value="{{ old('quantity') }}" required>
+                                            <input type="number" class="form-control" name="quantity" id="quantity-i"
+                                                value="{{ old('quantity') }}" required disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="sales_add_item">Sales</label>
-                                            <input type="number" class="form-control" name="sales" id="sales_add_item" onkeyup="getTotalSales()"
-                                                value="{{ old('sales') }}" required>
+                                            <input type="number" class="form-control" name="sales" id="sales-i"
+                                                value="{{ old('sales') }}" required disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="total_sales_add_item">Total Sales</label>
-                                            <input type="text" class="form-control" name="total_sales" id="total_sales_add_item"
+                                            <input type="text" class="form-control" name="total_sales" id="total_sales-i"
                                                 value="{{ old('total_sales') }}" readonly required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="submit_item"></label>
-                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item"><i class="fas fa-plus-circle"></i> Add
-                                                    Item</button>
+                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item">
+                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +113,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="addItemDatatable" width="100%"
+                            <table class="table table-bordered table-striped" id="pcfItem_datatable" width="100%"
                                 cellspacing="0">
                                 <thead>
                                     <tr bgcolor="gray" class="text-white">
@@ -140,46 +142,43 @@
                 <div class="card shadow mb-4">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <form id="second_table">
+                            <form id="second_table" action="{{ route('PCF.sub.store-foc') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="test_name_id">Item Code</label>
-                                            <input type="hidden" class="form-control" name="pcf_no_add_items_foc" id="pcf_no_add_item_foc"> <!-- pcf no --> 
-                                            <input type="hidden" class="form-control" name="hidden_item_code_foc" id="hidden_item_code_foc"> <!-- item code --> 
-                                            <select class="form-control" name="item_code_foc" id="item_code_foc">
-                                                <option value="" selected>Please select Item Code</option>
-                                                @foreach ($sources as $source)
-                                                    <option value="{{ $source->id }}">{{ $source->item_code }}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item_foc"> <!-- pcf no -->  
+                                            
+                                            <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="item_description_foc">Item Description</label>
-                                            <input type="text" class="form-control" name="item_description_foc" id="item_description_foc"
+                                            <input type="text" class="form-control" name="description" id="description-foc"
                                                 value="{{ old('item_description_foc') }}" readonly required>
-                                            <input type="hidden" class="form-control" name="rate_foc" id="rate_foc"
-                                                value="{{ old('rate_foc') }}" required>
-                                            <input type="hidden" class="form-control" name="tp_php_foc" id="tp_php_foc"
-                                                value="{{ old('tp_php_foc') }}" required>    
-                                            <input type="hidden" class="form-control" name="cost_periph_foc" id="cost_periph_foc"
-                                                value="{{ old('cost_periph_foc') }}" required>
+
+                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-foc" placeholder="Total price (tp_php)">    
+                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-foc" placeholder="Cost of peripherals">
+                                            <input type="hidden" class="form-control" name="opex" id="opex-foc" placeholder="Opex">
+                                            <input type="hidden" class="form-control" name="total_cost" id="total_cost-foc" placeholder="Total Cost">    
+                                            <input type="hidden" class="form-control" name="cost_year" id="cost_year-foc" placeholder="Cost year">
+                                            <input type="hidden" class="form-control" name="depreciable_life" id="depreciable_life-foc" placeholder="Depreciable life">
+
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="serial_no_foc">Serial No.</label>
-                                            <input type="text" class="form-control" name="serial_no_foc" id="serial_no_foc"
-                                                value="N/A{{ old('serial_no_foc') }}" required>
+                                            <input type="text" class="form-control" name="serial_no" id="serial_no-foc"
+                                                value="N/A{{ old('serial_no-foc') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="type_foc">Type</label>
-                                            <select class="form-control" name="type_foc" id="type_foc">
+                                            <select class="form-control" name="type" id="type-foc">
                                                 <option value="MACHINE">MACHINE</option>
                                                 <option value="COGS" selected>COGS</option>
                                             </select>
@@ -187,22 +186,16 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="qty_foc">Quantity</label>
-                                            <input type="number" class="form-control" name="qty_foc" id="qty_foc" onkeyup="getComputationFOC()"
-                                                value="{{ old('qty_foc') }}" required>
-                                            <input type="hidden" class="form-control" name="opx_foc" id="opx_foc"
-                                                value="{{ old('opx_foc') }}" required>
-                                            <input type="hidden" class="form-control" name="total_cost_foc" id="total_cost_foc"
-                                                value="{{ old('total_cost_foc') }}" required>    
-                                            <input type="hidden" class="form-control" name="cost_year_foc" id="cost_year_foc"
-                                                value="{{ old('cost_year_foc') }}" required>
+                                            <label for="quantity-foc">Quantity</label>
+                                            <input type="number" class="form-control" name="quantity" id="quantity-foc"
+                                                value="{{ old('quantity-foc') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="submit_foc"></label>
-                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_foc"><i class="fas fa-plus-circle"></i> Add
-                                                    Item</button>
+                                            <label for="submit"></label>
+                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit">
+                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
                                         </div>
                                     </div>
                                 </div>
@@ -422,24 +415,25 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
+        $(function() {
             var pcf_no_old = $("#pcf_no").val();
             var pcf_no = $("#pcf_no_add_item").val(pcf_no_old);
-            
-            $('#addItemDatatable').DataTable({
+
+            $('#pcfItem_datatable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
+                resposive: true,
+                searchable: true,
                 ordering: true,
                 ajax: {
-                    // "url": '{!! route('PCF.sub.list') !!}',
-                    url : '/PCF.sub/ajax/list/'+pcf_no,
-                    data : function(data){
-                        return data;
-                    }
+                    url : '/PCF.sub/ajax/list/',
+                    headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                 },
-                "columns": [
-                    { data: 'item_code' },
+                columns: [
+                    { data: 'source.item_code' },
                     { data: 'description' },
                     { data: 'quantity' },
                     { data: 'sales' },
@@ -449,10 +443,172 @@
             });
         });
 
-        //FOR FOC Table List
-        $(document).ready(function() {
+        //start of select2 function -- item_code
+        $(function () {
+            $('#source_item_code-i').select2({
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("PCF.sub.source-search") }}',
+                    dataType: 'json',
+                },
+            });
+        });
+
+        $('#source_item_code-i').on('select2:select', function (e) {
+            var data = e.params.data;
+            var source_id = data.id
+            if(source_id) {
+                $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.source/get/source=' + source_id,
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                dataType: 'json',
+                }).done(function(data) {
+                    $('#description-i').val(data.description);
+                    $("#currency_rate-i").val(data.currency_rate);
+                    $("#tp_php-i").val(data.tp_php);
+                    $("#cost_of_peripherals-i").val(data.cost_of_peripherals);
+
+                    document.getElementById("quantity-i").disabled = false;
+                    document.getElementById("sales-i").disabled = false;
+
+                    calculateOpex();
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                    clearItemInputs();
+                });
+            }
+        });
+
+        $( "#source_item_code-i" ).on('change', function(e) {
+            clearItemInputs();
+            document.getElementById("quantity-i").disabled = true;
+            document.getElementById("sales-i").disabled = true;
+        });
+        //end of select2 function
+
+        const element = document.querySelectorAll('#sales-i, #quantity-i');
+        element.forEach(i => {
+            i.addEventListener('input', function() {
+                calculateTotalSales();
+                calculateNetSales();
+                calculateGrossProfit();
+                calculateTotalGrossProfit();
+                calculateTotalNetSales();
+                calculateProfitRate();
+            });
+        })
+
+        function calculateTotalSales() {
+            var quantity = $("#quantity-i").val();
+            var sales = $("#sales-i").val();
+            var  total_sales = sales * quantity;
+            $("#total_sales-i").val(total_sales.toFixed(2));
+        }
+
+        //Opex function
+        function calculateOpex() {
+            var currency_rate = $("#currency_rate-i").val();
+            var transfer_price = $("#tp_php-i").val();
+            var cost_of_peripherals = $("#cost_of_peripherals-i").val();
+            
+            if (parseInt(currency_rate) == 1 && cost_of_peripherals !== '') {
+                var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
+            } 
+            else if (parseInt(currency_rate) == 1 && cost_of_peripherals == '') {
+                var opex = transfer_price * 1.13 + 0;
+            }
+            else if (parseInt(currency_rate) !== 1 && cost_of_peripherals !== '') {
+                var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
+            } 
+            else {
+                var opex = transfer_price * 1.3 + 0;
+            }
+
+            $("#opex-i").val(opex.toFixed(2));
+        }
+
+        //Net Sales function
+        function calculateNetSales() {
+            var sales = $("#sales-i").val();
+            var net_sales = sales / 1.12;
+
+            $("#net_sales-i").val(net_sales.toFixed(2));
+        }
+
+        //Gross Profit Function
+        function calculateGrossProfit() {
+            var net_sales = $("#net_sales-i").val();
+            var opex = $("#opex-i").val();
+            // var cost_of_peripherals = $("#cost_of_peripherals-i").val();
+
+            var gross_profit = net_sales - opex;
+
+            $("#gross_profit-i").val(gross_profit.toFixed(2));
+        }
+
+        //Total Gross Profit Function
+        function calculateTotalGrossProfit() {
+            var gross_profit = $("#gross_profit-i").val();
+            var quantity = $("#quantity-i").val();
+            
+            var total_gross_profit = gross_profit * quantity;
+
+            $("#total_gross_profit-i").val(total_gross_profit.toFixed(2));
+        }
+
+        //Total Net Sales Function
+        function calculateTotalNetSales() {
+            var total_sales = $("#total_sales-i").val();
+
+            var total_net_sales = total_sales / 1.12;
+
+            $("#total_net_sales-i").val(total_net_sales.toFixed(2));
+        }
+
+        //Profit Rate Function
+        function calculateProfitRate() {
+            var gross_profit = $("#gross_profit-i").val();
+            var sales = $("#sales-i").val();
+
+            var profit_rate = (gross_profit / sales) * 100;
+
+            $("#profit_rate-i").val(profit_rate.toFixed(0));
+        }
+
+        function clearItemInputs() {
+            $("#item_code-i").val("");
+            $("#description-i").val("");
+            $("#rate-i").val("");
+            $("#tp_php-i").val("");
+            $("#cost_periph-i").val("");
+            $("#quantity-i").val("");
+            $("#sales-i").val("");
+            $("#total_sales-i").val("");
+            $("#opex-i").val("");
+            $("#net_sales-i").val("");
+            $("#gross_profit-i").val("");
+            $("#total_gross_profit-i").val("");
+            $("#total_net_sales-i").val("");
+            $("#profit_rate-i").val("");
+        }
+    
+    </script>
+    <script>
+        $(function() {
             var pcf_no_old = $("#pcf_no").val();
             var pcf_no = $("#pcf_no_add_item_foc").val(pcf_no_old);
+
             $('#addFOCdataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
@@ -476,50 +632,124 @@
             });
         });
 
-
-        $('.source_item_code-i').select2({
-            placeholder: 'Item Code',
-            ajax: {
-                url: '/ajax/get-descriptions',
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                text: item.item_code,
-                                id: item.id
-                            }
-                        })
-                    };
+        //start of select2 function -- machine item code;
+        $(function () {
+            $('#source_item_code-foc').select2({
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("PCF.sub.source-search") }}',
+                    dataType: 'json',
                 },
-                cache: true
+            });
+        });
+
+        $('#source_item_code-foc').on('select2:select', function (e) {
+            var data = e.params.data;
+            var source_id = data.id
+            if(source_id) {
+                $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.source/get/source=' + source_id,
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                dataType: 'json',
+                }).done(function(data) {
+                    $('#description-foc').val(data.description);
+                    $("#tp_php-foc").val(data.tp_php);
+                    $("#cost_of_peripherals-foc").val(data.cost_of_peripherals);
+
+                    calculateOpexFOC();
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                    clearItemInputs();
+                });
             }
+        });
+
+        $( "#source_item_code-foc" ).on('change', function(e) {
+            clearFOCInputs();
+        });
+        //end of select2 function;
+
+        //FOC Opex Function
+        function calculateOpexFOC()
+        {
+            var transfer_price = $("#tp_php-foc").val();
+            var cost_of_peripherals = parseFloat($("#cost_of_peripherals-foc").val());
+
+            if (isNaN(cost_of_peripherals)) {
+                var opex = (transfer_price * 1.3) + 0;
+            }
+            else {
+                var opex = (transfer_price * 1.13) + cost_of_peripherals;
+            }
+
+            $("#opex-foc").val(opex.toFixed(2));
+        }
+
+        // on quantity input, calculate total cost and yearly cost
+        const foc_element = document.querySelectorAll('#quantity-foc');
+        foc_element.forEach(i => {
+            i.addEventListener('input', function() {
+                calculateTotalCostandYearlyCost();
+            });
         })
 
-        function getTotalSales() {
-            var quantity = $("#quantity_add_item").val();
-            var sales = $("#sales_add_item").val();
-            var  total_sales = sales * quantity;
-            $("#total_sales_add_item").val(total_sales.toFixed(2));
+        //on type change, calculate total cost and yearly cost
+        $("#type-foc").on('change', function(e) {
+            calculateTotalCostandYearlyCost();
+            var target = $("#type-foc").val();
+            if (target == "MACHINE")
+            {
+                $("#depreciable_life-foc").val(5);
+            }
+            else if (target == "COGS")
+            {
+                $("#depreciable_life-foc").val(1);
+            }
+        });
 
-            //get opex value
-            getOpexValue();
+        //Total Cost and Yearly Cost Function
+        function calculateTotalCostandYearlyCost() {
+            var quantity = $("#quantity-foc").val();
+            var opex = $("#opex-foc").val();
+            var total_cost = opex * quantity;
+            var depreciation_life = 0;
 
-            //get net sales
-            getNetSales();
+            var target = $("#type-foc").val();
 
-            //get gross profit
-            getGrossProfit();
+            if (target == "MACHINE"){
+                depreciation_life = 5;
+            }else if (target == "COGS"){
+                depreciation_life = 1;
+            }
+            
+            var cost_year = total_cost / depreciation_life;
 
-            //get total gross profit
-            getTotalGrossProfit();
+            $("#total_cost-foc").val(total_cost.toFixed(2));
+            $("#cost_year-foc").val(cost_year.toFixed(2));
+        }
 
-            //get total net sales
-            getTotalNetSales();
-
-            //get profit rate
-            getProfitRate();
+        function clearFOCInputs() {
+            $("#item_code-foc").val("");
+            $("#description-foc").val("");
+            $("#tp_php-foc").val("");
+            $("#cost_of_peripherals-foc").val("");
+            $("#opex-foc").val("");
+            $("#serial_no-foc").val("");
+            $("#quantity-foc").val("");
+            $("#cost_year-foc").val("");
+            $("#total_cost-foc").val("");
+            $("#depreciable_life-foc").val("");
         }
 
         function getGrandTotals(pcf_no){
@@ -550,191 +780,31 @@
             }
         }
 
-        $("#submit_item").click(function(e){
-                e.preventDefault();
-
-                var _token = $('#first_table').find('input[name="_token"]').val();
-                var pcf_no = $("#pcf_no_add_item").val();
-                var item_code = $("#hidden_item_code").val();
-                var description = $("#description_add_item").val();
-                var quantity = $("#quantity_add_item").val();
-                var sales = $("#sales_add_item").val();
-                var total_sales = $("#total_sales_add_item").val();
-                var transfer_price = $("#tp_php_add_item").val();
-                var mandatory_peripherals = $("#cost_periph_add_item").val();
-                var opex = $("#opex_add_item").val();
-                var net_sales = $("#net_sales_add_item").val();
-                var gross_profit = $("#gross_profit_add_item").val();
-                var total_gross_profit = $("#total_gross_profit_add_item").val();
-                var total_net_sales = $("#total_net_sales_add_item").val();
-                var profit_rate = $("#profit_rate_add_item").val();
-
-                $.ajax({
-                    url: "{{ route('PCF.sub.additems') }}",
-                    type:'POST',
-                    data: {
-                        _token:_token, 
-                        pcf_no:pcf_no, 
-                        item_code:item_code,
-                        description:description,
-                        quantity:quantity,
-                        sales:sales,
-                        total_sales:total_sales,
-                        transfer_price:transfer_price,
-                        mandatory_peripherals:mandatory_peripherals,
-                        opex:opex,
-                        net_sales:net_sales,
-                        gross_profit:gross_profit,
-                        total_gross_profit:total_gross_profit,
-                        total_net_sales:total_net_sales,
-                        profit_rate:profit_rate
-                    },
-                    success: function(data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Success!',
-                            'Item added successfully!',
-                            'success'
-                        );
-                        
-                        //refresh added items table
-                        refreshAddedItemsTable(); 
-                        //get grand totals
-                        getGrandTotals(pcf_no);
-
-                    },
-                    error: function (data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        );
-                    },
-                });
-        }); 
-
-        //FOC Add Item Button Click
-        $("#submit_foc").click(function(e){
-                e.preventDefault();
-
-                var _token = $('#second_table').find('input[name="_token"]').val();
-                var pcf_foc = $("#pcf_no_add_item_foc").val();
-                var item_code_foc = $("#hidden_item_code_foc").val();
-                var description_foc = $("#item_description_foc").val();
-                var quantity_foc = $("#qty_foc").val();
-                var serial_no_foc = $("#serial_no_foc").val();
-                var type_foc = $("#type_foc").val();
-                var mandatory_peripherals_foc = $("#cost_periph_foc").val();
-                var opex_foc = $("#opx_foc").val();
-                var total_cost_foc = $("#total_cost_foc").val();
-                var cost_year_foc = $("#cost_year_foc").val();
-                var depreciable_life_foc = 0;
-
-                var target = $("#type_foc").val();
-
-                if (target == "MACHINE"){
-                    depreciable_life_foc = 5;
-                } else if (target == "COGS"){
-                    depreciable_life_foc = 1;
-                }
-
-                $.ajax({
-                    url: "{{ route('PCF.sub.addfoc') }}",
-                    type:'POST',
-                    data: {
-                        _token:_token, 
-                        pcf_foc:pcf_foc, 
-                        item_code_foc:item_code_foc,
-                        description_foc:description_foc,
-                        quantity_foc:quantity_foc,
-                        serial_no_foc:serial_no_foc,
-                        type_foc:type_foc,
-                        mandatory_peripherals_foc:mandatory_peripherals_foc,
-                        opex_foc:opex_foc,
-                        total_cost_foc:total_cost_foc,
-                        depreciable_life_foc:depreciable_life_foc,
-                        cost_year_foc:cost_year_foc
-                    },
-                    success: function(data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Success!',
-                            'Item added successfully!',
-                            'success'
-                        );
-                        //referesh FOC data table
-                        refreshAddedFOCTable(); 
-                        //get grand totals 
-                        getGrandTotals(pcf_foc);
-
-                    },
-                    error: function (data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        );
-                    },
-                });
-        });
-
-        function clearInputs() {
-            $("#item_code_add_item").val("");
-            $("#hidden_item_code").val("");
-            $("#description_add_item").val("");
-            $("#rate_add_item").val("");
-            $("#tp_php_add_item").val("");
-            $("#cost_periph_add_item").val("");
-            $("#quantity_add_item").val("");
-            $("#sales_add_item").val("");
-            $("#total_sales_add_item").val("");
-            $("#opex_add_item").val("");
-            $("#net_sales_add_item").val("");
-            $("#gross_profit_add_item").val("");
-            $("#total_gross_profit_add_item").val("");
-            $("#total_net_sales_add_item").val("");
-            $("#profit_rate_add_item").val("");
-            $("#item_code_foc").val("");
-            $("#hidden_item_code_foc").val("");
-            $("#item_description_foc").val("");
-            $("#rate_foc").val("");
-            $("#tp_php_foc").val("");
-            $("#cost_periph_foc").val("");
-            $("#serial_no_foc").val("");
-            $("#type_foc").val("");
-            $("#qty_foc").val("");
-            $("#opx_foc").val("");
-            $("#total_cost_foc").val("");
-            $("#cost_year_foc").val("");
-        }
-
         function refreshAddedItemsTable() {
             //delete first the table before reinitialize
             $("#addItemDatatable").dataTable().fnDestroy();
             var pcf_no = $("#pcf_no_add_item").val();
             var table = $('#addItemDatatable').DataTable({
-                            "stripeClasses": [],
-                            processing: false,
-                            serverSide: true,
-                            ordering: true,
-                            ajax: {
-                                // "url": '{!! route('PCF.sub.list') !!}',
-                                url : '/PCF.sub/ajax/list/'+pcf_no,
-                                data : function(data){
-                                    return data;
-                                }
-                            },
-                            "columns": [
-                                { data: 'item_code' },
-                                { data: 'description' },
-                                { data: 'quantity' },
-                                { data: 'sales' },
-                                { data: 'total_sales' },
-                                { data: 'action' },
-                            ],
-                        });
+                "stripeClasses": [],
+                processing: false,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    // "url": '{!! route('PCF.sub.list') !!}',
+                    url : '/PCF.sub/ajax/list/'+pcf_no,
+                    data : function(data){
+                        return data;
+                    }
+                },
+                "columns": [
+                    { data: 'item_code' },
+                    { data: 'description' },
+                    { data: 'quantity' },
+                    { data: 'sales' },
+                    { data: 'total_sales' },
+                    { data: 'action' },
+                ],
+            });
             //reload datatable data 
             table.ajax.reload().draw();
         }
@@ -784,41 +854,6 @@
             $('#pcf_no_add_item_foc').val($(this).val());
         });
 
-        //Get description on combobox selected index changed
-        $("#item_code_add_item").on('change', function(){
-            var item_code = $(this).val();
-            if (item_code){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-descriptions/' + item_code,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        $("#hidden_item_code").val(response.item_code);
-                        $("#description_add_item").val(response.description);
-                        $("#rate_add_item").val(response.currency_rate);
-                        $("#tp_php_add_item").val(response.tp_php);
-                        $("#cost_periph_add_item").val(response.cost_of_peripherals);
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    }
-                });
-            } else {
-                $("#hidden_item_code").val("");
-                $("#description_add_item").val("");
-                $("#rate_add_item").val("");
-                $("#tp_php_add_item").val("");
-                $("#cost_periph_add_item").val("");
-            }
-        });
-
         //Get description on combobox selected index changed for FOC
         $("#item_code_foc").on('change', function(){
             var item_foc_id = $(this).val();
@@ -854,83 +889,6 @@
             }
         });
 
-        //Get the computation for FOC items
-        function getComputationFOC() {
-            var quantity = $("#qty_foc").val();
-            var opx = ($("#tp_php_foc").val() * 1.3) + parseInt($("#cost_periph_foc").val());
-            var total_cost = opx * quantity;
-            var dep_life = 0;
-
-            var target = $("#type_foc").val();
-
-            if (target == "MACHINE"){
-                dep_life = 5;
-            }else if (target == "COGS"){
-                dep_life = 1;
-            }
-            
-            var cost_year = total_cost / dep_life;
-            $("#opx_foc").val(opx.toFixed(2));
-            $("#total_cost_foc").val(total_cost.toFixed(2));
-            $("#cost_year_foc").val(cost_year.toFixed(2));
-
-        }
-        
-        function getOpexValue() {
-            var currency_rate = $("#rate_add_item").val();
-            var transfer_price = $("#tp_php_add_item").val();
-            var cost_periph = $("#cost_periph_add_item").val();
-            
-            if (parseInt(currency_rate) == 1) {
-                var opex = transfer_price * 1.15 + parseInt(cost_periph);
-            } else {
-                var opex = transfer_price * 1.3 + parseInt(cost_periph);
-            }
-
-            $("#opex_add_item").val(opex.toFixed(2));
-        }
-
-        function getNetSales() {
-            var sales = $("#sales_add_item").val();
-            var net_sales = sales/1.12;
-
-            $("#net_sales_add_item").val(net_sales.toFixed(2));
-        }
-
-        function getGrossProfit() {
-            var net_sales = $("#net_sales_add_item").val();
-            var opex = $("#opex_add_item").val();
-            var cost_periph = $("#cost_periph_add_item").val();
-
-            var gross_profit = net_sales - opex;
-            $("#gross_profit_add_item").val(gross_profit.toFixed(2));
-        }
-
-        function getTotalGrossProfit() {
-            var gross_profit = $("#gross_profit_add_item").val();
-            var quantity = $("#quantity_add_item").val();
-            
-            var total_gross_profit = gross_profit * quantity;
-
-            $("#total_gross_profit_add_item").val(total_gross_profit.toFixed(2));
-        }
-
-        function getTotalNetSales() {
-            var total_sales = $("#total_sales_add_item").val();
-
-            var total_net_sales = total_sales / 1.12;
-
-            $("#total_net_sales_add_item").val(total_net_sales.toFixed(2));
-        }
-
-        function getProfitRate() {
-            var gross_profit = $("#gross_profit_add_item").val();
-            var sales = $("#sales_add_item").val();
-
-            var profit_rate = (gross_profit / sales) * 100;
-
-            $("#profit_rate_add_item").val(profit_rate.toFixed(0));
-        }
 
         function removeAddedItem(data) {
             var pcf_no = $("#pcf_no_add_item").val();

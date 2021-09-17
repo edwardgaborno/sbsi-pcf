@@ -33,11 +33,13 @@
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
                                     <div class="row">
+                                        @can('source_create')
                                         <div class="col-md-4 offset-md-8">
                                             <a href="#" data-toggle="modal" data-target="#addSourceModal"
                                                 class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
                                                 Source</a>
                                         </div>
+                                        @endcan
                                     </div>
                                 </div>
 
