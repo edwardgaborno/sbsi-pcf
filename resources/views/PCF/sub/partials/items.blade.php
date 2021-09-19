@@ -31,10 +31,6 @@
                                 placeholder="trasfer price">    
                             <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i"
                                 placeholder="cost peripherals">
-
-                            {{-- <input type="hidden" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
-                                placeholder="transfer price"> --}}
-
                             <input type="hidden" class="form-control" name="opex" id="opex-i"
                                 placeholder="opex">
                             <input type="hidden" class="form-control" name="net_sales" id="net_sales-i"

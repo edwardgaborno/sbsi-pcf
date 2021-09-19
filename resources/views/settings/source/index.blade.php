@@ -104,7 +104,7 @@
                 searchable: true,
                 ordering: true,
                 ajax: {
-                    url: "{{ route('settings.source.source_list') }}",
+                    url: "{{ route('settings.source.list') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },

@@ -21,6 +21,11 @@ class CreatePCFInclusionsTable extends Migration
                 ->constrained('sources')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->foreignId('p_c_f_request_id')
+                ->nullable()
+                ->constrained('p_c_f_requests')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string('serial_no');
             $table->string('type');
             $table->integer('quantity');

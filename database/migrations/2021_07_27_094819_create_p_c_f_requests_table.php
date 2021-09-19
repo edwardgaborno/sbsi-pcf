@@ -33,7 +33,7 @@ class CreatePCFRequestsTable extends Migration
             $table->string('psr'); // we can get the name of the PSR by using the column created by;
             $table->string('manager');
             $table->decimal('annual_profit', 12, 2)->default(0.00);
-            $table->decimal('annual_profit_rate', 12, 2)->default(0.00);
+            $table->decimal('annual_profit_rate');
             $table->tinyInteger('status')->default(0);
             $table->string('pcf_document')->nullable();
             $table->foreignId('created_by') // user_id

@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('PCF.add') }}" method="post">
+            <form action="{{ route('PCF.store') }}" method="post">
                 @csrf
                 <div class="modal-body">
                     <!-- Left Element -->

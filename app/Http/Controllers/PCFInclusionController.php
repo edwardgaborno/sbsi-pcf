@@ -32,7 +32,6 @@ class PCFInclusionController extends Controller
     public function pcfFOCList(Request $request)
     {
         if ($request->ajax()) {
-
             $pcfInclusion = PCFInclusion::with('source')
                     ->select('p_c_f_inclusions.*')
                     ->get();

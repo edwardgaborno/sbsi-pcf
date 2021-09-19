@@ -1,5 +1,9 @@
 @extends('layouts.app')
-@section('title','PCF - PCF Add Request')
+@section('title','PCF - PCF Create Request')
+
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
 
 @section('content')
 <div id="wrapper">
@@ -31,7 +35,7 @@
                 
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="{{ route('PCF.add') }}" method="post">
+                        <form action="{{ route('PCF.store') }}" method="post">
                             @csrf
                             <div class="modal-body">
                                 <!-- Left Element -->
@@ -637,7 +641,7 @@
             })
         })
 
-        function getGrandTotal(){
+        function getGrandTotal() {
             $.ajax({
                 type: 'GET',
                 dataType: 'json',
@@ -646,7 +650,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             }).done(function(response) {
-                console.log(response.annual_profit)
                 $("#annual_profit").val(response.annual_profit);
                 $("#annual_profit_rate").val(response.annual_profit_rate);
             }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -659,3 +662,7 @@
         }
     </script>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@endpush

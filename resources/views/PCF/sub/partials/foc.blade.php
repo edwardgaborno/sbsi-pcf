@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="test_name_id">Item Code</label>
+                            <label for="source_item_code-foc">Item Code</label>
                             <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item_foc" value="{{ $pcf_no }}"> <!-- pcf no -->  
                             
                             <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>

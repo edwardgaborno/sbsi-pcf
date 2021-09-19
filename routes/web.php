@@ -48,24 +48,26 @@ Route::middleware(['auth'])->group(function () {
     // PCF Index View
     Route::prefix('PCF')->group(function () {
         Route::name('PCF')->group(function () {
-            Route::get('/', [PCFRequestController::class, 'index'])->name('');
+            Route::get('/', [PCFRequestController::class, 'index'])->name('.index');
+            Route::get('/create-request', [PCFRequestController::class, 'create'])->name('.create_request');
+            Route::post('/store', [PCFRequestController::class, 'store'])->name('.store');
+            Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
+
             Route::get('/ajax/list', [PCFRequestController::class, 'pcfList'])->name('.list');
             Route::get('/get/pcf_details={pcf_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
-            Route::post('/add', [PCFRequestController::class, 'store'])->name('.add');
-            Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
-            Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
-            Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
+
             Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
             Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
             Route::post('/store-pcf-file', [PCFRequestController::class, 'storePCFPdfFile'])->name('.storeFile');
+
+            Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
+            Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
         });
     });
 
     // PCF Index View
     Route::prefix('PCF.sub')->group(function () {
         Route::name('PCF.sub')->group(function () {
-            Route::get('/add-request', [PCFListController::class, 'show'])->name('.add_request');
-
             Route::get('/ajax/item-list/{pcf_no}', [PCFListController::class, 'pcfItemList'])->name('.item_list');
             Route::post('/store-items', [PCFListController::class, 'store'])->name('.store_items');
             Route::delete('/ajax/delete/pcf-list/{item_id}', [PCFListController::class, 'destroy'])->name('.destroy_item');
@@ -81,8 +83,8 @@ Route::middleware(['auth'])->group(function () {
     // user management
     Route::prefix('user-management/users')->group(function () {
         Route::name('users')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('');
-            Route::get('/ajax/users_list', [UserController::class, 'usersList'])->name('.users_list');
+            Route::get('/', [UserController::class, 'index'])->name('.index');
+            Route::get('/ajax/users-list', [UserController::class, 'usersList'])->name('.list');
             Route::post('/store', [UserController::class, 'store'])->name('.store');
             Route::put('/update', [UserController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-user-account/{id}', [UserController::class, 'approveUser'])->name('.approve_user');
@@ -95,8 +97,8 @@ Route::middleware(['auth'])->group(function () {
     // Source Index View
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
-            Route::get('/', [SourceController::class, 'index'])->name('');
-            Route::get('/ajax/source_list', [SourceController::class, 'sourceList'])->name('.source_list');
+            Route::get('/', [SourceController::class, 'index'])->name('.index');
+            Route::get('/ajax/source-list', [SourceController::class, 'sourceList'])->name('.list');
             Route::post('/store', [SourceController::class, 'store'])->name('.store');
             Route::put('/update', [SourceController::class, 'update'])->name('.update');
 

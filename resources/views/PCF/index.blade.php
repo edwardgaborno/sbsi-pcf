@@ -1,6 +1,11 @@
 @extends('layouts.app')
 @section('title','PCF - PCF Request')
 
+@push('styles')
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @section('content')
 <div id="wrapper">
 
@@ -35,7 +40,7 @@
                                     @can('psr_request_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
-                                                <a href="{{ route('PCF.sub.add_request') }}"
+                                                <a href="{{ route('PCF.create_request') }}"
                                                     class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
                                                     Request</a>
                                             </div>
@@ -153,7 +158,59 @@
                     )
                 });
             }
-        })
+        });
+
+        //start of select2 function -- item_code
+        $(function () {
+            $('#edit_source_item_code-i').select2({
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("settings.source.source_search") }}',
+                    dataType: 'json',
+                },
+            });
+        });
+
+        $('#edit_source_item_code-i').on('select2:select', function (e) {
+            var data = e.params.data;
+            var source_id = data.id
+            if(source_id) {
+                $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/get-details/source=' + source_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(data) {
+                    $('#description-i').val(data.description);
+                    $("#currency_rate-i").val(data.currency_rate);
+                    $("#tp_php-i").val(data.tp_php);
+                    $("#cost_of_peripherals-i").val(data.cost_of_peripherals);
+
+                    document.getElementById("quantity-i").disabled = false;
+                    document.getElementById("sales-i").disabled = false;
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                    
+                });
+            }
+        });
+
+        $( "#edit_source_item_code-i" ).on('change', function(e) {
+            document.getElementById("quantity-i").disabled = true;
+            document.getElementById("sales-i").disabled = true;
+        });
+        //end of select2 function
 
         function removeAddedItem(data) {
             var pcf_no = $("#pcf_no_add_item").val();
@@ -776,3 +833,8 @@
         });
     </script>
 @endsection
+
+@push('scripts')
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@endpush

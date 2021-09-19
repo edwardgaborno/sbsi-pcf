@@ -238,84 +238,73 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        @can('psr_request_create')
-                            <form id="first_table">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="test_name_id">Test Code</label>
-                                                <input type="hidden" class="form-control" name="pcf_no_add_items" id="pcf_no_add_item"> <!-- pcf no --> 
-                                                <input type="hidden" class="form-control" name="hidden_item_code" id="hidden_item_code"> <!-- item code --> 
-                                                <select class="form-control" name="item_code_add_item" id="item_code_add_item">
-                                                    <option value="" selected>Please select Item Code</option>
-                                                    @foreach ($sources as $source)
-                                                        <option value="{{ $source->id }}">{{ $source->item_code }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                        @can('psr_request_edit')
+                        <form id="edit_pcfListForm">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="test_name_id">Test Code</label>
+                                            <select name="source_id" id="edit_source_item_code-i" class="form-control select2"></select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="description_add_item">Item Description</label>
-                                                <input type="text" class="form-control" name="description" id="description_add_item"
-                                                    value="{{ old('description') }}" placeholder="source description" readonly required>
-                                                <input type="hidden" class="form-control" name="rate_foc" id="rate_add_item"
-                                                    value="{{ old('rate_foc') }}" placeholder="currency rate" required>
-                                                <input type="hidden" class="form-control" name="tp_php_foc" id="tp_php_add_item"
-                                                    value="{{ old('tp_php_foc') }}" placeholder="trasfer price" required>    
-                                                <input type="hidden" class="form-control" name="cost_periph_foc" id="cost_periph_add_item"
-                                                    value="{{ old('cost_periph_foc') }}" placeholder="cost peripherals" required>
-                                                {{-- <input type="text" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
-                                                    value="{{ old('transfer_price_foc') }}" placeholder="transfer price" required>
-                                                <input type="text" class="form-control" name="mandatory_peripherals_foc" id="mandatory_peripherals_add_item"
-                                                    value="{{ old('mandatory_peripherals_foc') }}" placeholder="mandatory peripherals" required> --}}
-                                                <input type="hidden" class="form-control" name="opex_foc" id="opex_add_item"
-                                                    value="{{ old('opex_foc') }}" placeholder="opex" required>
-                                                <input type="hidden" class="form-control" name="net_sales_foc" id="net_sales_add_item"
-                                                    value="{{ old('net_sales_foc') }}" placeholder="net sales" required>
-                                                <input type="hidden" class="form-control" name="gross_profit_foc" id="gross_profit_add_item"
-                                                    value="{{ old('gross_profit_foc') }}" placeholder="gross profit" required>
-                                                <input type="hidden" class="form-control" name="total_gross_profit_foc" id="total_gross_profit_add_item"
-                                                    value="{{ old('total_gross_profit_foc') }}" placeholder="total gross profit" required>
-                                                <input type="hidden" class="form-control" name="total_net_sales_foc" id="total_net_sales_add_item"
-                                                    value="{{ old('total_net_sales_foc') }}" placeholder="total net sales" required>
-                                                <input type="hidden" class="form-control" name="profit_rate_foc" id="profit_rate_add_item"
-                                                    value="{{ old('profit_rate_foc') }}" placeholder="profit rate" required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="description">Item Description</label>
+                                            <input type="text" class="form-control" name="description" id="description-i"
+                                                placeholder="Description" readonly required>
+
+                                            <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
+                                                placeholder="currency rate" >
+                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-i"
+                                                placeholder="trasfer price">    
+                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i"
+                                                placeholder="cost peripherals">
+                                            <input type="hidden" class="form-control" name="opex" id="opex-i"
+                                                placeholder="opex">
+                                            <input type="hidden" class="form-control" name="net_sales" id="net_sales-i"
+                                                placeholder="net sales">
+                                            <input type="hidden" class="form-control" name="gross_profit" id="gross_profit-i"
+                                                placeholder="gross profit">
+                                            <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit-i"
+                                                placeholder="total gross profit">
+                                            <input type="hidden" class="form-control" name="total_net_sales" id="total_net_sales-i"
+                                                placeholder="total net sales">
+                                            <input type="hidden" class="form-control" name="profit_rate" id="profit_rate-i"
+                                                placeholder="profit rate">
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="quantity_add_item">Quantity (Per Year)</label>
-                                                <input type="number" class="form-control" name="quantity" id="quantity_add_item" onkeyup="getTotalSales()"
-                                                    value="{{ old('quantity') }}" required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity_add_item">Quantity (Per Year)</label>
+                                            <input type="number" class="form-control" name="quantity" id="quantity-i"
+                                                value="{{ old('quantity') }}" required disabled>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="sales_add_item">Sales</label>
-                                                <input type="number" class="form-control" name="sales" id="sales_add_item" onkeyup="getTotalSales()"
-                                                    value="{{ old('sales') }}" required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="sales_add_item">Sales</label>
+                                            <input type="number" class="form-control" name="sales" id="sales-i"
+                                                value="{{ old('sales') }}" required disabled>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="total_sales_add_item">Total Sales</label>
-                                                <input type="text" class="form-control" name="total_sales" id="total_sales_add_item"
-                                                    value="{{ old('total_sales') }}" readonly required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="total_sales_add_item">Total Sales</label>
+                                            <input type="text" class="form-control" name="total_sales" id="total_sales-i"
+                                                value="{{ old('total_sales') }}" readonly required>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="submit_item"></label>
-                                                    <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item"><i class="fas fa-plus-circle"></i> Add
-                                                        Item</button>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="submit_item"></label>
+                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item">
+                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                        </form>
                         @endcan
                         <div class="row">
                             <div class="card-body">
@@ -341,7 +330,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                        @can('psr_request_create')
+                        @can('psr_request_edit')
                             <form id="second_table">
                                 @csrf
                                 <div class="modal-body">
@@ -351,12 +340,8 @@
                                                 <label for="test_name_id">Item Code</label>
                                                 <input type="hidden" class="form-control" name="pcf_no_add_items_foc" id="pcf_no_add_item_foc"> <!-- pcf no --> 
                                                 <input type="hidden" class="form-control" name="hidden_item_code_foc" id="hidden_item_code_foc"> <!-- item code -->
-                                                <select class="form-control" name="item_code_foc" id="item_code_foc">
-                                                    <option value="" selected>Please select Item Code</option>
-                                                    @foreach ($sources as $source)
-                                                        <option value="{{ $source->id }}">{{ $source->item_code }}</option>
-                                                    @endforeach
-                                                </select>
+
+                                                <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
                                             </div>
                                         </div>
                                         <div class="col-md-2">

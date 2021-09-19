@@ -22,7 +22,7 @@
     <!-- Nav Item - PCF Request Menu -->
     @can('psr_request_access')
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('PCF') }}">
+        <a class="nav-link" href="{{ route('PCF.index') }}">
             <i class="fas fa-list"></i>
             <span>PCF Request</span></a>
     </li>
@@ -37,7 +37,7 @@
             </a>
             <div id="manage_users" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('users') }}">Users</a>
+                    <a class="collapse-item" href="{{ route('users.index') }}">Users</a>
                 </div>
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="#">Roles</a>
@@ -58,7 +58,7 @@
             </a>
             <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('settings.source') }}">Source</a>
+                    <a class="collapse-item" href="{{ route('settings.source.index') }}">Source</a>
                 </div>
             </div>
         </li>

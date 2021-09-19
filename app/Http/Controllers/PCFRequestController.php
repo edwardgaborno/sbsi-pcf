@@ -17,11 +17,29 @@ use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
 
 class PCFRequestController extends Controller
 {
+    private $pcf_no;
+
     public function index(Request $request)
     {
         $this->authorize('psr_request_access');
     
         return view('PCF.index');
+    }
+
+    public function create(PCFList $pCFList)
+    {
+        //get max value of pcf number
+        $pcfMaxVal = PCFRequest::max('pcf_no');
+
+        if(empty($pcfMaxVal)) {
+            $this->pcf_no = '000001';
+        } else {
+            $this->pcf_no = str_pad( $pcfMaxVal + 1, 6, "0", STR_PAD_LEFT );
+        }
+
+        return view('PCF.sub.create_request',[
+            'pcf_no' => $this->pcf_no,
+        ]);
     }
 
     public function store(StorePCFRequestRequest $request)
@@ -35,7 +53,7 @@ class PCFRequestController extends Controller
 
         alert()->success('Success','PCF Request has been created.');
 
-        return view('PCF.index');
+        return redirect()->route('PCF.index');
     }
 
     public function update(UpdatePCFRequestRequest $request, PCFRequest $PCFRequest)
@@ -49,7 +67,7 @@ class PCFRequestController extends Controller
 
         Alert::success('PCF Request Details', 'Updated successfully'); 
 
-        return redirect()->route('PCF');
+        return redirect()->route('PCF.index');
     }
 
     public function pcfList(Request $request) 
