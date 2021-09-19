@@ -26,203 +26,9 @@
                     <h1 class="h3 mb-0 text-gray-800">PCF Request</h1>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <h1 class="h5 mb-0 text-gray-800">ITEM LIST</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="card shadow mb-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <form id="first_table" action="{{ route('PCF.sub.store-items') }}" method="POST">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="test_name_id">Test Code</label>
-                                            <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item"> <!-- pcf no -->
-                                            
-                                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="description">Item Description</label>
-                                            <input type="text" class="form-control" name="description" id="description-i"
-                                                placeholder="source description" readonly required>
-
-                                            <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
-                                                placeholder="currency rate" >
-                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-i"
-                                                placeholder="trasfer price">    
-                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i"
-                                                placeholder="cost peripherals">
-
-                                            {{-- <input type="hidden" class="form-control" name="transfer_price_foc" id="transfer_price_add_item"
-                                                placeholder="transfer price">
-                                            <input type="hidden" class="form-control" name="mandatory_peripherals" id="mandatory_peripherals_add_item"
-                                                placeholder="mandatory peripherals"> --}}
-
-                                            <input type="hidden" class="form-control" name="opex" id="opex-i"
-                                                placeholder="opex">
-                                            <input type="hidden" class="form-control" name="net_sales" id="net_sales-i"
-                                                placeholder="net sales">
-                                            <input type="hidden" class="form-control" name="gross_profit" id="gross_profit-i"
-                                                placeholder="gross profit">
-                                            <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit-i"
-                                                placeholder="total gross profit">
-                                            <input type="hidden" class="form-control" name="total_net_sales" id="total_net_sales-i"
-                                                placeholder="total net sales">
-                                            <input type="hidden" class="form-control" name="profit_rate" id="profit_rate-i"
-                                                placeholder="profit rate">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="quantity_add_item">Quantity (Per Year)</label>
-                                            <input type="number" class="form-control" name="quantity" id="quantity-i"
-                                                value="{{ old('quantity') }}" required disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="sales_add_item">Sales</label>
-                                            <input type="number" class="form-control" name="sales" id="sales-i"
-                                                value="{{ old('sales') }}" required disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="total_sales_add_item">Total Sales</label>
-                                            <input type="text" class="form-control" name="total_sales" id="total_sales-i"
-                                                value="{{ old('total_sales') }}" readonly required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="submit_item"></label>
-                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item">
-                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="pcfItem_datatable" width="100%"
-                                cellspacing="0">
-                                <thead>
-                                    <tr bgcolor="gray" class="text-white">
-                                        <th>Item Code</th>
-                                        <th>Item Description</th>
-                                        <th>Quantity (Per Year)</th>
-                                        <th>Sales</th>
-                                        <th>Total Sales</th>
-                                        <th>Action</th>
-                                    </tr> 
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <h1 class="h5 mb-0 text-gray-800">MACHINES AND INCLUSIONS (FOC REAGENTS, LIS CONNECTIVITY, INTERFACE, OTHER ITEMS)</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="card shadow mb-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <form id="second_table" action="{{ route('PCF.sub.store-foc') }}" method="POST">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="test_name_id">Item Code</label>
-                                            <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item_foc"> <!-- pcf no -->  
-                                            
-                                            <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="item_description_foc">Item Description</label>
-                                            <input type="text" class="form-control" name="description" id="description-foc"
-                                                value="{{ old('item_description_foc') }}" readonly required>
-
-                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-foc" placeholder="Total price (tp_php)">    
-                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-foc" placeholder="Cost of peripherals">
-                                            <input type="hidden" class="form-control" name="opex" id="opex-foc" placeholder="Opex">
-                                            <input type="hidden" class="form-control" name="total_cost" id="total_cost-foc" placeholder="Total Cost">    
-                                            <input type="hidden" class="form-control" name="cost_year" id="cost_year-foc" placeholder="Cost year">
-                                            <input type="hidden" class="form-control" name="depreciable_life" id="depreciable_life-foc" placeholder="Depreciable life">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="serial_no_foc">Serial No.</label>
-                                            <input type="text" class="form-control" name="serial_no" id="serial_no-foc"
-                                                value="N/A{{ old('serial_no-foc') }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="type_foc">Type</label>
-                                            <select class="form-control" name="type" id="type-foc">
-                                                <option value="MACHINE">MACHINE</option>
-                                                <option value="COGS" selected>COGS</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="quantity-foc">Quantity</label>
-                                            <input type="number" class="form-control" name="quantity" id="quantity-foc"
-                                                value="{{ old('quantity-foc') }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="submit"></label>
-                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit">
-                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="pcfFOC_dataTable" width="100%"
-                                cellspacing="0">
-                                <thead>
-                                    <tr bgcolor="gray" class="text-white">
-                                        <th>Item Code</th>
-                                        <th>Item Description</th>
-                                        <th>Serial No.</th>
-                                        <th>Type</th>
-                                        <th>Quantity</th>
-                                        <th>Action</th>
-                                    </tr> 
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                @include('PCF.sub.partials.items')
+                @include('PCF.sub.partials.foc')
+                
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ route('PCF.add') }}" method="post">
@@ -246,16 +52,15 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="institution">Institution</label>
                                             <textarea class="form-control" name="institution" id="institution" cols="5"
                                                 rows="3">{{ old('institution') }}</textarea>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="address">Address</label>
                                             <textarea class="form-control" name="address" id="address" cols="5"
@@ -264,23 +69,23 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="contact_person">Contact Person</label>
                                             <input type="text" class="form-control" name="contact_person" id="contact_person"
                                                 value="{{ old('contact_person') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="designation">Designation</label>
                                             <input type="text" class="form-control" name="designation" id="designation"
                                                 value="{{ old('designation') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="thru_duration_contract">Thru Designation</label>
                                             <input type="text" class="form-control" name="thru_designation" id="thru_duration_contract"
@@ -289,15 +94,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="institution">Supplier/Manufacturer</label>
                                             <input type="text" class="form-control" name="supplier" id="supplier"
                                                 value="{{ old('supplier') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="terms">Terms</label>
@@ -305,6 +109,7 @@
                                                 value="{{ old('supplier') }}" required>
                                         </div>
                                     </div>
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="validity">Validity</label>
@@ -312,20 +117,21 @@
                                                 value="{{ old('validity') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="delivery">Delivery</label>
                                             <input type="text" class="form-control" name="delivery" id="delivery"
                                                 value="{{ old('delivery') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="warranty">Warranty (For Machines Only)</label>
                                             <input type="text" class="form-control" name="warranty" id="warranty"
-                                                value="{{ old('supplier') }}" required>
+                                                value="{{ old('supplier') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -415,32 +221,31 @@
 
 @section('scripts')
     <script>
-        $(function() {
-            var pcf_no_old = $("#pcf_no").val();
-            var pcf_no = $("#pcf_no_add_item").val(pcf_no_old);
-
+        //scripts for pcfList, starts here;
+        document.addEventListener('DOMContentLoaded', function() {
             $('#pcfItem_datatable').DataTable({
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
-                resposive: true,
+                responsive: true,
                 searchable: true,
                 ordering: true,
                 ajax: {
-                    url : '/PCF.sub/ajax/list/',
+                    url : "{{ route('PCF.sub.item_list', $pcf_no) }}",
                     headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                 },
                 columns: [
                     { data: 'source.item_code' },
-                    { data: 'description' },
+                    { data: 'source.description' },
                     { data: 'quantity' },
                     { data: 'sales' },
                     { data: 'total_sales' },
                     { data: 'action' },
                 ],
             });
+            getGrandTotal();
         });
 
         //start of select2 function -- item_code
@@ -450,7 +255,7 @@
                 minimumInputLength: 3,
                 placeholder: 'Item code',
                 ajax: {
-                    url: '{{ route("PCF.sub.source-search") }}',
+                    url: '{{ route("settings.source.source_search") }}',
                     dataType: 'json',
                 },
             });
@@ -461,14 +266,14 @@
             var source_id = data.id
             if(source_id) {
                 $.ajax({
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: '/settings.source/get/source=' + source_id,
-                contentType: "application/json; charset=utf-8",
-                cache: false,
-                dataType: 'json',
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/get-details/source=' + source_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
                 }).done(function(data) {
                     $('#description-i').val(data.description);
                     $("#currency_rate-i").val(data.currency_rate);
@@ -509,6 +314,7 @@
             });
         })
 
+        //Total Sales Function
         function calculateTotalSales() {
             var quantity = $("#quantity-i").val();
             var sales = $("#sales-i").val();
@@ -602,13 +408,50 @@
             $("#total_net_sales-i").val("");
             $("#profit_rate-i").val("");
         }
-    
-    </script>
-    <script>
-        $(function() {
-            var pcf_no_old = $("#pcf_no").val();
-            var pcf_no = $("#pcf_no_add_item_foc").val(pcf_no_old);
 
+        //delete item from pcfList table
+        let item_id;
+        $('#pcfItem_datatable').on('click', '.pcfListDelete', function (e) {
+            e.preventDefault();
+            item_id = $(this).data('id');
+            Swal.fire({
+                title: 'Delete this item?',
+                text: "This item will be permanently deleted.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'DELETE',
+                        url: '/PCF.sub/ajax/delete/pcf-list/' + item_id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    }).done(function(response) {
+                        Swal.fire(
+                            'Success!',
+                            'The item has been deleted.',
+                            'success'
+                        )
+                        //reload Item List dataTable
+                        $('#pcfItem_datatable').DataTable().ajax.reload();
+                        getGrandTotal()
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Please contact your system administrator!',
+                            'error'
+                        )
+                    });
+                }
+            })
+        })
+
+        //scripts for pcfInclusion, starts here;
+        $(function() {
             $('#pcfFOC_dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
@@ -617,20 +460,21 @@
                 searchable: true,
                 ordering: true,
                 ajax: {
-                    url : '/PCF.sub/ajax/foc-list/',
+                    url : "{{ route('PCF.sub.foc_list', $pcf_no) }}",
                     headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                 },
                 columns: [
                     { data: 'source.item_code' },
-                    { data: 'description' },
+                    { data: 'source.description' },
                     { data: 'serial_no' },
                     { data: 'type' },
                     { data: 'quantity' },
                     { data: 'action' },
                 ],
             });
+            getGrandTotal();
         });
 
         //start of select2 function -- machine item code;
@@ -640,7 +484,7 @@
                 minimumInputLength: 3,
                 placeholder: 'Item code',
                 ajax: {
-                    url: '{{ route("PCF.sub.source-search") }}',
+                    url: '{{ route("settings.source.source_search") }}',
                     dataType: 'json',
                 },
             });
@@ -655,7 +499,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '/settings.source/get/source=' + source_id,
+                url: '/settings.source/get-details/source=' + source_id,
                 contentType: "application/json; charset=utf-8",
                 cache: false,
                 dataType: 'json',
@@ -671,7 +515,7 @@
                         'Please contact your system administrator!',
                         'error'
                     )
-                    clearItemInputs();
+                    clearFOCInputs();
                 });
             }
         });
@@ -746,239 +590,72 @@
             $("#tp_php-foc").val("");
             $("#cost_of_peripherals-foc").val("");
             $("#opex-foc").val("");
-            $("#serial_no-foc").val("");
+            $("#serial_no-foc").val("N / A");
             $("#quantity-foc").val("");
             $("#cost_year-foc").val("");
             $("#total_cost-foc").val("");
             $("#depreciable_life-foc").val("");
         }
 
-        function getGrandTotals(pcf_no){
-            if (pcf_no){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-grand-totals/' + pcf_no,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        $("#annual_profit").val(response.annual_profit);
-                        $("#annual_profit_rate").val(response.annual_profit_rate);
-                    },
-                    error: function(response) {
+        let foc_id;
+        $('#pcfFOC_dataTable').on('click', '.pcfInclusionDelete', function (e) {
+            e.preventDefault();
+            foc_id = $(this).data('id');
+            Swal.fire({
+                title: 'Delete this item?',
+                text: "This item will be permanently deleted.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'DELETE',
+                        url: '/PCF.sub/ajax/delete/pcf-foc/' + foc_id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    }).done(function(response) {
+                        Swal.fire(
+                            'Success!',
+                            'The item has been deleted.',
+                            'success'
+                        )
+                        //reload Item List dataTable
+                        $('#pcfFOC_dataTable').DataTable().ajax.reload();
+                        getGrandTotal();
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
                         Swal.fire(
                             'Something went wrong!',
                             'Please contact your system administrator!',
                             'error'
                         )
-                    }
-                });
-            } else {
-                $("#annual_profit").val("0");
-                $("#annual_profit_rate").val("0");
-            }
-        }
+                    });
+                }
+            })
+        })
 
-        function refreshAddedItemsTable() {
-            //delete first the table before reinitialize
-            $("#addItemDatatable").dataTable().fnDestroy();
-            var pcf_no = $("#pcf_no_add_item").val();
-            var table = $('#addItemDatatable').DataTable({
-                "stripeClasses": [],
-                processing: false,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    // "url": '{!! route('PCF.sub.list') !!}',
-                    url : '/PCF.sub/ajax/list/'+pcf_no,
-                    data : function(data){
-                        return data;
-                    }
+        function getGrandTotal(){
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url : "{{ route('PCF.sub.get_grand_total', $pcf_no) }}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                "columns": [
-                    { data: 'item_code' },
-                    { data: 'description' },
-                    { data: 'quantity' },
-                    { data: 'sales' },
-                    { data: 'total_sales' },
-                    { data: 'action' },
-                ],
+            }).done(function(response) {
+                console.log(response.annual_profit)
+                $("#annual_profit").val(response.annual_profit);
+                $("#annual_profit_rate").val(response.annual_profit_rate);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                Swal.fire(
+                    'Something went wrong!',
+                    'Please contact your system administrator!',
+                    'error'
+                )
             });
-            //reload datatable data 
-            table.ajax.reload().draw();
-        }
-
-        //FOC Refresh Tble After Add Item
-        function refreshAddedFOCTable() {
-            //delete first the table before reinitialize
-            $("#addFOCdataTable").dataTable().fnDestroy();
-            var pcf_no = $("#pcf_no_add_item_foc").val();
-            var table = $('#addFOCdataTable').DataTable({
-                            "stripeClasses": [],
-                            processing: false,
-                            serverSide: true,
-                            ordering: true,
-                            ajax: {
-                                // "url": '{!! route('PCF.sub.list') !!}',
-                                url : '/PCF.sub/ajax/foc-list/'+pcf_no,
-                                data : function(data){
-                                    return data;
-                                }
-                            },
-                            "columns": [
-                                { data: 'item_code' },
-                                { data: 'description' },
-                                { data: 'serial_no' },
-                                { data: 'type' },
-                                { data: 'quantity' },
-                                { data: 'action' },
-                            ],
-                        });
-            //reload datatable data 
-            table.ajax.reload().draw();
-        }
-
-        //Format no
-        // function formatNumber (num) {
-        //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-        // }
-       
-       //Get PCF_No for reference
-        $('#pcf_no').keyup(function() {
-            $('#pcf_no_add_item').val($(this).val());
-        });
-
-        //Get PCF_No for reference
-        $('#pcf_no_foc').keyup(function() {
-            $('#pcf_no_add_item_foc').val($(this).val());
-        });
-
-        //Get description on combobox selected index changed for FOC
-        $("#item_code_foc").on('change', function(){
-            var item_foc_id = $(this).val();
-            if (item_foc_id){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-description/' + item_foc_id,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        $("#hidden_item_code_foc").val(response.item_code);
-                        $("#item_description_foc").val(response.description);
-                        $("#rate_foc").val(response.currency_rate);
-                        $("#tp_php_foc").val(response.tp_php);
-                        $("#cost_periph_foc").val(response.cost_of_peripherals);
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    }
-                });
-            } else {
-                $("#hidden_item_code_foc").val("");
-                $("#item_description_foc").val("");
-                $("#rate_foc").val("");
-                $("#tp_php_foc").val("");
-                $("#cost_periph_foc").val("");
-            }
-        });
-
-
-        function removeAddedItem(data) {
-            var pcf_no = $("#pcf_no_add_item").val();
-            Swal.fire({
-                title: 'Remove Added Item',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    var id = data.data('id');
-
-                    $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF.sub/ajax/remove-added-item/' + id,
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            //reload table 
-                            refreshAddedItemsTable(); 
-                            getGrandTotals(pcf_no);
-                            //fire the alert message
-                            Swal.fire(
-                                'Success!',
-                                'Added item has been removed successfully!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
-                    });
-                }
-            })
-        }
-
-        function removeAddedInclusion(data) {
-            var pcf_no = $("#pcf_no_add_item_foc").val();
-            Swal.fire({
-                title: 'Remove Added Inclusion',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    var id = data.data('id');
-
-                    $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF.sub/ajax/remove-added-inclusion/' + id,
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            //reload table 
-                            refreshAddedFOCTable(); 
-                            getGrandTotals(pcf_no);
-                            //fire the alert message
-                            Swal.fire(
-                                'Success!',
-                                'Inclusion has been removed successfully!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
-                    });
-                }
-            })
         }
     </script>
 @endsection

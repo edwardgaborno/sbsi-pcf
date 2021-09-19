@@ -21,15 +21,13 @@ class CreatePCFInclusionsTable extends Migration
                 ->constrained('sources')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('description');
             $table->string('serial_no');
             $table->string('type');
             $table->integer('quantity');
-            // $table->double('mandatory_peripherals', 11, 2)->default(0.00);
-            $table->double('opex', 11, 2)->default(0.00);
-            $table->double('total_cost', 11, 2)->default(0.00);
+            $table->decimal('opex', 11, 2)->default(0.00);
+            $table->decimal('total_cost', 11, 2)->default(0.00);
             $table->tinyInteger('depreciable_life');
-            $table->double('cost_year', 11, 2)->default(0.00);
+            $table->decimal('cost_year', 11, 2)->default(0.00);
             $table->timestamps();
         });
     }

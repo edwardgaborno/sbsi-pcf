@@ -104,7 +104,7 @@
                 searchable: true,
                 ordering: true,
                 ajax: {
-                    url: "{{ route('settings.source.list') }}",
+                    url: "{{ route('settings.source.source_list') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -142,7 +142,7 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/settings.source/get/source=' + source_id,
+                    url: '/settings.source/get-details/source=' + source_id,
                     contentType: "application/json; charset=utf-8",
                     cache: false,
                     dataType: 'json',

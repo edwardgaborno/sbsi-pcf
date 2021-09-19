@@ -21,19 +21,18 @@ class CreatePCFListsTable extends Migration
                 ->constrained('sources')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('description');
             $table->integer('quantity');
-            $table->double('sales', 11, 2)->default(0.00);
-            $table->double('total_sales', 11, 2)->default(0.00);
-            $table->double('transfer_price', 11, 2)->default(0.00);
-            $table->double('mandatory_peripherals', 11, 2)->default(0.00);
-            $table->double('opex', 11, 2)->default(0.00);
-            $table->double('net_sales', 11, 2)->default(0.00);
-            $table->double('gross_profit', 11, 2)->default(0.00);
-            $table->double('total_gross_profit', 11, 2)->default(0.00);
-            $table->double('total_net_sales', 11, 2)->default(0.00);
+            $table->decimal('sales', 11, 2)->default(0.00);
+            $table->decimal('total_sales', 12, 2)->default(0.00);
+            $table->decimal('transfer_price', 11, 2)->default(0.00);
+            $table->decimal('mandatory_peripherals', 11, 2)->default(0.00);
+            $table->decimal('opex', 11, 2)->default(0.00);
+            $table->decimal('net_sales', 11, 2)->default(0.00);
+            $table->decimal('gross_profit', 11, 2)->default(0.00);
+            $table->decimal('total_gross_profit', 12, 2)->default(0.00);
+            $table->decimal('total_net_sales', 12, 2)->default(0.00);
             $table->double('profit_rate', 11, 2)->default(0.00);
-            $table->string('above_standard_price')->nullable();
+            $table->enum('above_standard_price', ['yes', 'no'])->nullable();
             $table->timestamps();
         });
     }

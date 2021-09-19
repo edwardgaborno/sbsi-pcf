@@ -40,8 +40,8 @@ class UpdatePCFRequestRequest extends FormRequest
             'date_bidding' => 'required|date',
             'bid_docs_price' => 'required|numeric',
             'manager' => 'required|string',
-            'annual_profit' => 'nullable|numeric', //make it required later on -- for testing purposes;
-            'annual_profit_rate' => 'nullable|numeric'
+            'annual_profit' => 'required|numeric',
+            'annual_profit_rate' => 'required|numeric'
         ];
     }
 }

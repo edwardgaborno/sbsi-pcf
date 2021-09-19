@@ -86,16 +86,15 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="edit_institution">Institution</label>
-                                            <input type="text" class="form-control" name="institution" id="edit_institution"
-                                                value="{{ old('edit_institution') }}" required>
+                                            <textarea class="form-control" name="institution" id="edit_institution" cols="5"
+                                                rows="3">{{ old('institution') }}</textarea>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="edit_address">Address</label>
                                             <textarea class="form-control" name="address" id="edit_address" cols="5"
@@ -104,23 +103,23 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_contact_person">Contact Person</label>
                                             <input type="text" class="form-control" name="contact_person" id="edit_contact_person"
                                                 value="{{ old('edit_contact_person') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_designation">Designation</label>
                                             <input type="text" class="form-control" name="designation" id="edit_designation"
                                                 value="{{ old('edit_designation') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_thru_designation">Thru Designation</label>
                                             <input type="text" class="form-control" name="thru_designation" id="edit_thru_designation"
@@ -129,15 +128,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_supplier">Supplier/Manufacturer</label>
                                             <input type="text" class="form-control" name="supplier" id="edit_supplier"
                                                 value="{{ old('edit_supplier') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_terms">Terms</label>
@@ -145,6 +143,7 @@
                                                 value="{{ old('edit_terms') }}" required>
                                         </div>
                                     </div>
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="edit_validity">Validity</label>
@@ -152,16 +151,17 @@
                                                 value="{{ old('edit_validity') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="edit_delivery">Delivery</label>
                                             <input type="text" class="form-control" name="delivery" id="edit_delivery"
                                                 value="{{ old('edit_delivery') }}" required>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="edit_warranty">Warranty (For Machines Only)</label>
                                             <input type="text" class="form-control" name="warranty" id="edit_warranty"

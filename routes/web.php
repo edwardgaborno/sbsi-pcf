@@ -41,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
     //route for file upload feature for temporary location
     Route::prefix('tmp')->group(function (){
         Route::name('store')->group(function () {
-            Route::post('/pcf-document', [FilepondController::class, 'storePCFDocument'])->name('.pcf-document');
+            Route::post('/pcf-document', [FilepondController::class, 'storePCFDocument'])->name('.pcf_document');
         });
     });
 
@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         Route::name('PCF')->group(function () {
             Route::get('/', [PCFRequestController::class, 'index'])->name('');
             Route::get('/ajax/list', [PCFRequestController::class, 'pcfList'])->name('.list');
-            Route::get('/get/pcf_details={pcf_id}', [PCFRequestController::class, 'getPCFRequestDetails'])->name('.get-pcf-details');
+            Route::get('/get/pcf_details={pcf_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
             Route::post('/add', [PCFRequestController::class, 'store'])->name('.add');
             Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
@@ -64,19 +64,17 @@ Route::middleware(['auth'])->group(function () {
     // PCF Index View
     Route::prefix('PCF.sub')->group(function () {
         Route::name('PCF.sub')->group(function () {
-            Route::get('/add-request', [PCFListController::class, 'show'])->name('.addrequest');
-            Route::post('/store-items', [PCFListController::class, 'store'])->name('.store-items');
-            Route::get('/ajax/list/', [PCFListController::class, 'pcfItemList'])->name('.list');
-            Route::get('/ajax/get-description/{id}', [PCFListController::class, 'getDescription'])->name('.get_description'); 
-            Route::post('/ajax/get-descriptions/', [PCFListController::class, 'search'])->name('.get_descriptions'); 
-            Route::get('/ajax/remove-added-item/{id}', [PCFListController::class, 'removeAddedItem'])->name('.remove_added_item');
-            Route::get('/ajax/remove-added-inclusion/{id}', [PCFListController::class, 'removeAddedInclusion'])->name('.remove_added_inclusion');
-            Route::get('/ajax/get-grand-totals/{pcf_no}', [PCFListController::class, 'getGrandTotals'])->name('.get_grand_totals');
+            Route::get('/add-request', [PCFListController::class, 'show'])->name('.add_request');
 
-            Route::get('/source/web/search/', [PCFListController::class, 'sourceSearch'])->name('.source-search');
+            Route::get('/ajax/item-list/{pcf_no}', [PCFListController::class, 'pcfItemList'])->name('.item_list');
+            Route::post('/store-items', [PCFListController::class, 'store'])->name('.store_items');
+            Route::delete('/ajax/delete/pcf-list/{item_id}', [PCFListController::class, 'destroy'])->name('.destroy_item');
 
-            Route::get('/ajax/foc-list/', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
-            Route::post('/store-foc', [PCFInclusionController::class, 'store'])->name('.store-foc');
+            Route::get('/ajax/foc-list/{pcf_no}', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
+            Route::post('/store-foc', [PCFInclusionController::class, 'store'])->name('.store_foc');
+            Route::delete('/ajax/delete/pcf-foc/{foc_id}', [PCFInclusionController::class, 'destroy'])->name('.destroy_foc');
+
+            Route::get('/ajax/get-grand-total/{pcf_no}', [PCFRequestController::class, 'getGrandTotal'])->name('.get_grand_total');
         });
     });
 
@@ -84,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('user-management/users')->group(function () {
         Route::name('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('');
-            Route::get('/ajax/list', [UserController::class, 'usersList'])->name('.list');
+            Route::get('/ajax/users_list', [UserController::class, 'usersList'])->name('.users_list');
             Route::post('/store', [UserController::class, 'store'])->name('.store');
             Route::put('/update', [UserController::class, 'update'])->name('.update');
             Route::get('/ajax/approve-user-account/{id}', [UserController::class, 'approveUser'])->name('.approve_user');
@@ -98,10 +96,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
             Route::get('/', [SourceController::class, 'index'])->name('');
-            Route::get('/ajax/source_list', [SourceController::class, 'sourceList'])->name('.list');
-            Route::get('/get/source={source_id}', [SourceController::class, 'getSourceDetails'])->name('.get-source-details');
+            Route::get('/ajax/source_list', [SourceController::class, 'sourceList'])->name('.source_list');
             Route::post('/store', [SourceController::class, 'store'])->name('.store');
             Route::put('/update', [SourceController::class, 'update'])->name('.update');
+
+            Route::get('/source/web/search/', [SourceController::class, 'sourceSearch'])->name('.source_search');
+            Route::get('/get-details/source={source_id}', [SourceController::class, 'sourceDescription'])->name('.source_description');
         });
     });
 

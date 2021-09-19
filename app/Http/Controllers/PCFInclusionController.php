@@ -16,37 +16,37 @@ class PCFInclusionController extends Controller
         
         PCFInclusion::create($request->validated());
 
-        alert()->success('Success','PCF Request FOC has been added.');
+        alert()->success('Success','The item has been added.');
 
         return back();
+    }
+
+    public function destroy($foc_id)
+    {
+        $pcfInclusion = PCFInclusion::findOrFail($foc_id);
+        $pcfInclusion->delete();
+
+        return response()->json(['success' => 'success'], 200);
     }
 
     public function pcfFOCList(Request $request)
     {
         if ($request->ajax()) {
 
-            $PCFInclusion = PCFInclusion::with('source')
+            $pcfInclusion = PCFInclusion::with('source')
                     ->select('p_c_f_inclusions.*')
                     ->get();
 
-            return Datatables::of($PCFInclusion)
-                ->addIndexColumn()
+            return Datatables::of($pcfInclusion)
                 ->addColumn('action', function ($data) {
                     if (auth()->user()->can('psr_request_delete')) {
                         return
-                            ' 
-                        <td>
-                            <a href="#" class="badge badge-danger"
-                                data-id="' . $data->id . '"
-                                onclick="removeAddedInclusion($(this))"><i
-                                    class="fas fa-trash-alt"></i> 
-                                Remove
-                            </a>
-                        </td>
+                        '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
+                            <i class="fas fa-trash-alt"></i> Delete item</a>
                         ';
                     }
                 })
-                ->escapeColumns([])
+                ->rawColumns(['action'])
                 ->make(true);
         }
     }

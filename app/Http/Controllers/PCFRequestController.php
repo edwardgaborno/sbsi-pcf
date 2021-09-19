@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFRequest;
 use App\Models\PCFList;
+use App\Models\PCFInclusion;
 use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
-use App\Models\PCFInclusion;
 use Yajra\Datatables\Datatables;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
-use App\Http\Requests\Source\UpdateSourceRequest;
 
 class PCFRequestController extends Controller
 {
@@ -51,11 +50,6 @@ class PCFRequestController extends Controller
         Alert::success('PCF Request Details', 'Updated successfully'); 
 
         return redirect()->route('PCF');
-    }
-
-    public function destroy(PCFRequest $pCFRequest)
-    {
-        //
     }
 
     public function pcfList(Request $request) 
@@ -111,7 +105,7 @@ class PCFRequestController extends Controller
         }
     }
 
-    public function getPCFRequestDetails($pcf_id)
+    public function pcfRequestDetails($pcf_id)
     {
         $this->authorize('psr_request_access');
 
@@ -172,7 +166,7 @@ class PCFRequestController extends Controller
 
     public function downloadPdf($pcf_no)
     {
-        $this->authorize('psr_download_pcf');
+        $this->authorize('download_pcf');
         //check if valid request and authorized user
 
         if (\Auth::check() && !empty($pcf_no)) {
@@ -228,7 +222,7 @@ class PCFRequestController extends Controller
 
     public function viewPdf($pcf_no)
     {
-        $this->authorize('psr_view_pcf');
+        $this->authorize('view_pcf');
 
         //check if valid request and authorized user
         if (\Auth::check() && !empty($pcf_no)) {
@@ -311,6 +305,25 @@ class PCFRequestController extends Controller
         Alert::success('Success', 'The PCF file has been uploaded.');
 
         return back();
+    }
 
+    public function getGrandTotal($pcf_no)
+    {
+        $grandTotalGrossProfit = PCFList::where('pcf_no', $pcf_no)->sum('gross_profit');
+        $grandTotalCostPerYear = PCFInclusion::where('pcf_no', $pcf_no)->sum('cost_year');
+        $grandTotalNetSales = PCFList::where('pcf_no', $pcf_no)->sum('total_net_sales'); //ito ung zero
+
+        $annual_profit = $grandTotalGrossProfit - $grandTotalCostPerYear;
+        
+        if ($grandTotalNetSales > 0) { // pano to if negative? //try natin mag negative
+            $annual_profit_rate = ($annual_profit / $grandTotalNetSales) * 100;
+        } else { //pag 0 then = to 0 yung din sya
+            $annual_profit_rate = 0;
+        }
+
+        return response()->json(array(
+            'annual_profit' => number_format((float)$annual_profit, 2, '.', ''),
+            'annual_profit_rate' => number_format((float)$annual_profit_rate, 0, '.', ''),
+        ), 200);
     }
 }

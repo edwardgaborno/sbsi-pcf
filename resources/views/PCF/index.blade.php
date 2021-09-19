@@ -35,7 +35,7 @@
                                     @can('psr_request_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
-                                                <a href="{{ route('PCF.sub.addrequest') }}"
+                                                <a href="{{ route('PCF.sub.add_request') }}"
                                                     class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
                                                     Request</a>
                                             </div>
@@ -247,7 +247,7 @@
 
         function loadAddItemTable(pcf_no) {
             //delete first the table before reinitialize
-            $("#addItemDatatable").dataTable().fnDestroy();
+            $("#addItemDatatable1").dataTable().fnDestroy();
             $("#pcf_no_add_item").val(pcf_no);
             var table = $('#addItemDatatable').DataTable({
                 "stripeClasses": [],
@@ -255,7 +255,6 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    // "url": '{!! route('PCF.sub.list') !!}',
                     url : '/PCF.sub/ajax/list/'+pcf_no,
                     data : function(data){
                         return data;
@@ -285,7 +284,6 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    // "url": '{!! route('PCF.sub.list') !!}',
                     url : '/PCF.sub/ajax/foc-list/'+pcf_no,
                     data : function(data){
                         return data;
@@ -352,7 +350,7 @@
                 var profit_rate = $("#profit_rate_add_item").val();
 
                 $.ajax({
-                    url: "{{ route('PCF.sub.store-items') }}",
+                    url: "{{ route('PCF.sub.store_items') }}",
                     type:'POST',
                     data: {
                         _token:_token, 
@@ -422,7 +420,7 @@
                 }
 
                 $.ajax({
-                    url: "{{ route('PCF.sub.store-foc') }}",
+                    url: "{{ route('PCF.sub.store_foc') }}",
                     type:'POST',
                     data: {
                         _token:_token, 
@@ -769,7 +767,7 @@
                 pdfPreviewHeight: 320,
                 pdfComponentExtraParams: 'toolbar=0&view=fit&page=1',
                 server: {
-                    url: "{{ route('store.pcf-document') }}",
+                    url: "{{ route('store.pcf_document') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }

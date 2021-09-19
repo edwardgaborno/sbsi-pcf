@@ -37,7 +37,7 @@ class SourceController extends Controller
         catch (Exception $ex) {
 
             DB::rollBack();
-            throw $ex; // use better error handling, for now this will do;
+            throw $ex; // use better error handling, for now, this will do;
         }
 
         return back();
@@ -62,7 +62,7 @@ class SourceController extends Controller
         catch (Exception $ex) {
 
             DB::rollBack();
-            throw $ex; // use better error handling, for now this will do;
+            throw $ex; // use better error handling, for now, this will do;
         }
 
         return back();
@@ -83,11 +83,23 @@ class SourceController extends Controller
                 ->addColumn('tp_php', function ($data) {
                     return number_format($data->tp_php, 2, '.', ',');
                 })
+                ->addColumn('mandatory_peripherals', function ($data) {
+                    if (!empty($data->mandatory_peripherals)) {
+                        return $data->mandatory_peripherals;
+                    }
+                    else {
+                        return "None";
+                    }
+                })
                 ->addColumn('cost_of_peripherals', function ($data) {
-                    return number_format($data->cost_of_peripherals, 2, '.', ',');
+                    if (!empty($data->cost_of_peripherals)) {
+                        return number_format($data->cost_of_peripherals, 2, '.', ',');
+                    }
+                    else {
+                        return "None";
+                    }
                 })
                 ->addColumn('actions', function ($data) {
-
                     if(auth()->user()->can('source_edit')) {
                         return
                         '
@@ -102,7 +114,16 @@ class SourceController extends Controller
         }
     }
 
-    public function getSourceDetails($source_id)
+    public function sourceSearch(Request $request)
+    {
+        $this->authorize('source_access');
+
+        $sources = Source::where('item_code', 'LIKE', '%'.$request->input('term', '').'%')
+                        ->get(['id', 'item_code as text']);
+        return ['results' => $sources];
+    }
+
+    public function sourceDescription($source_id)
     {
         $this->authorize('source_access');
         
