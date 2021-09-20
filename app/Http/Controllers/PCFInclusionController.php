@@ -14,7 +14,9 @@ class PCFInclusionController extends Controller
     {
         $this->authorize('psr_request_store');
         
-        PCFInclusion::create($request->validated());
+        PCFInclusion::create($request->validated() + [
+            'p_c_f_request_id' => $request->p_c_f_request_id,
+        ]);
 
         alert()->success('Success','The item has been added.');
 
@@ -35,6 +37,29 @@ class PCFInclusionController extends Controller
             $pcfInclusion = PCFInclusion::with('source')
                     ->select('p_c_f_inclusions.*')
                     ->get();
+
+            return Datatables::of($pcfInclusion)
+                ->addColumn('action', function ($data) {
+                    if (auth()->user()->can('psr_request_delete')) {
+                        return
+                        '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
+                            <i class="fas fa-trash-alt"></i> Delete item</a>
+                        ';
+                    }
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+
+    public function pcfRequestInclusion(Request $request, $pcf_request_id)
+    {
+        $this->authorize('psr_request_access');
+
+        if ($request->ajax()) {
+            $pcfInclusion = PCFInclusion::with('source')
+                        ->where('p_c_f_request_id', $pcf_request_id)
+                        ->get();
 
             return Datatables::of($pcfInclusion)
                 ->addColumn('action', function ($data) {

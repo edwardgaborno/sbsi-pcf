@@ -322,7 +322,7 @@
         function calculateTotalSales() {
             var quantity = $("#quantity-i").val();
             var sales = $("#sales-i").val();
-            var  total_sales = sales * quantity;
+            var total_sales = sales * quantity;
             $("#total_sales-i").val(total_sales.toFixed(2));
         }
 

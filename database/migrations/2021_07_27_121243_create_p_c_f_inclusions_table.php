@@ -31,8 +31,8 @@ class CreatePCFInclusionsTable extends Migration
             $table->integer('quantity');
             $table->decimal('opex', 11, 2)->default(0.00);
             $table->decimal('total_cost', 11, 2)->default(0.00);
-            $table->tinyInteger('depreciable_life');
             $table->decimal('cost_year', 11, 2)->default(0.00);
+            $table->tinyInteger('depreciable_life');
             $table->timestamps();
         });
     }

@@ -112,25 +112,33 @@
                 ],
             });
         });
-        
-        let pcf_id;
+    </script>
+
+    <script> 
+        let pcf_request_id;
 
         $('#pcf_dataTable').on('click', '.editPCFRequest', function (e) {
             e.preventDefault();
-            pcf_id = $(this).data('id');
-            if (pcf_id){
+            pcf_request_id = $(this).data('id');
+            if (pcf_request_id){
                 $.ajax({
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/PCF/get/pcf_details=' + pcf_id,
+                    url: '/PCF/get/pcf_details=' + pcf_request_id,
                     contentType: "application/json; charset=utf-8",
                     cache: false,
                     dataType: 'json',
                 }).done(function(data) {
                     $('#pcf_request_id').val(data.id);
+                    $('#pcf_request_id-i').val(data.id); //pcfList pcf_request_id;
+                    $('#pcf_request_id-foc').val(data.id); //pcfInclusion pcf_request_id;
+
                     $('#edit_pcf_no').val(data.pcf_no);
+                    $('#edit_pcf_no-i').val(data.pcf_no); //pcfList pcf no;
+                    $('#edit_pcf_no-foc').val(data.pcf_no); //pcfInclusion pcf no;
+
                     $('#edit_date').val(data.date);
                     $('#edit_institution').val(data.institution);
                     $('#edit_address').val(data.address);
@@ -150,6 +158,9 @@
                     $('#edit_annual_profit').val(data.annual_profit);
                     $('#edit_annual_profit_rate').val(data.annual_profit_rate);
                     $('#editPCFRequestModal').modal('show');
+
+                    editItemDataTable(pcf_request_id);
+                    editFOCDataTable(pcf_request_id)
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Something went wrong!',
@@ -160,9 +171,37 @@
             }
         });
 
+        //Item List DataTable
+        function editItemDataTable(pcf_request_id) {
+            $('#edit_pcfItem_dataTable').DataTable({
+                "stripeClasses": [],
+                destroy: true,
+                processing: false,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    url : '/PCF/ajax/items-list/' + pcf_request_id,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [
+                    { data: 'source.item_code' },
+                    { data: 'source.description' },
+                    { data: 'quantity' },
+                    { data: 'sales' },
+                    { data: 'total_sales' },
+                    { data: 'action' },
+                ],
+            });
+        }
+
         //start of select2 function -- item_code
         $(function () {
-            $('#edit_source_item_code-i').select2({
+            $('#source_item_code-i').select2({
+                dropdownParent: $('#editPCFRequestModal'),
                 allowClear: true,
                 minimumInputLength: 3,
                 placeholder: 'Item code',
@@ -173,7 +212,7 @@
             });
         });
 
-        $('#edit_source_item_code-i').on('select2:select', function (e) {
+        $('#source_item_code-i').on('select2:select', function (e) {
             var data = e.params.data;
             var source_id = data.id
             if(source_id) {
@@ -195,25 +234,89 @@
                     document.getElementById("quantity-i").disabled = false;
                     document.getElementById("sales-i").disabled = false;
 
+                    calculateOpex();
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Something went wrong!',
                         'Please contact your system administrator!',
                         'error'
                     )
-                    
+                    clearItemInputs();
                 });
             }
         });
 
-        $( "#edit_source_item_code-i" ).on('change', function(e) {
+        $("#source_item_code-i").on('change', function(e) {
             document.getElementById("quantity-i").disabled = true;
             document.getElementById("sales-i").disabled = true;
+
+            clearItemInputs();
         });
         //end of select2 function
 
-        function removeAddedItem(data) {
-            var pcf_no = $("#pcf_no_add_item").val();
+        //on pcfList form submit; ajax
+        $('#edit_pcfListForm').on('submit',function(e){
+            e.preventDefault();
+            let pcf_no = $("#edit_pcf_no-i").val();
+            let p_c_f_request_id = $("#pcf_request_id-i").val();
+            let source_id = $("#source_item_code-i").val();
+            let description = $("#description-i").val();
+            let quantity = $("#quantity-i").val();
+            let sales = $("#sales-i").val();
+            let total_sales = $("#total_sales-i").val();
+            let opex = $("#opex-i").val();
+            let net_sales = $("#net_sales-i").val();
+            let gross_profit = $("#gross_profit-i").val();
+            let total_gross_profit = $("#total_gross_profit-i").val();
+            let total_net_sales = $("#total_net_sales-i").val();
+            let profit_rate = $("#profit_rate-i").val();
+
+            $.ajax({
+                url: "{{ route('PCF.sub.store_items') }}",
+                method:'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    pcf_no:pcf_no,
+                    p_c_f_request_id:p_c_f_request_id,
+                    source_id:source_id,
+                    description:description,
+                    quantity:quantity,
+                    sales:sales,
+                    total_sales:total_sales,
+                    opex:opex,
+                    net_sales:net_sales,
+                    gross_profit:gross_profit,
+                    total_gross_profit:total_gross_profit,
+                    total_net_sales:total_net_sales,
+                    profit_rate:profit_rate
+                },
+                success: function(response) {
+                    clearItemInputs();
+                    Swal.fire(
+                        'Success!',
+                        'Item added successfully!',
+                        'success'
+                    );
+                    //refresh added items table
+                    $('#edit_pcfItem_dataTable').DataTable().ajax.reload();
+                    getGrandTotal(pcf_no);
+                },
+                error: function (response) {
+                    clearItemInputs();
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    );
+                },
+            });
+        }); 
+
+        //delete pcfList Items
+        $('#edit_pcfItem_dataTable').on('click', '.pcfListDelete', function (e) {
+            e.preventDefault();
+            let item_id = $(this).data('id');
+            let pcf_no = $("#edit_pcf_no-i").val();
             Swal.fire({
                 title: 'Remove Added Item',
                 text: "Are you sure?",
@@ -224,503 +327,272 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    var id = data.data('id');
-
                     $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF.sub/ajax/remove-added-item/' + id,
+                        method: 'DELETE',
                         headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        success: function(response) {
-                            //reload table 
-                            loadAddItemTable(pcf_no); 
-                            getGrandTotals(pcf_no);
-                            //fire the alert message
-                            Swal.fire(
-                                'Success!',
-                                'Added item has been removed successfully!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
+                        url: '/PCF.sub/ajax/delete/pcf-list/' + item_id,
+                        contentType: "application/json; charset=utf-8",
+                        cache: false,
+                        dataType: 'json',
+                    }).done(function(data) {
+                        $('#edit_pcfItem_dataTable').DataTable().ajax.reload();
+                        getGrandTotal(pcf_no);
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Please contact your system administrator!',
+                            'error'
+                        )
                     });
                 }
             })
-        }
+        });
 
-        function removeAddedInclusion(data) {
-            var pcf_no = $("#pcf_no_add_item_foc").val();
-            Swal.fire({
-                title: 'Remove Added Inclusion',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    var id = data.data('id');
-
-                    $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF.sub/ajax/remove-added-inclusion/' + id,
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            //reload table 
-                            loadAddedFocItemTable(pcf_no); 
-                            getGrandTotals(pcf_no);
-                            //fire the alert message
-                            Swal.fire(
-                                'Success!',
-                                'Inclusion has been removed successfully!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
-                    });
-                }
-            })
-        }
-
-        function loadAddItemTable(pcf_no) {
-            //delete first the table before reinitialize
-            $("#addItemDatatable1").dataTable().fnDestroy();
-            $("#pcf_no_add_item").val(pcf_no);
-            var table = $('#addItemDatatable').DataTable({
-                "stripeClasses": [],
-                processing: false,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url : '/PCF.sub/ajax/list/'+pcf_no,
-                    data : function(data){
-                        return data;
-                    }
-                },
-                "columns": [
-                    { data: 'item_code' },
-                    { data: 'description' },
-                    { data: 'quantity' },
-                    { data: 'sales' },
-                    { data: 'total_sales' },
-                    { data: 'action' },
-                ],
+        const element = document.querySelectorAll('#sales-i, #quantity-i');
+        element.forEach(i => {
+            i.addEventListener('input', function() {
+                calculateTotalSales();
+                calculateNetSales();
+                calculateGrossProfit();
+                calculateTotalGrossProfit();
+                calculateTotalNetSales();
+                calculateProfitRate();
             });
+        })
 
-            //reload datatable data 
-            table.ajax.reload().draw();
+        //Total Sales Function
+        function calculateTotalSales() {
+            var quantity = $("#quantity-i").val();
+            var sales = $("#sales-i").val();
+            var total_sales = sales * quantity;
+            $("#total_sales-i").val(total_sales.toFixed(2));
         }
 
-        function loadAddedFocItemTable(pcf_no) {
-            //delete first the table before reinitialize
-            $("#addFOCdataTable").dataTable().fnDestroy();
-            $("#pcf_no_add_item_foc").val(pcf_no);
-            var table = $('#addFOCdataTable').DataTable({
-                "stripeClasses": [],
-                processing: false,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url : '/PCF.sub/ajax/foc-list/'+pcf_no,
-                    data : function(data){
-                        return data;
-                    }
-                },
-                "columns": [
-                    { data: 'item_code' },
-                    { data: 'description' },
-                    { data: 'serial_no' },
-                    { data: 'type' },
-                    { data: 'quantity' },
-                    { data: 'action' }
-                ],
-            });
-
-            //reload datatable data 
-            table.ajax.reload().draw();
-        }
-
-        function getGrandTotals(pcf_no){
-            if (pcf_no){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-grand-totals/' + pcf_no,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        $("#edit_annual_profit").val(response.annual_profit);
-                        $("#edit_annual_profit_rate").val(response.annual_profit_rate);
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    }
-                });
-            } else {
-                $("#annual_profit").val("0");
-                $("#annual_profit_rate").val("0");
-            }
-        }
-
-        $("#submit_item").click(function(e){
-                e.preventDefault();
-
-                var _token = $('#first_table').find('input[name="_token"]').val();
-                var pcf_no = $("#pcf_no_add_item").val();
-                var item_code = $("#hidden_item_code").val();
-                var description = $("#description_add_item").val();
-                var quantity = $("#quantity_add_item").val();
-                var sales = $("#sales_add_item").val();
-                var total_sales = $("#total_sales_add_item").val();
-                var transfer_price = $("#tp_php_add_item").val();
-                var mandatory_peripherals = $("#cost_periph_add_item").val();
-                var opex = $("#opex_add_item").val();
-                var net_sales = $("#net_sales_add_item").val();
-                var gross_profit = $("#gross_profit_add_item").val();
-                var total_gross_profit = $("#total_gross_profit_add_item").val();
-                var total_net_sales = $("#total_net_sales_add_item").val();
-                var profit_rate = $("#profit_rate_add_item").val();
-
-                $.ajax({
-                    url: "{{ route('PCF.sub.store_items') }}",
-                    type:'POST',
-                    data: {
-                        _token:_token, 
-                        pcf_no:pcf_no, 
-                        item_code:item_code,
-                        description:description,
-                        quantity:quantity,
-                        sales:sales,
-                        total_sales:total_sales,
-                        transfer_price:transfer_price,
-                        mandatory_peripherals:mandatory_peripherals,
-                        opex:opex,
-                        net_sales:net_sales,
-                        gross_profit:gross_profit,
-                        total_gross_profit:total_gross_profit,
-                        total_net_sales:total_net_sales,
-                        profit_rate:profit_rate
-                    },
-                    success: function(data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Success!',
-                            'Item added successfully!',
-                            'success'
-                        );
-                        
-                        //refresh added items table
-                        loadAddItemTable(pcf_no); 
-                        //get grand totals
-                        getGrandTotals(pcf_no);
-
-                    },
-                    error: function (data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        );
-                    },
-                });
-        }); 
-
-        //FOC Add Item Button Click
-        $("#submit_foc").click(function(e){
-                e.preventDefault();
-
-                var _token = $('#second_table').find('input[name="_token"]').val();
-                var pcf_foc = $("#pcf_no_add_item_foc").val();
-                var item_code_foc = $("#hidden_item_code_foc").val();
-                var description_foc = $("#item_description_foc").val();
-                var quantity_foc = $("#qty_foc").val();
-                var serial_no_foc = $("#serial_no_foc").val();
-                var type_foc = $("#type_foc").val();
-                var mandatory_peripherals_foc = $("#cost_periph_foc").val();
-                var opex_foc = $("#opx_foc").val();
-                var total_cost_foc = $("#total_cost_foc").val();
-                var cost_year_foc = $("#cost_year_foc").val();
-                var depreciable_life_foc = 0;
-
-                var target = $("#type_foc").val();
-
-                if (target == "MACHINE"){
-                    depreciable_life_foc = 5;
-                }else if (target == "COGS"){
-                    depreciable_life_foc = 1;
-                }
-
-                $.ajax({
-                    url: "{{ route('PCF.sub.store_foc') }}",
-                    type:'POST',
-                    data: {
-                        _token:_token, 
-                        pcf_foc:pcf_foc, 
-                        item_code_foc:item_code_foc,
-                        description_foc:description_foc,
-                        quantity_foc:quantity_foc,
-                        serial_no_foc:serial_no_foc,
-                        type_foc:type_foc,
-                        mandatory_peripherals_foc:mandatory_peripherals_foc,
-                        opex_foc:opex_foc,
-                        total_cost_foc:total_cost_foc,
-                        depreciable_life_foc:depreciable_life_foc,
-                        cost_year_foc:cost_year_foc
-                    },
-                    success: function(data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Success!',
-                            'Item added successfully!',
-                            'success'
-                        );
-                        //referesh FOC data table
-                        loadAddedFocItemTable(pcf_foc); 
-                        //get grand totals 
-                        getGrandTotals(pcf_foc);
-
-                    },
-                    error: function (data) {
-                        clearInputs();
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        );
-                    },
-                });
-        });
-
-        function clearInputs() {
-            $("#item_code_add_item").val("");
-            $("#hidden_item_code").val("");
-            $("#description_add_item").val("");
-            $("#rate_add_item").val("");
-            $("#tp_php_add_item").val("");
-            $("#cost_periph_add_item").val("");
-            $("#quantity_add_item").val("");
-            $("#sales_add_item").val("");
-            $("#total_sales_add_item").val("");
-            $("#opex_add_item").val("");
-            $("#net_sales_add_item").val("");
-            $("#gross_profit_add_item").val("");
-            $("#total_gross_profit_add_item").val("");
-            $("#total_net_sales_add_item").val("");
-            $("#profit_rate_add_item").val("");
-            $("#item_code_foc").val("");
-            $("#hidden_item_code_foc").val("");
-            $("#item_description_foc").val("");
-            $("#rate_foc").val("");
-            $("#tp_php_foc").val("");
-            $("#cost_periph_foc").val("");
-            $("#serial_no_foc").val("");
-            $("#type_foc").val("");
-            $("#qty_foc").val("");
-            $("#opx_foc").val("");
-            $("#total_cost_foc").val("");
-            $("#cost_year_foc").val("");
-        }
-
-        //Get description on combobox selected index changed
-        $("#item_code_add_item").on('change', function(){
-            var item_code = $(this).val();
-            if (item_code){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-descriptions/' + item_code,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        $("#hidden_item_code").val(response.item_code);
-                        $("#description_add_item").val(response.description);
-                        $("#rate_add_item").val(response.currency_rate);
-                        $("#tp_php_add_item").val(response.tp_php);
-                        $("#cost_periph_add_item").val(response.cost_periph);
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    }
-                });
-            } else {
-                $("#description_add_item").val("");
-                $("#rate_add_item").val("");
-                $("#tp_php_add_item").val("");
-                $("#cost_periph_add_item").val("");
-            }
-        });
-
-        //Get description on combobox selected index changed for FOC
-        $("#item_code_foc").on('change', function(){
-            var item_foc_id = $(this).val();
-            if (item_foc_id){
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'json',
-                    url: '/PCF.sub/ajax/get-description/' + item_foc_id,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        $("#hidden_item_code_foc").val(response.item_code);
-                        $("#item_description_foc").val(response.description);
-                        $("#rate_foc").val(response.currency_rate);
-                        $("#tp_php_foc").val(response.tp_php);
-                        $("#cost_periph_foc").val(response.cost_periph);
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    }
-                });
-            } else {
-                $("#item_description_foc").val("");
-                $("#rate_foc").val("");
-                $("#tp_php_foc").val("");
-                $("#cost_periph_foc").val("");
-            }
-        });
-
-        //Get the computation for FOC items
-        function getComputationFOC() {
-            var quantity = $("#qty_foc").val();
-            var opx = ($("#tp_php_foc").val() * 1.3) + parseInt($("#cost_periph_foc").val());
-            var total_cost = opx * quantity;
-            var dep_life = 0;
-
-            var target = $("#type_foc").val();
-
-            if (target == "MACHINE"){
-                dep_life = 5;
-            }else if (target == "COGS"){
-                dep_life = 1;
-            }
+        //Opex function
+        function calculateOpex() {
+            var currency_rate = $("#currency_rate-i").val();
+            var transfer_price = $("#tp_php-i").val();
+            var cost_of_peripherals = $("#cost_of_peripherals-i").val();
             
-            var cost_year = total_cost / dep_life;
-            $("#opx_foc").val(opx.toFixed(2));
-            $("#total_cost_foc").val(total_cost.toFixed(2));
-            $("#cost_year_foc").val(cost_year.toFixed(2));
-
-        }
-
-        function getTotalSales() {
-            var quantity = $("#quantity_add_item").val();
-            var sales = $("#sales_add_item").val();
-            var  total_sales = sales * quantity;
-            $("#total_sales_add_item").val(total_sales.toFixed(2));
-
-            //get opex value
-            getOpexValue();
-
-            //get net sales
-            getNetSales();
-
-            //get gross profit
-            getGrossProfit();
-
-            //get total gross profit
-            getTotalGrossProfit();
-
-            //get total net sales
-            getTotalNetSales();
-
-            //get profit rate
-            getProfitRate();
-        }
-
-        function getOpexValue() {
-            var currency_rate = $("#rate_add_item").val();
-            var transfer_price = $("#tp_php_add_item").val();
-            var cost_periph = $("#cost_periph_add_item").val();
-            
-            if (parseInt(currency_rate) == 1) {
-                var opex = transfer_price * 1.15 + parseInt(cost_periph);
-            } else {
-                var opex = transfer_price * 1.3 + parseInt(cost_periph);
+            if (parseInt(currency_rate) == 1 && cost_of_peripherals !== '') {
+                var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
+            } 
+            else if (parseInt(currency_rate) == 1 && cost_of_peripherals == '') {
+                var opex = transfer_price * 1.13 + 0;
+            }
+            else if (parseInt(currency_rate) !== 1 && cost_of_peripherals !== '') {
+                var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
+            } 
+            else {
+                var opex = transfer_price * 1.3 + 0;
             }
 
-            $("#opex_add_item").val(opex.toFixed(2));
+            $("#opex-i").val(opex.toFixed(2));
         }
 
-        function getNetSales() {
-            var sales = $("#sales_add_item").val();
-            var net_sales = sales/1.12;
+        //Net Sales function
+        function calculateNetSales() {
+            var sales = $("#sales-i").val();
+            var net_sales = sales / 1.12;
 
-            $("#net_sales_add_item").val(net_sales.toFixed(2));
+            $("#net_sales-i").val(net_sales.toFixed(2));
         }
 
-        function getGrossProfit() {
-            var net_sales = $("#net_sales_add_item").val();
-            var opex = $("#opex_add_item").val();
-            var cost_periph = $("#cost_periph_add_item").val();
+        //Gross Profit Function
+        function calculateGrossProfit() {
+            var net_sales = $("#net_sales-i").val();
+            var opex = $("#opex-i").val();
+            // var cost_of_peripherals = $("#cost_of_peripherals-i").val();
 
             var gross_profit = net_sales - opex;
-            $("#gross_profit_add_item").val(gross_profit.toFixed(2));
+
+            $("#gross_profit-i").val(gross_profit.toFixed(2));
         }
 
-        function getTotalGrossProfit() {
-            var gross_profit = $("#gross_profit_add_item").val();
-            var quantity = $("#quantity_add_item").val();
+        //Total Gross Profit Function
+        function calculateTotalGrossProfit() {
+            var gross_profit = $("#gross_profit-i").val();
+            var quantity = $("#quantity-i").val();
             
             var total_gross_profit = gross_profit * quantity;
 
-            $("#total_gross_profit_add_item").val(total_gross_profit.toFixed(2));
+            $("#total_gross_profit-i").val(total_gross_profit.toFixed(2));
         }
 
-        function getTotalNetSales() {
-            var total_sales = $("#total_sales_add_item").val();
+        //Total Net Sales Function
+        function calculateTotalNetSales() {
+            var total_sales = $("#total_sales-i").val();
 
             var total_net_sales = total_sales / 1.12;
 
-            $("#total_net_sales_add_item").val(total_net_sales.toFixed(2));
+            $("#total_net_sales-i").val(total_net_sales.toFixed(2));
         }
 
-        function getProfitRate() {
-            var gross_profit = $("#gross_profit_add_item").val();
-            var sales = $("#sales_add_item").val();
+        //Profit Rate Function
+        function calculateProfitRate() {
+            var gross_profit = $("#gross_profit-i").val();
+            var sales = $("#sales-i").val();
 
             var profit_rate = (gross_profit / sales) * 100;
 
-            $("#profit_rate_add_item").val(profit_rate.toFixed(0));
+            $("#profit_rate-i").val(profit_rate.toFixed(0));
         }
 
-        function ApproveRequest(data) {
+        function clearItemInputs() {
+            $("#description-i").val("");
+            $("#currency_rate-i").val("");
+            $("#rate-i").val("");
+            $("#tp_php-i").val("");
+            $("#cost_periph-i").val("");
+            $("#quantity-i").val("");
+            $("#sales-i").val("");
+            $("#total_sales-i").val("");
+            $("#opex-i").val("");
+            $("#net_sales-i").val("");
+            $("#gross_profit-i").val("");
+            $("#total_gross_profit-i").val("");
+            $("#total_net_sales-i").val("");
+            $("#profit_rate-i").val("");
+        }
+
+        //Machine & Inclusions DataTable
+        function editFOCDataTable(pcf_request_id) {
+            $('#edit_pcfFOC_dataTable').DataTable({
+                "stripeClasses": [],
+                destroy: true,
+                processing: false,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    url : '/PCF/ajax/inclusions-list/' + pcf_request_id,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [
+                    { data: 'source.item_code' },
+                    { data: 'source.description' },
+                    { data: 'serial_no' },
+                    { data: 'type' },
+                    { data: 'quantity' },
+                    { data: 'action' },
+                ],
+            });
+        }
+
+        //start of select2 function -- machine item code;
+        $(function () {
+            $('#source_item_code-foc').select2({
+                dropdownParent: $('#editPCFRequestModal'),
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("settings.source.source_search") }}',
+                    dataType: 'json',
+                },
+            });
+        });
+
+        $('#source_item_code-foc').on('select2:select', function (e) {
+            var data = e.params.data;
+            var source_id = data.id
+            if(source_id) {
+                $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.source/get-details/source=' + source_id,
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                dataType: 'json',
+                }).done(function(data) {
+                    $('#description-foc').val(data.description);
+                    $("#tp_php-foc").val(data.tp_php);
+                    $("#cost_of_peripherals-foc").val(data.cost_of_peripherals);
+
+                    calculateOpexFOC();
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                    clearFOCInputs();
+                });
+            }
+        });
+
+        $( "#source_item_code-foc" ).on('change', function(e) {
+            clearFOCInputs();
+        });
+        //end of select2 function;
+
+        //foc on form submit; ajax function
+        $('#edit_pcfFOCForm').on('submit',function(e){
+            e.preventDefault();
+            let p_c_f_request_id = $("#pcf_request_id-foc").val();
+            let source_id = $("#source_item_code-foc").val();
+            let pcf_no = $("#edit_pcf_no-foc").val();
+            let quantity = $("#quantity-foc").val();
+            let serial_no = $("#serial_no-foc").val();
+            let type = $("#type-foc").val();
+            let opex = $("#opex-foc").val();
+            let total_cost = $("#total_cost-foc").val();
+            let depreciable_life = $("#depreciable_life-foc").val();
+            let cost_year = $("#cost_year-foc").val();
+
+            $.ajax({
+                url: "{{ route('PCF.sub.store_foc') }}",
+                type:'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    p_c_f_request_id:pcf_request_id,
+                    source_id:source_id,
+                    pcf_no:pcf_no, 
+                    quantity:quantity,
+                    serial_no:serial_no,
+                    type:type,
+                    opex:opex,
+                    total_cost:total_cost,
+                    depreciable_life:depreciable_life,
+                    cost_year:cost_year
+                },
+                success: function(data) {
+                    clearFOCInputs();
+                    Swal.fire(
+                        'Success!',
+                        'Item added successfully!',
+                        'success'
+                    );
+                    //referesh FOC data table
+                    $('#edit_pcfFOC_dataTable').DataTable().ajax.reload();
+                    //get grand totals 
+                    getGrandTotal(pcf_no);
+                },
+                error: function (data) {
+                    clearFOCInputs();
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    );
+                },
+            });
+        });
+
+        //delete machines and inclusions items;
+        $('#edit_pcfFOC_dataTable').on('click', '.pcfInclusionDelete', function (e) {
+            e.preventDefault();
+            let foc_id = $(this).data('id');
+            let pcf_no = $("#edit_pcf_no-foc").val();
             Swal.fire({
-                title: 'Approve Request',
+                title: 'Remove Added Item',
                 text: "Are you sure?",
                 icon: 'warning',
                 showCancelButton: true,
@@ -729,89 +601,123 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    var id = data.data('id');
                     $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF/ajax/approve-request/' + id,
+                        method: 'DELETE',
                         headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        success: function(response) {
-                            //reload table 
-                            $("#dataTable").DataTable().ajax.reload(null, false);
-                            //fire the alert message
-                            Swal.fire(
-                                'Success!',
-                                'PCF Request has been approved successfully!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
+                        url: '/PCF.sub/ajax/delete/pcf-foc/' + foc_id,
+                        contentType: "application/json; charset=utf-8",
+                        cache: false,
+                        dataType: 'json',
+                    }).done(function(data) {
+                        $('#edit_pcfFOC_dataTable').DataTable().ajax.reload();
+                        getGrandTotal(pcf_no);
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Please contact your system administrator!',
+                            'error'
+                        )
                     });
                 }
             })
+        });
+
+        //FOC Opex Function
+        function calculateOpexFOC() {
+            var transfer_price = $("#tp_php-foc").val();
+            var cost_of_peripherals = parseFloat($("#cost_of_peripherals-foc").val());
+
+            if (isNaN(cost_of_peripherals)) {
+                var opex = (transfer_price * 1.3) + 0;
+            }
+            else {
+                var opex = (transfer_price * 1.13) + cost_of_peripherals;
+            }
+
+            $("#opex-foc").val(opex.toFixed(2));
         }
 
-        function DisApproveRequest(data) {
-            Swal.fire({
-                title: 'Disapprove Request',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
+        // on quantity input, calculate total cost and yearly cost
+        const foc_element = document.querySelectorAll('#quantity-foc');
+        foc_element.forEach(i => {
+            i.addEventListener('input', function() {
+                calculateTotalCostandYearlyCost();
+            });
+        })
 
-                    var id = data.data('id');
+        //on type change, calculate total cost and yearly cost
+        $("#type-foc").on('change', function(e) {
+            calculateTotalCostandYearlyCost();
+            var target = $("#type-foc").val();
+            if (target == "MACHINE")
+            {
+                $("#depreciable_life-foc").val(5);
+            }
+            else if (target == "COGS")
+            {
+                $("#depreciable_life-foc").val(1);
+            }
+        });
 
-                    console.log(id);
-                    $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        url: '/PCF/ajax/disapprove-request/' + id,
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            //reload table
-                            $("#dataTable").DataTable().ajax.reload(null, false);
-                            //fire the alert message
-                            Swal.fire(
-                                'Disapprove Success!',
-                                'Request has been disapproved!',
-                                'success'
-                            )
-                        },
-                        error: function(response) {
-                            Swal.fire(
-                                'Something went wrong!',
-                                'Please contact your system administrator!',
-                                'error'
-                            )
-                        }
-                    });
+        //Total Cost and Yearly Cost Function
+        function calculateTotalCostandYearlyCost() {
+            var quantity = $("#quantity-foc").val();
+            var opex = $("#opex-foc").val();
+            var total_cost = opex * quantity;
+            var depreciation_life = 0;
 
-                }
-            })
+            var target = $("#type-foc").val();
+
+            if (target == "MACHINE"){
+                depreciation_life = 5;
+            }else if (target == "COGS"){
+                depreciation_life = 1;
+            }
+            
+            var cost_year = total_cost / depreciation_life;
+
+            $("#total_cost-foc").val(total_cost.toFixed(2));
+            $("#cost_year-foc").val(cost_year.toFixed(2));
         }
 
+        function clearFOCInputs() {
+            $("#item_code-foc").val("");
+            $("#description-foc").val("");
+            $("#tp_php-foc").val("");
+            $("#cost_of_peripherals-foc").val("");
+            $("#opex-foc").val("");
+            $("#serial_no-foc").val("N / A");
+            $("#quantity-foc").val("");
+            $("#cost_year-foc").val("");
+            $("#total_cost-foc").val("");
+            $("#depreciable_life-foc").val("");
+        }
+
+        function getGrandTotal(pcf_no) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url : "/PCF.sub/ajax/get-grand-total/" + pcf_no,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            }).done(function(response) {
+                $("#edit_annual_profit").val(response.annual_profit);
+                $("#edit_annual_profit_rate").val(response.annual_profit_rate);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                Swal.fire(
+                    'Something went wrong!',
+                    'Please contact your system administrator!',
+                    'error'
+                )
+            });
+        }
     </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
-            FilePond.registerPlugin(FilePondPluginFileValidateType);
-            
             var inputElement = document.querySelector('input[name="upload_file"]');
             var store = FilePond.create((inputElement),
             {
@@ -820,9 +726,6 @@
             });
             
             store.setOptions({
-                allowPdfPreview: true,
-                pdfPreviewHeight: 320,
-                pdfComponentExtraParams: 'toolbar=0&view=fit&page=1',
                 server: {
                     url: "{{ route('store.pcf_document') }}",
                     headers: {

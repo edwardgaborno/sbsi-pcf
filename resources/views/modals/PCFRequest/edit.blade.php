@@ -72,7 +72,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="specimen_type">PCF No.</label>
-                                            <input type="hidden" name="pcf_request_id" id="pcf_request_id">
+                                            <input type="hidden" name="pcf_request_id" id="pcf_request_id" class="form-control">
                                             <input type="text" class="form-control" name="pcf_no" id="edit_pcf_no"
                                                 value="{{ old('pcf_no') }}" readonly required>
                                         </div>
@@ -165,7 +165,7 @@
                                         <div class="form-group">
                                             <label for="edit_warranty">Warranty (For Machines Only)</label>
                                             <input type="text" class="form-control" name="warranty" id="edit_warranty"
-                                                value="{{ old('edit_warranty') }}" required>
+                                                value="{{ old('edit_warranty') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -240,12 +240,14 @@
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         @can('psr_request_edit')
                         <form id="edit_pcfListForm">
+                            @csrf
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="test_name_id">Test Code</label>
-                                            <select name="source_id" id="edit_source_item_code-i" class="form-control select2"></select>
+                                            <label for="edit_source_item_code-i">Test Code</label>
+
+                                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -254,6 +256,8 @@
                                             <input type="text" class="form-control" name="description" id="description-i"
                                                 placeholder="Description" readonly required>
 
+                                            <input type="hidden" name="pcf_request_id" id="pcf_request_id-i" class="form-control">
+                                            <input type="hidden" name="pcf_no" id="edit_pcf_no-i" class="form-control">
                                             <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
                                                 placeholder="currency rate" >
                                             <input type="hidden" class="form-control" name="tp_php" id="tp_php-i"
@@ -309,7 +313,7 @@
                         <div class="row">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="addItemDatatable" width="100%"
+                                    <table class="table table-bordered table-striped" id="edit_pcfItem_dataTable" width="100%"
                                         cellspacing="0">
                                         <thead>
                                             <tr bgcolor="gray" class="text-white">
@@ -331,76 +335,73 @@
                     </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                         @can('psr_request_edit')
-                            <form id="second_table">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="test_name_id">Item Code</label>
-                                                <input type="hidden" class="form-control" name="pcf_no_add_items_foc" id="pcf_no_add_item_foc"> <!-- pcf no --> 
-                                                <input type="hidden" class="form-control" name="hidden_item_code_foc" id="hidden_item_code_foc"> <!-- item code -->
+                        <form id="edit_pcfFOCForm">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="source_item_code-foc">Item Code</label> 
+                                            
+                                            <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="item_description_foc">Item Description</label>
+                                            <input type="text" class="form-control" name="description" id="description-foc"
+                                                value="{{ old('item_description_foc') }}" readonly required>
+                                            
+                                            <input type="hidden" class="form-control" name="p_c_f_request_id" id="pcf_request_id-foc" placeholder="PCF Request Id">
+                                            <input type="hidden" class="form-control" name="pcf_no" id="edit_pcf_no-foc" placeholder="PCF No.">
+                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-foc" placeholder="Total price (tp_php)">    
+                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-foc" placeholder="Cost of peripherals">
+                                            <input type="hidden" class="form-control" name="opex" id="opex-foc" placeholder="Opex">
+                                            <input type="hidden" class="form-control" name="total_cost" id="total_cost-foc" placeholder="Total Cost">    
+                                            <input type="hidden" class="form-control" name="cost_year" id="cost_year-foc" placeholder="Cost year">
+                                            <input type="hidden" class="form-control" name="depreciable_life" id="depreciable_life-foc" placeholder="Depreciable life">
 
-                                                <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
-                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="item_description_foc">Item Description</label>
-                                                <input type="text" class="form-control" name="item_description_foc" id="item_description_foc"
-                                                    value="{{ old('item_description_foc') }}" readonly required>
-                                                <input type="hidden" class="form-control" name="rate_foc" id="rate_foc"
-                                                    value="{{ old('rate_foc') }}" required>
-                                                <input type="hidden" class="form-control" name="tp_php_foc" id="tp_php_foc"
-                                                    value="{{ old('tp_php_foc') }}" required>    
-                                                <input type="hidden" class="form-control" name="cost_periph_foc" id="cost_periph_foc"
-                                                    value="{{ old('cost_periph_foc') }}" required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="serial_no_foc">Serial No.</label>
+                                            <input type="text" class="form-control" name="serial_no" id="serial_no-foc"
+                                                value="N / A {{ old('serial_no-foc') }}" required>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="serial_no_foc">Serial No.</label>
-                                                <input type="text" class="form-control" name="serial_no_foc" id="serial_no_foc"
-                                                    value="{{ old('serial_no_foc') }}" required>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="type_foc">Type</label>
+                                            <select class="form-control" name="type" id="type-foc">
+                                                <option value="" selected disabled>Select type</option>
+                                                <option value="MACHINE">MACHINE</option>
+                                                <option value="COGS">COGS</option>
+                                            </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="type_foc">Type</label>
-                                                <select class="form-control" name="type_foc" id="type_foc">
-                                                    <option value="MACHINE">MACHINE</option>
-                                                    <option value="COGS" selected>COGS</option>
-                                                </select>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity-foc">Quantity</label>
+                                            <input type="number" class="form-control" name="quantity" id="quantity-foc"
+                                                value="{{ old('quantity-foc') }}" required>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="qty_foc">Quantity</label>
-                                                <input type="number" class="form-control" name="qty_foc" id="qty_foc" onkeyup="getComputationFOC()"
-                                                    value="{{ old('qty_foc') }}" required>
-                                                <input type="hidden" class="form-control" name="opx_foc" id="opx_foc"
-                                                    value="{{ old('opx_foc') }}" required>
-                                                <input type="hidden" class="form-control" name="total_cost_foc" id="total_cost_foc"
-                                                    value="{{ old('total_cost_foc') }}" required>    
-                                                <input type="hidden" class="form-control" name="cost_year_foc" id="cost_year_foc"
-                                                    value="{{ old('cost_year_foc') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="submit_foc"></label>
-                                                    <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_foc"><i class="fas fa-plus-circle"></i> Add
-                                                        Item</button>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="submit"></label>
+                                                <button type="submit" class="btn btn-primary form-control btn-submit" id="submit">
+                                                    <i class="fas fa-plus-circle"></i> Add Item</button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                        </form>
                         @endcan
                         <div class="row">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="addFOCdataTable" width="100%"
+                                    <table class="table table-bordered table-striped" id="edit_pcfFOC_dataTable" width="100%"
                                         cellspacing="0">
                                         <thead>
                                             <tr bgcolor="gray" class="text-white">

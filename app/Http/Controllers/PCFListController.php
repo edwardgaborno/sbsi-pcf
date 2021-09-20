@@ -14,7 +14,9 @@ class PCFListController extends Controller
     {
         $this->authorize('psr_request_store');
         
-        PCFList::create($request->validated());
+        PCFList::create($request->validated() + [
+            'p_c_f_request_id' => $request->p_c_f_request_id,
+        ]);
 
         alert()->success('Success','PCF Request Item has been added.');
 
@@ -40,6 +42,33 @@ class PCFListController extends Controller
                         ->get();
 
             return Datatables::of($PCFList)
+                ->addColumn('sales', function ($data) {
+                    return number_format($data->sales, 2, '.', ',');
+                })
+                ->addColumn('total_sales', function ($data) {
+                    return number_format($data->total_sales, 2, '.', ',');
+                })
+                ->addColumn('action', function ($data) {
+                    if (auth()->user()->can('psr_request_delete')) {
+                        return
+                        '<a href="javascript:void(0)" class="badge badge-danger pcfListDelete" data-id="' . $data->id . '">
+                            <i class="fas fa-trash-alt"></i> Delete Item</a>
+                        ';
+                    }
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+
+    public function pcfRequestList(Request $request, $pcf_request_id)
+    {
+        if ($request->ajax()) {
+            $pcfList = PCFList::with('source')
+                        ->where('p_c_f_request_id', $pcf_request_id)
+                        ->get();
+
+            return Datatables::of($pcfList)
                 ->addColumn('sales', function ($data) {
                     return number_format($data->sales, 2, '.', ',');
                 })

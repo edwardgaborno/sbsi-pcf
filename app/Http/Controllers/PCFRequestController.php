@@ -37,7 +37,7 @@ class PCFRequestController extends Controller
             $this->pcf_no = str_pad( $pcfMaxVal + 1, 6, "0", STR_PAD_LEFT );
         }
 
-        return view('PCF.sub.create_request',[
+        return view('PCF.sub.create_request', [
             'pcf_no' => $this->pcf_no,
         ]);
     }
@@ -46,9 +46,17 @@ class PCFRequestController extends Controller
     {
         $this->authorize('psr_request_store');
         
-        PCFRequest::create($request->validated() + [
+        $pcfRequest = PCFRequest::create($request->validated() + [
             'psr' => auth()->user()->name,
             'created_by' => auth()->user()->id,
+        ]);
+
+        PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
+            'p_c_f_request_id' => $pcfRequest->id,
+        ]);
+
+        PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
+            'p_c_f_request_id' => $pcfRequest->id,
         ]);
 
         alert()->success('Success','PCF Request has been created.');
@@ -70,7 +78,7 @@ class PCFRequestController extends Controller
         return redirect()->route('PCF.index');
     }
 
-    public function pcfList(Request $request) 
+    public function pcfRequestList(Request $request) 
     {
         $this->authorize('psr_request_access');
 
@@ -123,14 +131,15 @@ class PCFRequestController extends Controller
         }
     }
 
-    public function pcfRequestDetails($pcf_id)
+    public function pcfRequestDetails($pcf_request_id)
     {
         $this->authorize('psr_request_access');
 
-        $pcf_request = PCFRequest::findOrFail($pcf_id);
+        $pcf_request = PCFRequest::findOrFail($pcf_request_id);
         
         return response()->json($pcf_request);
     }
+
 
     public function ApproveRequest($id)
     {

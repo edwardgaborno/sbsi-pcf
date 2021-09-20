@@ -18,4 +18,14 @@ class PCFRequest extends Model implements HasMedia
     {
         return url($this->getFirstMediaUrl('pcf_request_file'));
     }
+
+    public function pcfLists() 
+    {
+        return $this->hasMany(PCFList::class);
+    }
+
+    public function pcfInclusions() 
+    {
+        return $this->hasMany(PCFInclusion::class);
+    }
 }

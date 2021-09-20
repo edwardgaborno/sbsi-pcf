@@ -15,4 +15,9 @@ class PCFList extends Model
     {
         return $this->belongsTo(Source::class);
     }
+
+    public function pcfRequest() 
+    {
+        return $this->belongsTo(PCFRequest::class);
+    }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
+use App\Models\PCFInclusion;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,8 +54,11 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/store', [PCFRequestController::class, 'store'])->name('.store');
             Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
 
-            Route::get('/ajax/list', [PCFRequestController::class, 'pcfList'])->name('.list');
-            Route::get('/get/pcf_details={pcf_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
+            Route::get('/ajax/list', [PCFRequestController::class, 'pcfRequestList'])->name('.list');
+            Route::get('/ajax/items-list/{pcf_request_id}', [PCFListController::class, 'pcfRequestList'])->name('.items_list');
+            Route::get('/ajax/inclusions-list/{pcf_request_id}', [PCFInclusionController::class, 'pcfRequestInclusion'])->name('.inclusions_list');
+
+            Route::get('/get/pcf_details={pcf_request_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
 
             Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
             Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
