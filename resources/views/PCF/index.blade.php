@@ -97,6 +97,7 @@
                 "stripeClasses": [],
                 processing: false,
                 serverSide: true,
+                responsive: true,
                 ordering: true,
                 ajax: {
                     url: "{{ route('PCF.list') }}",

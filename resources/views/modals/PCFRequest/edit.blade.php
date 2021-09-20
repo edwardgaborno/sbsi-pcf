@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit PCF Request </h5>
-                @hasanyrole('National Sales Manager|Accounting|Accounting manager')
+                @hasanyrole('PSR Manager|Marketing|National Sales Manager|Accounting|Accounting Manager')
                     <span class="badge badge-danger mt-2 ml-5">Only PSR have permission to update the details of this request</span>
                 @endhasanyrole
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -231,14 +231,14 @@
                             <!-- Content Row -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
-                                @can('psr_request_edit')
+                                @can('pcf_request_edit')
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
                                 @endcan
                             </div>
                         </form>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        @can('psr_request_edit')
+                        @can('pcf_request_edit')
                         <form id="edit_pcfListForm">
                             @csrf
                             <div class="modal-body">
@@ -334,7 +334,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                        @can('psr_request_edit')
+                        @can('pcf_request_edit')
                         <form id="edit_pcfFOCForm">
                             @csrf
                             <div class="modal-body">
