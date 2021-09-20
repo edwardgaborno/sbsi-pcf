@@ -37,7 +37,7 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    @can('psr_request_create')
+                                    @can('pcf_request_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
                                                 <a href="{{ route('PCF.create_request') }}"
@@ -714,6 +714,80 @@
                 )
             });
         }
+    </script>
+
+    <script>
+        //Approve PCF Request;
+        $('#pcf_dataTable').on('click', '.approvePcfRequest', function (e) {
+            e.preventDefault();
+            pcf_request_id = $(this).data('id');
+            Swal.fire({
+                title: 'Approve Request',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '/PCF/ajax/approve-request/' + pcf_request_id,
+                        contentType: "application/json; charset=utf-8",
+                        cache: false,
+                        dataType: 'json',
+                    }).done(function(data) {
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Please contact your system administrator!',
+                            'error'
+                        )
+                    });
+                }
+            });
+        });
+
+        //Disapprove PCF Request;
+        $('#pcf_dataTable').on('click', '.disapprovePcfRequest', function (e) {
+            e.preventDefault();
+            pcf_request_id = $(this).data('id');
+            Swal.fire({
+                title: 'Disapprove Request',
+                text: "Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '/PCF/ajax/disapprove-request/' + pcf_request_id,
+                        contentType: "application/json; charset=utf-8",
+                        cache: false,
+                        dataType: 'json',
+                    }).done(function(data) {
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Please contact your system administrator!',
+                            'error'
+                        )
+                    });
+                }
+            });
+        });
     </script>
 
     <script>

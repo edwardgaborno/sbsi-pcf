@@ -21,7 +21,7 @@ class PCFRequestController extends Controller
 
     public function index(Request $request)
     {
-        $this->authorize('psr_request_access');
+        $this->authorize('pcf_request_access');
     
         return view('PCF.index');
     }
@@ -44,7 +44,7 @@ class PCFRequestController extends Controller
 
     public function store(StorePCFRequestRequest $request)
     {
-        $this->authorize('psr_request_store');
+        $this->authorize('pcf_request_store');
         
         $pcfRequest = PCFRequest::create($request->validated() + [
             'psr' => auth()->user()->name,
@@ -66,7 +66,7 @@ class PCFRequestController extends Controller
 
     public function update(UpdatePCFRequestRequest $request, PCFRequest $PCFRequest)
     {
-        $this->authorize('psr_request_update');
+        $this->authorize('pcf_request_update');
 
         $updatePCFRequest = PCFRequest::findOrFail($request->pcf_request_id);
         $updatePCFRequest->update($request->validated() + [
@@ -80,7 +80,7 @@ class PCFRequestController extends Controller
 
     public function pcfRequestList(Request $request) 
     {
-        $this->authorize('psr_request_access');
+        $this->authorize('pcf_request_access');
 
         if ($request->ajax()) {
             $PCFRequest = PCFRequest::orderBy('pcf_no')->get();
@@ -88,42 +88,31 @@ class PCFRequestController extends Controller
             return Datatables::of($PCFRequest)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($data) {
-
-                    if (empty($data->pcf_document)) {
-                        $this->authorize('psr_request_edit');
+                    if (auth()->user()->can('pcf_request_edit')) {
                         return
-                        ' 
-                            <a href="#" class="badge badge-info editPCFRequest" 
-                                data-id="' . $data->id . '"
-                                data-toggle="modal">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </a>
-                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
-                                class="badge badge-success" 
-                                rel="noopener noreferrer">
-                                <i class="far fa-file-pdf"></i>
-                                Download PDF
-                            </a>
-                        ';
+                        '<a href="#" class="badge badge-info editPCFRequest" 
+                            data-id="' . $data->id . '" data-toggle="modal">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
+                            class="badge badge-success"  rel="noopener noreferrer">
+                            <i class="far fa-file-pdf"></i> Download PDF
+                        </a>';
                     }
                     else {
-                        $this->authorize('psr_request_edit');
                         return
-                        ' 
-                            <a href="#" class="badge badge-info editPCFRequest" 
-                                data-id="' . $data->id . '"
-                                data-toggle="modal">
-                                <i class="fas fa-edit"></i>
-                                Edit
-                            </a>
-                            <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
-                                class="badge badge-success" 
-                                rel="noopener noreferrer">
-                                <i class="far fa-file-pdf"></i>
-                                Download PDF
-                            </a>
-                        ';
+                        '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" 
+                            data-id="' . $data->id . '" data-toggle="modal">
+                            <i class="far fa-thumbs-up"></i> Approve
+                        </a>
+                        <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" 
+                            data-id="' . $data->id . '" data-toggle="modal">
+                            <i class="far fa-thumbs-down"></i> Disapprove
+                        </a>
+                        <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
+                            class="badge badge-info" rel="noopener noreferrer">
+                            <i class="far fa-file-pdf"></i> Download PDF
+                        </a>';
                     }
                 })
                 ->rawColumns(['actions'])
@@ -133,7 +122,7 @@ class PCFRequestController extends Controller
 
     public function pcfRequestDetails($pcf_request_id)
     {
-        $this->authorize('psr_request_access');
+        $this->authorize('pcf_request_access');
 
         $pcf_request = PCFRequest::findOrFail($pcf_request_id);
         
@@ -141,54 +130,26 @@ class PCFRequestController extends Controller
     }
 
 
-    public function ApproveRequest($id)
+    public function approveRequest($pcf_request_id)
     {
-        if (!empty($id)) {
-            $request = PCFRequest::find($id);
-            if ( (auth()->user()->hasRole('Accounting') && $request->status == 0) ||
-                (auth()->user()->hasRole('Accounting') && $request->status == 3)) {
-                $request->status = 2;
-                $request->save();
-            }
-            if((auth()->user()->hasRole('National Sales Manager') && $request->status == 2) ||
-                (auth()->user()->hasRole('National Sales Manager') && $request->status == 5)) {
-                $request->status = 4;
-                $request->save();
-            }
-            if(auth()->user()->hasRole('Accounting Manager')&& $request->status == 4){
-                $request->status = 6;
-                $request->save();
-            }
-
-            return response()->json(['success' => 'success'], 200);
-        }
-
-        return response()->json(['error' => 'invalid'], 401);
+        $pcf_request = PCFRequest::findOrFail($pcf_request_id);
+        $pcf_request->update([
+            'approved_by' => auth()->user()->id,
+            'disapproved_by' => NULL,
+        ]);
+            
+        return response()->json(['success' => 'success'], 200);
     }
 
-    public function DisapproveRequest($id)
+    public function disapproveRequest($pcf_request_id)
     {
-        if (!empty($id)) {
-            $request = PCFRequest::find($id);
-            if((auth()->user()->hasRole('Accounting') && $request->status == 0) ||
-                (auth()->user()->hasRole('Accounting') && $request->status == 3)) {
-                $request->status = 1;
-                $request->save();
-            }
-            if((auth()->user()->hasRole('National Sales Manager') && $request->status == 2) ||
-                (auth()->user()->hasRole('National Sales Manager') && $request->status == 5)) {
-                $request->status = 3;
-                $request->save();
-            }
-            if(auth()->user()->hasRole('Accounting Manager') && $request->status == 4){
-                $request->status = 5;
-                $request->save();
-            }
-
-            return response()->json(['success' => 'success'], 200);
-        }
-
-        return response()->json(['error' => 'invalid'], 401);
+        $pcf_request = PCFRequest::findOrFail($pcf_request_id);
+        $pcf_request->update([
+            'disapproved_by' => auth()->user()->id,
+            'approved_by' => NULL,
+        ]);
+            
+        return response()->json(['success' => 'success'], 200);
     }
 
     public function downloadPdf($pcf_no)

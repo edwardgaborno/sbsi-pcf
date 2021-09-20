@@ -12,7 +12,7 @@ class PCFInclusionController extends Controller
 {
     public function store(StorePCFInclusionRequest $request)
     {
-        $this->authorize('psr_request_store');
+        $this->authorize('pcf_request_store');
         
         PCFInclusion::create($request->validated() + [
             'p_c_f_request_id' => $request->p_c_f_request_id,
@@ -40,7 +40,7 @@ class PCFInclusionController extends Controller
 
             return Datatables::of($pcfInclusion)
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('psr_request_delete')) {
+                    if (auth()->user()->can('pcf_request_delete')) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
                             <i class="fas fa-trash-alt"></i> Delete item</a>
@@ -54,7 +54,7 @@ class PCFInclusionController extends Controller
 
     public function pcfRequestInclusion(Request $request, $pcf_request_id)
     {
-        $this->authorize('psr_request_access');
+        $this->authorize('pcf_request_access');
 
         if ($request->ajax()) {
             $pcfInclusion = PCFInclusion::with('source')
@@ -63,7 +63,7 @@ class PCFInclusionController extends Controller
 
             return Datatables::of($pcfInclusion)
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->can('psr_request_delete')) {
+                    if (auth()->user()->can('pcf_request_delete')) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
                             <i class="fas fa-trash-alt"></i> Delete item</a>
