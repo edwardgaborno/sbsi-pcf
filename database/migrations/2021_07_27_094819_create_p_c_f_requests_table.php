@@ -15,6 +15,7 @@ class CreatePCFRequestsTable extends Migration
     {
         Schema::create('p_c_f_requests', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('status_id')->default(0);
             $table->string('pcf_no');
             $table->date('date');
             $table->string('institution');
@@ -34,19 +35,8 @@ class CreatePCFRequestsTable extends Migration
             $table->string('manager');
             $table->decimal('annual_profit', 12, 2)->default(0.00);
             $table->decimal('annual_profit_rate');
-            $table->tinyInteger('status')->default(0);
             $table->string('pcf_document')->nullable();
             $table->foreignId('created_by') // user_id
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreignId('approved_by')
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreignId('disapproved_by')
                 ->nullable()
                 ->constrained('users')
                 ->onUpdate('cascade')
