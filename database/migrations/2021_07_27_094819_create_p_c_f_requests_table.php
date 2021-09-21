@@ -15,7 +15,11 @@ class CreatePCFRequestsTable extends Migration
     {
         Schema::create('p_c_f_requests', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('status_id')->default(0);
+            $table->foreignId('status_id') // status_id
+                ->nullable()
+                ->constrained('statuses')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string('pcf_no');
             $table->date('date');
             $table->string('institution');

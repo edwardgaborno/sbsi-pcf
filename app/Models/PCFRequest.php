@@ -28,4 +28,9 @@ class PCFRequest extends Model implements HasMedia
     {
         return $this->hasMany(PCFInclusion::class);
     }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
 }

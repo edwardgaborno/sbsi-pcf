@@ -75,10 +75,13 @@ class UserController extends Controller
 
         if ($request->ajax()) {
 
-            $getUsers = User::where('id','!=', auth()->user()->id)->get();
+            $users = User::where('id','!=', auth()->user()->id)->get();
 
-            return Datatables::of($getUsers)
+            return Datatables::of($users)
                 ->addIndexColumn()
+                ->addColumn('role', function ($data) {
+                    return $data->getRoleNames();
+                })
                 ->addColumn('status', function ($data) {
 
                     if ($data->status == 1 && $data->is_approve == 1) {

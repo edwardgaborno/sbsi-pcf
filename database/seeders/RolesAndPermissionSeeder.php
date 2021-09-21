@@ -67,22 +67,22 @@ class RolesAndPermissionSeeder extends Seeder
             'view_quotation',
             'download_quotation',
 
-            'psr_manager_approve_cf',
-            'psr_manager_reject_cf',
+            'psr_mgr_approve_cf',
+            'psr_mgr_reject_cf',
 
-            'marketing_approve_pcf',
-            'marketing_reject_pcf',
+            'mktg_approve_pcf',
+            'mktg_reject_pcf',
 
-            'accounting_approve_pcf',
-            'accounting_reject_pcf',
+            'acct_approve_pcf',
+            'acct_reject_pcf',
 
-            'national_sales_manager_approve_pcf',
-            'national_sales_manager_reject_pcf',
+            'nsm_approve_pcf',
+            'nsm_reject_pcf',
 
             'cfo_approve_pcf',
             'cfo_reject_pcf',
             'cfo_approve_quotation',
-            'cfo_manager_quotation',
+            'cfo_reject_quotation',
 
             'sales_asst_approve_pcf',
             'sales_asst_reject_pcf',
@@ -113,24 +113,24 @@ class RolesAndPermissionSeeder extends Seeder
         $psrMgrRole = Role::create(['name' => 'PSR Manager']);
         $psrMgrRole->givePermissionTo([
             'pcf_request_access',
-            'psr_manager_approve_cf',
-            'psr_manager_reject_cf',
+            'psr_mgr_approve_cf',
+            'psr_mgr_reject_cf',
         ]);
 
         $mkt_mgrRole = Role::create(['name' => 'Marketing']);
         $mkt_mgrRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
-            'marketing_approve_pcf',
-            'marketing_reject_pcf',
+            'mktg_approve_pcf',
+            'mktg_reject_pcf',
         ]);
 
         $acctRole = Role::create(['name' => 'Accounting']);
         $acctRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
-            'accounting_approve_pcf',
-            'accounting_reject_pcf',
+            'acct_approve_pcf',
+            'acct_reject_pcf',
         ]);
 
         $nsmRole = Role::create(['name' => 'National Sales Manager']);
@@ -141,8 +141,8 @@ class RolesAndPermissionSeeder extends Seeder
             'download_pcf',
             'view_quotation',
             'download_quotation',
-            'national_sales_manager_approve_pcf',
-            'national_sales_manager_reject_pcf',
+            'nsm_approve_pcf',
+            'nsm_reject_pcf',
         ]);
 
         $cfoRole = Role::create(['name' => 'Chief Finance Officer']);
@@ -155,7 +155,7 @@ class RolesAndPermissionSeeder extends Seeder
             'cfo_approve_pcf',
             'cfo_reject_pcf',
             'cfo_approve_quotation',
-            'cfo_manager_quotation',
+            'cfo_reject_quotation',
         ]);
 
         $cfoRole = Role::create(['name' => 'Sales Assistant']);

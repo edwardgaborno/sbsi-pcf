@@ -19,43 +19,25 @@ class StatusSeeder extends Seeder
                 'name' => 'Processing',
             ],
             [
-                'name' => 'PSR Manager approved',
+                'name' => 'Approved by PSR Manager',
             ],
             [
-                'name' => 'PSR Manager disapproved',
+                'name' => 'Approved by Marketing',
             ],
             [
-                'name' => 'Marketing approved',
+                'name' => 'Approved by Accounting',
             ],
             [
-                'name' => 'Marketing disapproved',
+                'name' => 'Approved by National Sales Manager',
             ],
             [
-                'name' => 'Accounting approved',
+                'name' => 'Approved by Chief Finance Officer',
             ],
             [
-                'name' => 'Accounting disapproved',
+                'name' => 'Approved by Sales Assistant',
             ],
             [
-                'name' => 'National Sales Manager approve',
-            ],
-            [
-                'name' => 'National Sales Manager disapprove',
-            ],
-            [
-                'name' => 'Chief Finance Officer approve',
-            ],
-            [
-                'name' => 'Chief Finance Officer disapprove',
-            ],
-            [
-                'name' => 'Sales Assistant approve',
-            ],
-            [
-                'name' => 'Sales Assistant disapprove',
-            ],
-            [
-                'name' => 'For Review',
+                'name' => 'For revision',
             ],
         ];
 

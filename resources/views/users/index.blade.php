@@ -97,7 +97,7 @@
                     { data: 'id' },
                     { data: 'name' },
                     { data: 'email' },
-                    { data: 'user_type' },
+                    { data: 'role' },
                     { data: 'status' },
                     { data: 'actions' }
                 ],

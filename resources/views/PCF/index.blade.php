@@ -60,6 +60,7 @@
                                                     <th>PSR</th>
                                                     <th>Annual Profit</th>
                                                     <th>Annual Profit Rate</th>
+                                                    <th>Status</th>
                                                     <th style="text-align: center; vertical-align: middle">Actions</th>
                                                 </tr> 
                                             </thead>
@@ -95,7 +96,7 @@
         $(function() {
             $('#pcf_dataTable').DataTable({
                 "stripeClasses": [],
-                processing: false,
+                processing: true,
                 serverSide: true,
                 responsive: true,
                 ordering: true,
@@ -109,6 +110,7 @@
                     { data: 'psr' },
                     { data: 'annual_profit' },
                     { data: 'annual_profit_rate' },
+                    { data: 'status' },
                     { data: 'actions', orderable: false, searchable: false }
                 ],
             });

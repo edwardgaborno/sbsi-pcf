@@ -11,7 +11,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\Datatables\Datatables;
 use PDF;
 use Illuminate\Support\Facades\DB;
-use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
 
@@ -34,7 +34,7 @@ class PCFRequestController extends Controller
         if(empty($pcfMaxVal)) {
             $this->pcf_no = '000001';
         } else {
-            $this->pcf_no = str_pad( $pcfMaxVal + 1, 6, "0", STR_PAD_LEFT );
+            $this->pcf_no = str_pad($pcfMaxVal + 1, 6, "0", STR_PAD_LEFT);
         }
 
         return view('PCF.sub.create_request', [
@@ -47,6 +47,7 @@ class PCFRequestController extends Controller
         $this->authorize('pcf_request_store');
         
         $pcfRequest = PCFRequest::create($request->validated() + [
+            'status_id' => 1,
             'psr' => auth()->user()->name,
             'created_by' => auth()->user()->id,
         ]);
@@ -81,41 +82,51 @@ class PCFRequestController extends Controller
     public function pcfRequestList(Request $request) 
     {
         $this->authorize('pcf_request_access');
-
+        
         if ($request->ajax()) {
-            $PCFRequest = PCFRequest::orderBy('pcf_no')->get();
+            $pcfRequest = PCFRequest::with('status')
+                        ->select('p_c_f_requests.*')
+                        ->get();
 
-            return Datatables::of($PCFRequest)
-                ->addIndexColumn()
-                ->addColumn('actions', function ($data) {
+            return Datatables::of($pcfRequest)
+                ->addColumn('status', function ($data) {
                     if (auth()->user()->can('pcf_request_edit')) {
-                        return
-                        '<a href="#" class="badge badge-info editPCFRequest" 
-                            data-id="' . $data->id . '" data-toggle="modal">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
-                            class="badge badge-success"  rel="noopener noreferrer">
-                            <i class="far fa-file-pdf"></i> Download PDF
-                        </a>';
+                        return $data->status->find(1)->name;
                     }
                     else {
-                        return
-                        '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" 
-                            data-id="' . $data->id . '" data-toggle="modal">
-                            <i class="far fa-thumbs-up"></i> Approve
-                        </a>
-                        <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" 
-                            data-id="' . $data->id . '" data-toggle="modal">
-                            <i class="far fa-thumbs-down"></i> Disapprove
-                        </a>
-                        <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" 
-                            class="badge badge-info" rel="noopener noreferrer">
-                            <i class="far fa-file-pdf"></i> Download PDF
-                        </a>';
+                        return $data->status->name;
                     }
                 })
-                ->rawColumns(['actions'])
+                ->addColumn('actions', function ($data) {
+
+                    $dl_action = '<a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                            rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PDF</a>';
+
+                    $wEdit_action = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="fas fa-edit"></i> Edit</a>
+                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PDF</a>';
+                                
+                    $approval_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-up"></i> Approve</a>
+                                <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-down"></i> Disapprove</a>
+                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-info" rel="noopener noreferrer">
+                                    <i class="far fa-file-pdf"></i> Download PDF</a>';
+
+                    if (auth()->user()->can('pcf_request_edit')) {
+                        if ($data->status_id == 14){
+                            return $wEdit_action;
+                        }
+                        else {
+                            return $dl_action;
+                        }
+                    }
+                    else {
+                        return $approval_action;
+                    }
+                })
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
     }
@@ -132,10 +143,27 @@ class PCFRequestController extends Controller
 
     public function approveRequest($pcf_request_id)
     {
+        $user = auth()->user();
         $pcf_request = PCFRequest::findOrFail($pcf_request_id);
+
+        if ($user->can('psr_mgr_approve_cf') &&  $pcf_request->status_id == 1) {
+            $status = 2;
+        } else if ($user->can('mktg_approve_pcf') &&  $pcf_request->status_id == 2) {
+            $status = 3;
+        } else if ($user->can('acct_approve_pcf') &&  $pcf_request->status_id == 3) {
+            $status = 4;
+        } else if ($user->can('nsm_approve_pcf') &&  $pcf_request->status_id == 4) {
+            $status = 5;
+        } else if ($user->can('cfo_approve_pcf') &&  $pcf_request->status_id == 5) {
+            $status = 6;
+        } else if ($user->can('sales_asst_approve_pcf') &&  $pcf_request->status_id == 6) {
+            $status = 7;
+        } else {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
         $pcf_request->update([
-            'approved_by' => auth()->user()->id,
-            'disapproved_by' => NULL,
+            'status_id' => $status,
         ]);
             
         return response()->json(['success' => 'success'], 200);
@@ -143,10 +171,27 @@ class PCFRequestController extends Controller
 
     public function disapproveRequest($pcf_request_id)
     {
+        $user = auth()->user();
         $pcf_request = PCFRequest::findOrFail($pcf_request_id);
+
+        if ($user->can('psr_mgr_reject_cf') &&  $pcf_request->status_id == 1) {
+            $status = 8;
+        } else if ($user->can('mktg_reject_pcf') &&  $pcf_request->status_id == 2) {
+            $status = 8;
+        } else if ($user->can('acct_reject_pcf') &&  $pcf_request->status_id == 3) {
+            $status = 8;
+        } else if ($user->can('nsm_reject_pcf') &&  $pcf_request->status_id == 4) {
+            $status = 8;
+        } else if ($user->can('cfo_reject_pcf') &&  $pcf_request->status_id == 5) {
+            $status = 8;
+        } else if ($user->can('sales_asst_reject_pcf') &&  $pcf_request->status_id == 6) {
+            $status = 8;
+        } else {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
         $pcf_request->update([
-            'disapproved_by' => auth()->user()->id,
-            'approved_by' => NULL,
+            'status_id' => $status,
         ]);
             
         return response()->json(['success' => 'success'], 200);
