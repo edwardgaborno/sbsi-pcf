@@ -367,6 +367,7 @@ class PCFRequestController extends Controller
 
             $get_pcf_inclusions = PCFInclusion::select(
                 'p_c_f_inclusions.type as type',
+                'p_c_f_inclusions.serial_no as serial_no',
                 'p_c_f_inclusions.quantity as quantity',
                 'sources.item_code as item_code',
                 'sources.description as description',

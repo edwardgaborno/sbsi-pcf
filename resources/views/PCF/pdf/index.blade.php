@@ -391,7 +391,7 @@
             <tr>
                 <th>ITEM CODE</th>
                 <th>ITEM DESCRIPTION</th>
-                <th>SERIAL NO. ( IF MACHINE TO BE BID IS NOT BRAND NEW)</th>
+                <th colspan="2">SERIAL NO. ( IF MACHINE TO BE BID IS NOT BRAND NEW)</th>
                 <th>QTY</th>
             </tr>
         </thead>
@@ -400,6 +400,7 @@
                 <tr>
                     <td>{{ $request->item_code }}</td>
                     <td>{{ $request->description }}</td>
+                    <td>{{ $request->serial_no }}</td>
                     <td>{{ $request->type }}</td>
                     <td>{{ $request->quantity }}</td>
                 </tr>
