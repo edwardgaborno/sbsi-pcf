@@ -16,6 +16,19 @@ class isUserApproveMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        if(auth()->check()) {
+            if(!auth()->user()->is_approved) {
+
+                auth()->logout();
+
+                $request->session()->invalidate();
+            
+                $request->session()->regenerateToken();
+            
+                return redirect('/')->withErrors('Your account needs an administrator approval in order to login');
+            }
+        }
+
         return $next($request);
     }
 }

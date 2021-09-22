@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'Ardison Pagulayan',
             'email' => 'ardi.pagulayan@sbsi.com.ph',
             'password' => Hash::make('admin'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
             'name' => 'Administrator',
             'email' => 'test1@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             'name' => 'PSR Manager',
             'email' => 'test2@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -59,7 +59,7 @@ class UserSeeder extends Seeder
             'name' => 'Marketing',
             'email' => 'test3@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -71,7 +71,7 @@ class UserSeeder extends Seeder
             'name' => 'Accounting',
             'email' => 'test4@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -83,7 +83,7 @@ class UserSeeder extends Seeder
             'name' => 'National Sales Manager',
             'email' => 'test5@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -95,7 +95,7 @@ class UserSeeder extends Seeder
             'name' => 'Chief Finance Officer',
             'email' => 'test6@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);
@@ -107,7 +107,7 @@ class UserSeeder extends Seeder
             'name' => 'Sales Assistant',
             'email' => 'test7@user.com',
             'password' => Hash::make('12345'),
-            'is_approve' => true,
+            'is_approved' => true,
             'status' => true,
             'email_verified_at' => Carbon::now()
         ]);

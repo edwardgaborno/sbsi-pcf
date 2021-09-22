@@ -45,6 +45,11 @@ class PCFRequestController extends Controller
     public function store(StorePCFRequestRequest $request)
     {
         $this->authorize('pcf_request_store');
+
+        $joins = DB::table('sources')
+                ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
+                ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price')
+                ->get();
         
         $pcfRequest = PCFRequest::create($request->validated() + [
             'status_id' => 1,
@@ -52,9 +57,19 @@ class PCFRequestController extends Controller
             'created_by' => auth()->user()->id,
         ]);
 
-        PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
-            'p_c_f_request_id' => $pcfRequest->id,
-        ]);
+        foreach($pcfRequest as $request) {
+
+            PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
+                'p_c_f_request_id' => $pcfRequest->id,
+            ]);
+            foreach($joins as $join) {
+                $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
+
+                PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
+                    'above_standard_price' => $asp,
+                ]);
+            }
+        }
 
         PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
             'p_c_f_request_id' => $pcfRequest->id,
@@ -335,6 +350,7 @@ class PCFRequestController extends Controller
                 'p_c_f_lists.quantity AS quantity',
                 'p_c_f_lists.sales AS sales',
                 'p_c_f_lists.total_sales AS total_sales',
+                'p_c_f_lists.above_standard_price AS above_standard_price',
                 'sources.item_code as item_code',
                 'sources.description as description',
                 'p_c_f_requests.date AS date',
