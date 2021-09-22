@@ -62,6 +62,10 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
             Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
+
+            Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
+            Route::get('/view-quotation/{pcf_no}', [PCFRequestController::class, 'viewQuotation'])->name('.view_quotation');
+
             Route::post('/store-pcf-file', [PCFRequestController::class, 'storePCFPdfFile'])->name('.storeFile');
 
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');

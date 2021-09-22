@@ -107,12 +107,14 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_access',
             'download_pcf',
             'upload_pcf',
+            'view_pcf',
             'source_access',
         ]);
 
         $psrMgrRole = Role::create(['name' => 'PSR Manager']);
         $psrMgrRole->givePermissionTo([
             'pcf_request_access',
+            'view_pcf',
             'psr_mgr_approve_cf',
             'psr_mgr_reject_cf',
         ]);
@@ -137,7 +139,6 @@ class RolesAndPermissionSeeder extends Seeder
         $nsmRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
-            'download_pcf',
             'download_pcf',
             'view_quotation',
             'download_quotation',
@@ -182,6 +183,7 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_access',
             'download_pcf',
             'upload_pcf',
+            'view_pcf',
             'source_create',
             'source_store',
             'source_edit',

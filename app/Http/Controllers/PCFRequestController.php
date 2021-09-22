@@ -90,8 +90,11 @@ class PCFRequestController extends Controller
 
             return Datatables::of($pcfRequest)
                 ->addColumn('status', function ($data) {
-                    if (auth()->user()->can('pcf_request_edit')) {
+                    if (auth()->user()->can('pcf_request_edit') && $data->status_id == 1) {
                         return $data->status->find(1)->name;
+                    }
+                    elseif (auth()->user()->can('pcf_request_edit') && $data->status_id == 8) {
+                        return $data->status->name;
                     }
                     else {
                         return $data->status->name;
@@ -100,22 +103,33 @@ class PCFRequestController extends Controller
                 ->addColumn('actions', function ($data) {
 
                     $dl_action = '<a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" 
-                            rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PDF</a>';
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PCF (PDF)</a>
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
                     $wEdit_action = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="fas fa-edit"></i> Edit</a>
-                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" 
-                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PDF</a>';
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                                 
                     $approval_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
-                                <a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-info" rel="noopener noreferrer">
-                                    <i class="far fa-file-pdf"></i> Download PDF</a>';
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
+
+                    $wQuotation_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-up"></i> Approve</a>
+                                <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-down"></i> Disapprove</a>
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>
+                                <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
                     if (auth()->user()->can('pcf_request_edit')) {
-                        if ($data->status_id == 14){
+                        if ($data->status_id == 8){
                             return $wEdit_action;
                         }
                         else {
@@ -123,7 +137,13 @@ class PCFRequestController extends Controller
                         }
                     }
                     else {
-                        return $approval_action;
+                        if(auth()->user()->can('view_quotation') && 
+                            ($data->status_id >= 4 && $data->status_id <= 7)) {
+                            return $wQuotation_action;
+                        }
+                        else {
+                            return $approval_action;
+                        }
                     }
                 })
                 ->rawColumns(['status', 'actions'])
@@ -197,117 +217,6 @@ class PCFRequestController extends Controller
         return response()->json(['success' => 'success'], 200);
     }
 
-    public function downloadPdf($pcf_no)
-    {
-        $this->authorize('download_pcf');
-        //check if valid request and authorized user
-
-        if (\Auth::check() && !empty($pcf_no)) {
-
-            $get_pcf_list = PCFList::select(
-                'p_c_f_lists.item_code AS item_code',
-                'p_c_f_lists.description AS description',
-                'p_c_f_lists.quantity AS quantity',
-                'p_c_f_lists.sales AS sales',
-                'p_c_f_lists.total_sales AS total_sales',
-                'p_c_f_lists.above_standard_price AS above_standard_price',
-                'p_c_f_requests.date AS date',
-                'p_c_f_requests.institution AS institution',
-                'p_c_f_requests.duration AS duration',
-
-                'p_c_f_requests.address AS address',
-                'p_c_f_requests.contact_person AS contact_person',
-                'p_c_f_requests.designation AS designation',
-                'p_c_f_requests.thru_designation AS thru_designation',
-                'p_c_f_requests.supplier AS supplier',
-                'p_c_f_requests.terms AS terms',
-                'p_c_f_requests.validity AS validity',
-                'p_c_f_requests.delivery AS delivery',
-                'p_c_f_requests.warranty AS warranty',
-
-                'p_c_f_requests.date_bidding AS date_biding',
-                'p_c_f_requests.bid_docs_price AS bid_docs_price',
-                'p_c_f_requests.psr AS psr',
-                'p_c_f_requests.manager AS manager',
-                'p_c_f_requests.annual_profit AS annual_profit',
-                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
-                'p_c_f_inclusions.item_code AS inclusions_item_code',
-                'p_c_f_inclusions.description AS inclusions_description',
-                'p_c_f_inclusions.type AS inclusions_type',
-                'p_c_f_inclusions.quantity AS inclusions_qty',
-            )
-            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
-            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
-            ->where('p_c_f_lists.pcf_no', $pcf_no)
-            ->orderBy('p_c_f_lists.id', 'DESC')
-            ->get();
-
-            $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
-            
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
-            $pdf->setPaper('legal', 'portrait');
-            return $pdf->download('pcf_request.pdf');
-        }
-
-        //return bad request error
-        return response()->json(['error' => 'invalid request'], 400);
-    }
-
-    public function viewPdf($pcf_no)
-    {
-        $this->authorize('view_pcf');
-
-        //check if valid request and authorized user
-        if (\Auth::check() && !empty($pcf_no)) {
-
-            $get_pcf_list = PCFList::select(
-                'p_c_f_lists.item_code AS item_code',
-                'p_c_f_lists.description AS description',
-                'p_c_f_lists.quantity AS quantity',
-                'p_c_f_lists.sales AS sales',
-                'p_c_f_lists.total_sales AS total_sales',
-                'p_c_f_requests.date AS date',
-                'p_c_f_requests.institution AS institution',
-                'p_c_f_requests.duration AS duration',
-
-                'p_c_f_requests.address AS address',
-                'p_c_f_requests.contact_person AS contact_person',
-                'p_c_f_requests.designation AS designation',
-                'p_c_f_requests.thru_designation AS thru_designation',
-                'p_c_f_requests.supplier AS supplier',
-                'p_c_f_requests.terms AS terms',
-                'p_c_f_requests.validity AS validity',
-                'p_c_f_requests.delivery AS delivery',
-                'p_c_f_requests.warranty AS warranty',
-
-                'p_c_f_requests.date_bidding AS date_biding',
-                'p_c_f_requests.bid_docs_price AS bid_docs_price',
-                'p_c_f_requests.psr AS psr',
-                'p_c_f_requests.manager AS manager',
-                'p_c_f_requests.annual_profit AS annual_profit',
-                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
-                'p_c_f_inclusions.item_code AS inclusions_item_code',
-                'p_c_f_inclusions.description AS inclusions_description',
-                'p_c_f_inclusions.type AS inclusions_type',
-                'p_c_f_inclusions.quantity AS inclusions_qty',
-            )
-            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
-            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
-            ->where('p_c_f_lists.pcf_no', $pcf_no)
-            ->orderBy('p_c_f_lists.id', 'DESC')
-            ->get();
-
-            $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
-            
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
-            $pdf->setPaper('legal', 'portrait');
-            return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
-        }
-
-        //return bad request error
-        return response()->json(['error' => 'invalid request'], 400);
-    }
-
     public function storePCFPdfFile(Request $request)
     {
         $validator = Validator::make($request->all(), [ 
@@ -358,5 +267,159 @@ class PCFRequestController extends Controller
             'annual_profit' => number_format((float)$annual_profit, 2, '.', ''),
             'annual_profit_rate' => number_format((float)$annual_profit_rate, 0, '.', ''),
         ), 200);
+    }
+
+    public function downloadPdf($pcf_no)
+    {
+        $this->authorize('download_pcf');
+        //check if valid request and authorized user
+
+        if (\Auth::check() && !empty($pcf_no)) {
+
+            $get_pcf_list = PCFList::select(
+                // 'p_c_f_lists.item_code AS item_code',
+                // 'p_c_f_lists.description AS description',
+                'p_c_f_lists.quantity AS quantity',
+                'p_c_f_lists.sales AS sales',
+                'p_c_f_lists.total_sales AS total_sales',
+                'p_c_f_requests.date AS date',
+                'p_c_f_requests.institution AS institution',
+                'p_c_f_requests.contract_duration AS duration',
+
+                'p_c_f_requests.address AS address',
+                'p_c_f_requests.contact_person AS contact_person',
+                'p_c_f_requests.designation AS designation',
+                'p_c_f_requests.thru_designation AS thru_designation',
+                'p_c_f_requests.supplier AS supplier',
+                'p_c_f_requests.terms AS terms',
+                'p_c_f_requests.validity AS validity',
+                'p_c_f_requests.delivery AS delivery',
+                'p_c_f_requests.warranty AS warranty',
+
+                'p_c_f_requests.date_bidding AS date_biding',
+                'p_c_f_requests.bid_docs_price AS bid_docs_price',
+                'p_c_f_requests.psr AS psr',
+                'p_c_f_requests.manager AS manager',
+                'p_c_f_requests.annual_profit AS annual_profit',
+                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
+                // 'p_c_f_inclusions.item_code AS inclusions_item_code',
+                // 'p_c_f_inclusions.description AS inclusions_description',
+                'p_c_f_inclusions.type AS inclusions_type',
+                'p_c_f_inclusions.quantity AS inclusions_qty',
+            )
+            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
+            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
+            ->where('p_c_f_lists.pcf_no', $pcf_no)
+            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->get();
+
+            $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
+            
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
+            $pdf->setPaper('legal', 'portrait');
+            return $pdf->download('pcf_request.pdf');
+        }
+
+        //return bad request error
+        return response()->json(['error' => 'invalid request'], 400);
+    }
+
+    public function viewPdf($pcf_no)
+    {
+        $this->authorize('view_pcf');
+
+        //check if valid request and authorized user
+        if (\Auth::check() && !empty($pcf_no)) {
+
+            $get_pcf_list = PCFList::select(
+                'p_c_f_lists.quantity AS quantity',
+                'p_c_f_lists.sales AS sales',
+                'p_c_f_lists.total_sales AS total_sales',
+                'sources.item_code as item_code',
+                'sources.description as description',
+                'p_c_f_requests.date AS date',
+                'p_c_f_requests.institution AS institution',
+                'p_c_f_requests.contract_duration AS duration',
+
+                'p_c_f_requests.address AS address',
+                'p_c_f_requests.contact_person AS contact_person',
+                'p_c_f_requests.designation AS designation',
+                'p_c_f_requests.thru_designation AS thru_designation',
+                'p_c_f_requests.supplier AS supplier',
+                'p_c_f_requests.terms AS terms',
+                'p_c_f_requests.validity AS validity',
+                'p_c_f_requests.delivery AS delivery',
+                'p_c_f_requests.warranty AS warranty',
+
+                'p_c_f_requests.date_bidding AS date_biding',
+                'p_c_f_requests.bid_docs_price AS bid_docs_price',
+                'p_c_f_requests.psr AS psr',
+                'p_c_f_requests.manager AS manager',
+                'p_c_f_requests.annual_profit AS annual_profit',
+                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
+            )
+            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
+            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
+            ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
+            ->where('p_c_f_lists.pcf_no', $pcf_no)
+            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->get();
+
+            $get_pcf_inclusions = PCFInclusion::select(
+                'p_c_f_inclusions.type as type',
+                'p_c_f_inclusions.quantity as quantity',
+                'sources.item_code as item_code',
+                'sources.description as description',
+            )
+            ->join('sources', 'sources.id', 'p_c_f_inclusions.source_id')
+            ->where('pcf_no',$pcf_no)
+            ->get();
+            
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
+            $pdf->setPaper('legal', 'portrait');
+            return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
+        }
+
+        //return bad request error
+        return response()->json(['error' => 'invalid request'], 400);
+    }
+
+    public function viewQuotation($pcf_no)
+    {
+        $this->authorize('view_quotation');
+
+        //check if valid request and authorized user
+        if (\Auth::check() && !empty($pcf_no)) {
+
+            $pcfList = PCFList::select(
+                // 'p_c_f_lists.item_code AS item_code',
+                // 'p_c_f_lists.description AS description',
+                'p_c_f_lists.quantity AS quantity',
+                'p_c_f_lists.sales AS sales',
+                'p_c_f_lists.total_sales AS total_sales',
+                'p_c_f_requests.date AS date',
+                'p_c_f_requests.institution AS institution',
+                'p_c_f_requests.address AS address',
+                'p_c_f_requests.supplier AS supplier',
+                'p_c_f_requests.terms AS terms',
+                'p_c_f_requests.validity AS validity',
+                'p_c_f_requests.delivery AS delivery',
+                'p_c_f_requests.warranty AS warranty',
+                'sources.item_code as item_code',
+                'sources.description as description',
+            )
+            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
+            ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
+            ->where('p_c_f_lists.pcf_no', $pcf_no)
+            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->get();
+
+            $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcf_no'));
+            $pdf->setPaper('legal', 'portrait');
+            return $pdf->stream('quotation.pdf', array("Attachment" => false));
+        }
+
+        //return bad request error
+        return response()->json(['error' => 'invalid request'], 400);
     }
 }
