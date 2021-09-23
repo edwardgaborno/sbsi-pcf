@@ -184,12 +184,13 @@ class PCFRequestController extends Controller
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
-        if ($user->can('psr_mgr_approve_cf') &&  $pcfRequest->status_id == 1) {
+        if ($user->can('psr_mgr_approve_pcf') &&  $pcfRequest->status_id == 1) {
             $status = 2;
         } else if ($user->can('mktg_approve_pcf') &&  $pcfRequest->status_id == 2) {
             $status = 3;
         } else if ($user->can('acct_approve_pcf') &&  $pcfRequest->status_id == 3) {
             $status = 4;
+            $pcfRequest->update(['approved_by' => $user->id,]);
         } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4) {
             $status = 5;
         } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
@@ -382,10 +383,13 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.manager AS manager',
                 'p_c_f_requests.annual_profit AS annual_profit',
                 'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
+
+                'users.name as name',
             )
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
             ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
+            ->join('users', 'users.id', 'p_c_f_requests.approved_by')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
             ->orderBy('p_c_f_lists.id', 'DESC')
             ->get();

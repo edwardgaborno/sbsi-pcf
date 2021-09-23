@@ -409,16 +409,18 @@
     </table>
 
     <table class="approvedByTable" style="width: 200px;">
+        @foreach ($get_pcf_list as $request)
         <tbody>
             <tr>
                 <td style="text-align: left; font-weight: bold;">Approved by:</td>
-                <td style="text-decoration: underline; text-align: center;">MARY ANNIE SANTIAGO</td>
+                <td style="text-decoration: underline; text-align: center;">{{ $request->name }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="text-align: center;">Accounting</td>
             </tr>
         </tbody>
+        @endforeach
     </table>
             
     <table class="footerTable" style="width: 200px; margin-left: auto">

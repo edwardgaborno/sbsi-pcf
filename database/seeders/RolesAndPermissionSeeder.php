@@ -67,8 +67,8 @@ class RolesAndPermissionSeeder extends Seeder
             'view_quotation',
             'download_quotation',
 
-            'psr_mgr_approve_cf',
-            'psr_mgr_reject_cf',
+            'psr_mgr_approve_pcf',
+            'psr_mgr_reject_pcf',
 
             'mktg_approve_pcf',
             'mktg_reject_pcf',
