@@ -37,7 +37,7 @@ class CreatePCFListsTable extends Migration
             $table->decimal('total_gross_profit', 12, 2)->default(0.00);
             $table->decimal('total_net_sales', 12, 2)->default(0.00);
             $table->double('profit_rate', 11, 2)->default(0.00);
-            $table->enum('above_standard_price', ['yes', 'no'])->nullable();
+            $table->string('above_standard_price')->nullable();
             $table->timestamps();
         });
     }

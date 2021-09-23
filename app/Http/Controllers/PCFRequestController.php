@@ -46,30 +46,15 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_store');
 
-        $joins = DB::table('sources')
-                ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
-                ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price')
-                ->get();
-        
         $pcfRequest = PCFRequest::create($request->validated() + [
             'status_id' => 1,
             'psr' => auth()->user()->name,
             'created_by' => auth()->user()->id,
         ]);
 
-        foreach($pcfRequest as $request) {
-
-            PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
-                'p_c_f_request_id' => $pcfRequest->id,
-            ]);
-            foreach($joins as $join) {
-                $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
-
-                PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
-                    'above_standard_price' => $asp,
-                ]);
-            }
-        }
+        PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
+            'p_c_f_request_id' => $pcfRequest->id,
+        ]);
 
         PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
             'p_c_f_request_id' => $pcfRequest->id,
@@ -84,9 +69,10 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_update');
 
-        $updatePCFRequest = PCFRequest::findOrFail($request->pcf_request_id);
-        $updatePCFRequest->update($request->validated() + [
+        $pcfRequest = PCFRequest::findOrFail($request->pcf_request_id);
+        $pcfRequest->update($request->validated() + [
             'psr' => auth()->user()->name,
+            'status_id' => 1,
         ]);
 
         Alert::success('PCF Request Details', 'Updated successfully'); 
@@ -99,7 +85,7 @@ class PCFRequestController extends Controller
         $this->authorize('pcf_request_access');
         
         if ($request->ajax()) {
-            $pcfRequest = PCFRequest::with('status')
+            $pcfRequest = PCFRequest::with('status', 'pcfList')
                         ->select('p_c_f_requests.*')
                         ->get();
 
@@ -133,14 +119,19 @@ class PCFRequestController extends Controller
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
                                 <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
+                    
+                    $vQuotation_action = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>
+                                <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
                     $wQuotation_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>
-                                <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-success" 
+                                <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
                     if (auth()->user()->can('pcf_request_edit')) {
@@ -152,11 +143,28 @@ class PCFRequestController extends Controller
                         }
                     }
                     else {
-                        if(auth()->user()->can('view_quotation') && 
+                        if (auth()->user()->can('view_quotation') && ($data->status_id == 5) &&
+                        ($data->countDistinct($data->pcf_no) > 1)) {
+                            return $wQuotation_action;
+                        }
+                        elseif (auth()->user()->can('view_quotation') && ($data->status_id == 5) &&
+                        ($data->countDistinct($data->pcf_no) == 1)) {
+                            return $vQuotation_action;
+                        }
+                        elseif (auth()->user()->can('view_quotation') && 
                             ($data->status_id >= 4 && $data->status_id <= 7)) {
                             return $wQuotation_action;
                         }
-                        else {
+                        elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
+                            return $approval_action;
+                        }
+                        elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
+                            return $approval_action;
+                        }
+                        elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
+                            return $approval_action;
+                        }
+                        elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
                             return $approval_action;
                         }
                     }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Facades\DB;
 
 class PCFRequest extends Model implements HasMedia
 {
@@ -19,18 +20,30 @@ class PCFRequest extends Model implements HasMedia
         return url($this->getFirstMediaUrl('pcf_request_file'));
     }
 
-    public function pcfLists() 
+    public function pcfList() 
     {
-        return $this->hasMany(PCFList::class);
+        return $this->belongsTo(PCFList::class);
     }
 
-    public function pcfInclusions() 
+    public function pcfInclusion() 
     {
-        return $this->hasMany(PCFInclusion::class);
+        return $this->belongsTo(PCFInclusion::class);
     }
 
     public function status()
     {
         return $this->belongsTo(Status::class);
+    }
+
+    public function countDistinct($value)
+    {
+        $counts = DB::table('p_c_f_lists')
+                ->select(DB::raw('COUNT(DISTINCT above_standard_price) as totalDistinct'))
+                ->where('pcf_no', $value)
+                ->get();
+        
+        foreach($counts as $count) {
+            return $count->totalDistinct;
+        }   
     }
 }

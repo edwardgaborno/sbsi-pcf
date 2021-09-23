@@ -115,8 +115,8 @@ class RolesAndPermissionSeeder extends Seeder
         $psrMgrRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
-            'psr_mgr_approve_cf',
-            'psr_mgr_reject_cf',
+            'psr_mgr_approve_pcf',
+            'psr_mgr_reject_pcf',
         ]);
 
         $mkt_mgrRole = Role::create(['name' => 'Marketing']);

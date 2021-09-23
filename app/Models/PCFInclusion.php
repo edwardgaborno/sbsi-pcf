@@ -16,8 +16,8 @@ class PCFInclusion extends Model
         return $this->belongsTo(Source::class);
     }
 
-    public function pcfRequest() 
+    public function pcfRequests() 
     {
-        return $this->belongsTo(PCFRequest::class);
+        return $this->hasMany(PCFRequest::class);
     }
 }

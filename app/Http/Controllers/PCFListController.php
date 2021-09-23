@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PCFList;
 use Illuminate\Http\Request;
 use Alert;
+use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\PCFList\StorePCFListRequest;
 
@@ -13,10 +14,35 @@ class PCFListController extends Controller
     public function store(StorePCFListRequest $request)
     {
         $this->authorize('pcf_request_store');
-        
-        PCFList::create($request->validated() + [
-            'p_c_f_request_id' => $request->p_c_f_request_id,
-        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            $pcfList = PCFList::create($request->validated() + [
+                'p_c_f_request_id' => $request->p_c_f_request_id,
+            ]);
+
+            $joins = DB::table('sources')
+                    ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
+                    ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price', 'sources.id as source_id')
+                    ->get();
+
+
+            foreach($joins as $join) {
+                $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
+
+                $pcfList->update([
+                    'above_standard_price' => $asp,
+                ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Throwable $th) {
+
+            DB::rollBack();
+        }
 
         alert()->success('Success','PCF Request Item has been added.');
 
