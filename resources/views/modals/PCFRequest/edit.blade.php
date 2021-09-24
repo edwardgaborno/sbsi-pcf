@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit PCF Request </h5>
-                @hasanyrole('PSR Manager|Marketing|National Sales Manager|Accounting|Sales Assitant|Chief Finance Officer')
+                @hasanyrole('PSR Manager|Marketing|National Sales Manager|Accounting|Sales Assistant|Chief Finance Officer')
                     <span class="badge badge-danger mt-2 ml-5">Only PSR have permission to update the details of this request</span>
                 @endhasanyrole
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
