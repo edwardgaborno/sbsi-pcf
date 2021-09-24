@@ -60,10 +60,8 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/get/pcf_details={pcf_request_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
 
-            Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
             Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
 
-            Route::get('/download-pdf/{pcf_no}', [PCFRequestController::class, 'downloadPdf'])->name('.download_pdf');
             Route::get('/view-quotation/{pcf_no}', [PCFRequestController::class, 'viewQuotation'])->name('.view_quotation');
 
             Route::post('/store-pcf-file', [PCFRequestController::class, 'storePCFPdfFile'])->name('.storeFile');

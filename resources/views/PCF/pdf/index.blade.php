@@ -146,183 +146,81 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="5">
-                    <center>
-                        PROFITABILITY COMPUTATION FORM
-                    </center>
-                </th>
+                <th colspan="5"><center>PROFITABILITY COMPUTATION FORM</center></th>
             </tr>
             <tr>
                 <th style="width: 30%;">DATE:</th>
-                <td style="width: 40%;">
-                <center>
-                    {{ Carbon\Carbon::parse($get_pcf_list[0]->date)->format('F d, Y') }}
-                </center>
-                </td>
+                <td style="width: 40%;"><center>{{ Carbon\Carbon::parse($get_pcf_list[0]->date)->format('F d, Y') }}</center></td>
             </tr>
             <tr>
                 <th>INSTITUTION:</th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->institution }}
-                </center>
-                </td>
+                <td><center>{{ $get_pcf_list[0]->institution }}</center></td>
             </tr>
             <tr>
-                <th>
-                    ADDRESS:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->address }}
-                </center>
-                </td>
+                <th>ADDRESS:</th>
+                <td><center>{{ $get_pcf_list[0]->address }}</center></td>
             </tr>
             <tr>
-                <th>
-                    CONTACT PERSON:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->contact_person }}
-                </center>
-                </td>
+                <th>CONTACT PERSON:</th>
+                <td><center>{{ $get_pcf_list[0]->contact_person }}</center></td>
             </tr>
-
             <tr>
-                <th>
-                    DESIGNATION:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->designation }}
-                </center>
-                </td>
+                <th>DESIGNATION:</th>
+                <td><center>{{ $get_pcf_list[0]->designation }}</center></td>
             </tr>
-
             <tr>
-                <th>
-                    THRU DESIGNATION:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->thru_designation }}
-                </center>
-                </td>
+                <th>THRU DESIGNATION:</th>
+                <td><center>{{ $get_pcf_list[0]->thru_designation }}</center></td>
             </tr>
-            
             <tr>
-                <th>
-                    SUPPLIER:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->supplier }}
-                </center>
-                </td>
+                <th>SUPPLIER:</th>
+                <td><center>{{ $get_pcf_list[0]->supplier }}</center></td>
+            </tr>
+            <tr>
+                <th>TERMS:</th>
+                <td><center>{{ $get_pcf_list[0]->terms }}</center></td>
+            </tr>
+            <tr>
+                <th>VALIDITY:</th>
+                <td><center>{{ $get_pcf_list[0]->validity }}</center></td>
+            </tr>
+            <tr>
+                <th>DELIVERY:</th>
+                <td><center>{{ $get_pcf_list[0]->delivery }}</center></td>
+            </tr>
+            <tr>
+                <th>WARRANT (FOR MACHINES ONLY):</th>
+                <td><center>{{ $get_pcf_list[0]->warranty }}</center></td>
             </tr>
 
             <tr>
-                <th>
-                    TERMS:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->terms }}
-                </center>
-                </td>
+                <th>DURATION OF CONTRACT (NO. OF YEARS):</th>
+                <td><center>{{ $get_pcf_list[0]->duration }}</center></td>
             </tr>
-
             <tr>
-                <th>
-                    VALIDITY:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->validity }}
-                </center>
-                </td>
+                <th>DATE OF BIDDING:</th>
+                <td><center>{{ $get_pcf_list[0]->date_biding }}</center></td>
             </tr>
-            
             <tr>
-                <th>
-                    DELIVERY:
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->delivery }}
-                </center>
-                </td>
+                <th>BID DOCS PRICE:</th>
+                <td><center>{{ number_format($get_pcf_list[0]->bid_docs_price,2) }}</center></td>
             </tr>
-
             <tr>
-                <th>
-                    WARRANT (FOR MACHINES ONLY):
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->warranty }}
-                </center>
-                </td>
+                <th>PSR and MANAGER:</th>
+                <td><center>{{ $get_pcf_list[0]->psr .', '. $get_pcf_list[0]->manager }}</center></td>
             </tr>
-
             <tr>
-                <th>
-                    DURATION OF CONTRACT (NO. OF YEARS):
-                </th>
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->duration }}
-                </center>
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    DATE OF BIDDING:
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->date_biding }}
-                </center>
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    BID DOCS PRICE: 
-                <td>
-                <center>
-                    {{ number_format($get_pcf_list[0]->bid_docs_price,2) }}
-                </center>
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    PSR and MANAGER:
-                <td>
-                <center>
-                    {{ $get_pcf_list[0]->psr .', '. $get_pcf_list[0]->manager }}
-                </center>
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                    ANNUAL PROFIT:
+                <th>ANNUAL PROFIT:</th>
                 <td style="text-align: right; background-color: #fff200; font-weight: bold;">
                     {{ number_format($get_pcf_list[0]->annual_profit,2) }}
                 </td>
             </tr>
-
             <tr>
-                <th>
-                    ANNUAL PROFIT RATE:
+                <th>ANNUAL PROFIT RATE:</th>
                 <td style="text-align: right; background-color: #fff200; font-weight: bold;">
                     {{ $get_pcf_list[0]->annual_profit_rate.'%' }}
                 </td>
             </tr>
-
         </tbody>
     </table>
     <table class="pcf_no">
@@ -337,13 +235,11 @@
             </tr>
             <tr>
                 <td style="width: 20%; font-weight: bold;">RFQ NO:</td>
-                <td>
-                </td>
+                <td></td>
             </tr>
             <tr>
                 <td style="width: 20%; font-weight: bold;">INVOLVED:</td>
-                <td>
-                </td>
+                <td></td>
             </tr>
         </tbody>
     </table>
@@ -409,18 +305,22 @@
     </table>
 
     <table class="approvedByTable" style="width: 200px;">
-        @foreach ($get_pcf_list as $request)
         <tbody>
             <tr>
                 <td style="text-align: left; font-weight: bold;">Approved by:</td>
-                <td style="text-decoration: underline; text-align: center;">{{ $request->name }}</td>
+            @if(!empty($approver[0]->name))
+                <td style="text-decoration: underline; text-align: center;">
+                    {{ $approver[0]->name }}
+                </td>
+            @else
+                <td style="text-decoration: underline; text-align: center;"></td>
+            @endif
             </tr>
             <tr>
                 <td></td>
                 <td style="text-align: center;">Accounting</td>
             </tr>
         </tbody>
-        @endforeach
     </table>
             
     <table class="footerTable" style="width: 200px; margin-left: auto">
@@ -437,10 +337,11 @@
         </tbody>
     </table>
 
+    @if(!empty($approver[0]->name))
     <div class="signed-note">
         <span>NOTE: THIS DOCUMENT HAS BEEN ELECTRONICALLY SIGNED BY THE APPROVER.</span>
     </div>
-
+    @endif
     <div class="docs-note">
         <span>NOTE: NO PCF SHALL PROCEED TO BIDDING WITHOUT ACCOUNTING SIGNATURE.</span>
     </div>

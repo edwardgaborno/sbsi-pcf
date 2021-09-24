@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\PCFRequest;
 use App\Models\PCFList;
 use App\Models\PCFInclusion;
@@ -9,11 +10,13 @@ use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\Datatables\Datatables;
+use Carbon\Carbon;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
+use App\Notifications\ApprovePCFRequestNotification;
 
 class PCFRequestController extends Controller
 {
@@ -46,21 +49,31 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_store');
 
-        $pcfRequest = PCFRequest::create($request->validated() + [
-            'status_id' => 1,
-            'psr' => auth()->user()->name,
-            'created_by' => auth()->user()->id,
-        ]);
+        DB::beginTransaction();
 
-        PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
-            'p_c_f_request_id' => $pcfRequest->id,
-        ]);
+        try {
 
-        PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
-            'p_c_f_request_id' => $pcfRequest->id,
-        ]);
+            $pcfRequest = PCFRequest::create($request->validated() + [
+                'status_id' => 1,
+                'psr' => auth()->user()->name,
+                'created_by' => auth()->user()->id,
+            ]);
 
-        alert()->success('Success','PCF Request has been created.');
+            PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
+                'p_c_f_request_id' => $pcfRequest->id,
+            ]);
+
+            PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
+                'p_c_f_request_id' => $pcfRequest->id,
+            ]);
+
+            DB::commit();
+            alert()->success('Success','PCF Request has been created.');
+        }
+        catch (\Throwable $th) {
+
+            DB::rollBack();
+        }
 
         return redirect()->route('PCF.index');
     }
@@ -103,9 +116,7 @@ class PCFRequestController extends Controller
                 })
                 ->addColumn('actions', function ($data) {
 
-                    $dl_action = '<a target="_blank" href="' . route('PCF.download_pdf', $data->pcf_no) .'" class="badge badge-success" 
-                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> Download PCF (PDF)</a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                    $vAction = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
                     $wEdit_action = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
@@ -134,7 +145,7 @@ class PCFRequestController extends Controller
                             return $wEdit_action;
                         }
                         else {
-                            return $dl_action;
+                            return $vAction;
                         }
                     }
                     else {
@@ -184,6 +195,8 @@ class PCFRequestController extends Controller
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
+        $requestor = User::find($pcfRequest->created_by);
+
         if ($user->can('psr_mgr_approve_pcf') &&  $pcfRequest->status_id == 1) {
             $status = 2;
         } else if ($user->can('mktg_approve_pcf') &&  $pcfRequest->status_id == 2) {
@@ -195,6 +208,10 @@ class PCFRequestController extends Controller
             $status = 5;
         } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
             $status = 6;
+
+            $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
+            $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+
         } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 6) {
             $status = 7; 
         } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 5 
@@ -204,11 +221,17 @@ class PCFRequestController extends Controller
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
-        $pcfRequest->update([
-            'status_id' => $status,
-        ]);
-            
-        return response()->json(['success' => 'success'], 200);
+        try {
+            $pcfRequest->update([
+                'status_id' => $status,
+            ]);
+                
+            DB::commit();
+            return response()->json(['success' => 'success'], 200);
+        }
+        catch (\Throwable $th) {
+            DB::rollBack();
+        }
     }
 
     public function disapproveRequest($pcf_request_id)
@@ -235,11 +258,19 @@ class PCFRequestController extends Controller
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
-        $pcfRequest->update([
-            'status_id' => $status,
-        ]);
-            
-        return response()->json(['success' => 'success'], 200);
+        DB::beginTransaction();
+
+        try {
+            $pcfRequest->update([
+                'status_id' => $status,
+            ]);
+
+            DB::commit();
+            return response()->json(['success' => 'success'], 200);
+        }
+        catch (\Throwable $th) {
+            DB::rollBack();
+        }
     }
 
     public function storePCFPdfFile(Request $request)
@@ -294,79 +325,24 @@ class PCFRequestController extends Controller
         ), 200);
     }
 
-    public function downloadPdf($pcf_no)
-    {
-        $this->authorize('download_pcf');
-        //check if valid request and authorized user
-
-        if (\Auth::check() && !empty($pcf_no)) {
-
-            $get_pcf_list = PCFList::select(
-                // 'p_c_f_lists.item_code AS item_code',
-                // 'p_c_f_lists.description AS description',
-                'p_c_f_lists.quantity AS quantity',
-                'p_c_f_lists.sales AS sales',
-                'p_c_f_lists.total_sales AS total_sales',
-                'p_c_f_requests.date AS date',
-                'p_c_f_requests.institution AS institution',
-                'p_c_f_requests.contract_duration AS duration',
-
-                'p_c_f_requests.address AS address',
-                'p_c_f_requests.contact_person AS contact_person',
-                'p_c_f_requests.designation AS designation',
-                'p_c_f_requests.thru_designation AS thru_designation',
-                'p_c_f_requests.supplier AS supplier',
-                'p_c_f_requests.terms AS terms',
-                'p_c_f_requests.validity AS validity',
-                'p_c_f_requests.delivery AS delivery',
-                'p_c_f_requests.warranty AS warranty',
-
-                'p_c_f_requests.date_bidding AS date_biding',
-                'p_c_f_requests.bid_docs_price AS bid_docs_price',
-                'p_c_f_requests.psr AS psr',
-                'p_c_f_requests.manager AS manager',
-                'p_c_f_requests.annual_profit AS annual_profit',
-                'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
-                // 'p_c_f_inclusions.item_code AS inclusions_item_code',
-                // 'p_c_f_inclusions.description AS inclusions_description',
-                'p_c_f_inclusions.type AS inclusions_type',
-                'p_c_f_inclusions.quantity AS inclusions_qty',
-            )
-            ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
-            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
-            ->where('p_c_f_lists.pcf_no', $pcf_no)
-            ->orderBy('p_c_f_lists.id', 'DESC')
-            ->get();
-
-            $get_pcf_inclusions = PCFInclusion::where('pcf_no',$pcf_no)->get();
-            
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
-            $pdf->setPaper('legal', 'portrait');
-            return $pdf->download('pcf_request.pdf');
-        }
-
-        //return bad request error
-        return response()->json(['error' => 'invalid request'], 400);
-    }
-
     public function viewPdf($pcf_no)
     {
         $this->authorize('view_pcf');
 
-        //check if valid request and authorized user
-        if (\Auth::check() && !empty($pcf_no)) {
+        if (auth()->check() && !empty($pcf_no)) {
 
             $get_pcf_list = PCFList::select(
                 'p_c_f_lists.quantity AS quantity',
                 'p_c_f_lists.sales AS sales',
                 'p_c_f_lists.total_sales AS total_sales',
                 'p_c_f_lists.above_standard_price AS above_standard_price',
+
                 'sources.item_code as item_code',
                 'sources.description as description',
+
                 'p_c_f_requests.date AS date',
                 'p_c_f_requests.institution AS institution',
                 'p_c_f_requests.contract_duration AS duration',
-
                 'p_c_f_requests.address AS address',
                 'p_c_f_requests.contact_person AS contact_person',
                 'p_c_f_requests.designation AS designation',
@@ -376,7 +352,6 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.validity AS validity',
                 'p_c_f_requests.delivery AS delivery',
                 'p_c_f_requests.warranty AS warranty',
-
                 'p_c_f_requests.date_bidding AS date_biding',
                 'p_c_f_requests.bid_docs_price AS bid_docs_price',
                 'p_c_f_requests.psr AS psr',
@@ -384,12 +359,9 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.annual_profit AS annual_profit',
                 'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
 
-                'users.name as name',
             )
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
-            ->leftJoin('p_c_f_inclusions','p_c_f_inclusions.pcf_no','p_c_f_lists.pcf_no')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
-            ->join('users', 'users.id', 'p_c_f_requests.approved_by')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
             ->orderBy('p_c_f_lists.id', 'DESC')
             ->get();
@@ -404,8 +376,14 @@ class PCFRequestController extends Controller
             ->join('sources', 'sources.id', 'p_c_f_inclusions.source_id')
             ->where('pcf_no',$pcf_no)
             ->get();
+
+            $approver = User::select(
+                'users.name as name',
+            )
+            ->join('p_c_f_requests', 'p_c_f_requests.approved_by', 'users.id')
+            ->get();
             
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no'));
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no', 'approver'));
             $pdf->setPaper('legal', 'portrait');
             return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
         }
@@ -422,8 +400,6 @@ class PCFRequestController extends Controller
         if (\Auth::check() && !empty($pcf_no)) {
 
             $pcfList = PCFList::select(
-                // 'p_c_f_lists.item_code AS item_code',
-                // 'p_c_f_lists.description AS description',
                 'p_c_f_lists.quantity AS quantity',
                 'p_c_f_lists.sales AS sales',
                 'p_c_f_lists.total_sales AS total_sales',
