@@ -82,13 +82,22 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_update');
 
-        $pcfRequest = PCFRequest::findOrFail($request->pcf_request_id);
-        $pcfRequest->update($request->validated() + [
-            'psr' => auth()->user()->name,
-            'status_id' => 1,
-        ]);
+        DB::beginTransaction();
 
-        Alert::success('PCF Request Details', 'Updated successfully'); 
+        try {
+            $pcfRequest = PCFRequest::findOrFail($request->pcf_request_id);
+            $pcfRequest->update($request->validated() + [
+                'psr' => auth()->user()->name,
+                'status_id' => 1,
+            ]);
+
+            DB::commit();
+            alert()->success('Success','PCF Request has been updated.');
+
+        }
+        catch (\Throwable $th) {
+            DB::rollBack();
+        }
 
         return redirect()->route('PCF.index');
     }
@@ -192,6 +201,8 @@ class PCFRequestController extends Controller
 
     public function approveRequest($pcf_request_id)
     {
+        DB::beginTransaction();
+
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
@@ -236,6 +247,8 @@ class PCFRequestController extends Controller
 
     public function disapproveRequest($pcf_request_id)
     {
+        DB::beginTransaction();
+
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
@@ -253,12 +266,10 @@ class PCFRequestController extends Controller
             $status = 8;
         } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 5 
                 && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
-            $status = 8;
+                $status = 8;
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
-
-        DB::beginTransaction();
 
         try {
             $pcfRequest->update([
@@ -388,7 +399,6 @@ class PCFRequestController extends Controller
             return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
         }
 
-        //return bad request error
         return response()->json(['error' => 'invalid request'], 400);
     }
 
@@ -396,8 +406,7 @@ class PCFRequestController extends Controller
     {
         $this->authorize('view_quotation');
 
-        //check if valid request and authorized user
-        if (\Auth::check() && !empty($pcf_no)) {
+        if (auth()->check() && !empty($pcf_no)) {
 
             $pcfList = PCFList::select(
                 'p_c_f_lists.quantity AS quantity',
