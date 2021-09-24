@@ -46,4 +46,13 @@ class PCFRequest extends Model implements HasMedia
             return $count->totalDistinct;
         }   
     }
+
+    public function checkColumnValue($value)
+    {
+        $data = PCFList::select('above_standard_price')->where('pcf_no', $value)->get();
+
+        foreach($data as $datum) {
+            return $datum->above_standard_price;
+        }
+    }
 }

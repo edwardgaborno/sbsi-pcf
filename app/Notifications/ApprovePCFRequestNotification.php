@@ -47,7 +47,7 @@ class ApprovePCFRequestNotification extends Notification
         return (new MailMessage)
                     ->subject('PCF Request Approved')
                     ->greeting('Hello, ' . $this->name)
-                    ->line('The PCF request that you have created, ' . $this->date . ' has been approved.')
+                    ->line('The PCF request that you have created, ' . $this->date . ', has been approved.')
                     ->line('Thank you for using the application!');
     }
 

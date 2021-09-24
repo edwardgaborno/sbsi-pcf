@@ -8,7 +8,6 @@ use App\Models\PCFList;
 use App\Models\PCFInclusion;
 use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
-use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
 use PDF;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
 use App\Notifications\ApprovePCFRequestNotification;
+use Illuminate\Contracts\Support\ValidatedData;
 
 class PCFRequestController extends Controller
 {
@@ -107,8 +107,9 @@ class PCFRequestController extends Controller
         $this->authorize('pcf_request_access');
         
         if ($request->ajax()) {
-            $pcfRequest = PCFRequest::with('status', 'pcfList')
+            $pcfRequest = PCFRequest::with('status')
                         ->select('p_c_f_requests.*')
+                        ->where('status_id', '!=', 7) //once approved by sales assistant, hide data;
                         ->get();
 
             return Datatables::of($pcfRequest)
@@ -126,6 +127,11 @@ class PCFRequestController extends Controller
                 ->addColumn('actions', function ($data) {
 
                     $vAction = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
+
+                    $uploadedPcf = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="fas fa-edit"></i> Edit</a>
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
                     $wEdit_action = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
@@ -149,42 +155,106 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
+                    $wUploadApproval = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-up"></i> Approve</a>
+                                <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-down"></i> Disapprove</a>
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
+                    
+                    $wUploadedQuotation = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-up"></i> Approve</a>
+                                <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="far fa-thumbs-down"></i> Disapprove</a>
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>
+                                <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
+
                     if (auth()->user()->can('pcf_request_edit')) {
                         if ($data->status_id == 8){
-                            return $wEdit_action;
+                            if (!empty($data->pcf_document)) { //check if there's an uploaded file, show it instead;
+                                return $uploadedPcf;
+                            } else {
+                                return $wEdit_action;
+                            }
                         }
                         else {
-                            return $vAction;
+                            if (!empty($data->pcf_document)) {
+                                return $uploadedPcf;
+                            } else {
+                                return $vAction;
+                            }
                         }
                     }
                     else {
-                        if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                        if (!empty($data->pcf_document)) {
+                            if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                            ($data->countDistinct($data->pcf_no) > 1)) {
+                                return $wUploadedQuotation;
+                            }
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
+                                    return 'For Sales Assistant Approval';
+                            }
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
+                                    return $wUploadedQuotation;
+                            }
+                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1)) {
+                                    return $wUploadedQuotation;
+                            }
+                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
+                                ($data->countDistinct($data->pcf_no) > 1)) {
+                                    return $wUploadedQuotation;
+                            }
+                            elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
+                                return $wUploadApproval;
+                            }
+                            elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
+                                return $wUploadApproval;
+                            }
+                            elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
+                                return $wUploadApproval;
+                            }
+                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
+                                return $wUploadedQuotation;
+                            }
+                        }
+                        else {
+                            if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                             ($data->countDistinct($data->pcf_no) > 1)) {
                                 return $wQuotation_action;
-                        }
-                        elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                            ($data->countDistinct($data->pcf_no) == 1)) {
-                                return 'For Sales Assitant Approval';
-                        }
-                        elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 5) &&
-                            ($data->countDistinct($data->pcf_no) == 1)) {
+                            }
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
+                                    return 'For Sales Assistant Approval';
+                            }
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
+                                    return $wQuotation_action;
+                            }
+                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 5) &&
+                                ($data->countDistinct($data->pcf_no) == 1)) {
+                                    return $wQuotation_action;
+                            }
+                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
+                                ($data->countDistinct($data->pcf_no) > 1)) {
+                                    return $wQuotation_action;
+                            }
+                            elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
+                                return $approval_action;
+                            }
+                            elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
+                                return $approval_action;
+                            }
+                            elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
+                                return $approval_action;
+                            }
+                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
                                 return $wQuotation_action;
-                        }
-                        elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
-                            ($data->countDistinct($data->pcf_no) > 1)) {
-                                return $wQuotation_action;
-                        }
-                        elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
-                            return $approval_action;
-                        }
-                        elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
-                            return $approval_action;
-                        }
-                        elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
-                            return $approval_action;
-                        }
-                        elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
-                            return $wQuotation_action;
+                            }
                         }
                     }
                 })
@@ -290,32 +360,38 @@ class PCFRequestController extends Controller
 
     public function storePCFPdfFile(Request $request)
     {
-        $validator = Validator::make($request->all(), [ 
-            'upload_file' => 'required',
+        $this->authorize('upload_pcf');
+
+        $validatedData = $request->validate([
+            'upload_file' => ['required',],
         ]);
 
-        if ($validator->fails()) {
-            Alert::error('Invalid Data', $validator->errors()->first()); 
-            return redirect()->route('PCF');
+        DB::beginTransaction();
+
+        try {
+            $pcf_request = PCFRequest::findOrFail($request->pcf_id);
+
+            $temporaryFile = TemporaryFile::where('folder', $validatedData)->first();
+            if ($temporaryFile) {
+
+                $pcf_request->update([
+                    'pcf_document' => $temporaryFile->file_name,
+                    'status_id' => 1,
+                ]);
+
+                $pcf_request->addMedia(storage_path('app/pcf_files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
+                        ->toMediaCollection('pcf_request_file');
+
+                rmdir(storage_path('app/pcf_files/tmp/' . $request->upload_file));
+                $temporaryFile->delete();
+            }
+
+            DB::commit();
+            alert()->success('Success', 'The PCF file has been uploaded.');
         }
-
-        $pcf_request = PCFRequest::findOrFail($request->pcf_id);
-
-        $temporaryFile = TemporaryFile::where('folder', $request->upload_file)->first();
-        if ($temporaryFile) {
-
-            $pcf_request->update([
-                'pcf_document' => $temporaryFile->file_name,
-            ]);
-
-            $pcf_request->addMedia(storage_path('app/pcf_files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
-                    ->toMediaCollection('pcf_request_file');
-
-            rmdir(storage_path('app/pcf_files/tmp/' . $request->upload_file));
-            $temporaryFile->delete();
+        catch (\Throwable $th) {
+            DB::rollBack();
         }
-
-        Alert::success('Success', 'The PCF file has been uploaded.');
 
         return back();
     }

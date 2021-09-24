@@ -137,6 +137,7 @@
                     $('#pcf_request_id').val(data.id);
                     $('#pcf_request_id-i').val(data.id); //pcfList pcf_request_id;
                     $('#pcf_request_id-foc').val(data.id); //pcfInclusion pcf_request_id;
+                    $('#for_upload_id').val(data.id);
 
                     $('#edit_pcf_no').val(data.pcf_no);
                     $('#edit_pcf_no-i').val(data.pcf_no); //pcfList pcf no;
@@ -810,6 +811,24 @@
                     }
                 },
             });
+        });
+    </script>
+
+    <script>
+        $(function(){
+            var dtToday = new Date();
+            
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if(month < 10)
+                month = '0' + month.toString();
+            if(day < 10)
+                day = '0' + day.toString();
+            
+            var maxDate = year + '-' + month + '-' + day;
+
+            $('#edit_date, #edit_date_bidding').attr('min', maxDate);
         });
     </script>
 @endsection
