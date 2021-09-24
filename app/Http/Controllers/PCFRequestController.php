@@ -170,6 +170,10 @@ class PCFRequestController extends Controller
                             ($data->countDistinct($data->pcf_no) == 1)) {
                                 return $wQuotation_action;
                         }
+                        elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
+                            ($data->countDistinct($data->pcf_no) > 1)) {
+                                return $wQuotation_action;
+                        }
                         elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
                             return $approval_action;
                         }
@@ -180,7 +184,7 @@ class PCFRequestController extends Controller
                             return $approval_action;
                         }
                         elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
-                            return $approval_action;
+                            return $wQuotation_action;
                         }
                     }
                 })
