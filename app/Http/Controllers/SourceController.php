@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Source;
-use Exception;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
@@ -27,17 +26,14 @@ class SourceController extends Controller
         DB::beginTransaction();
 
         try {
-
             Source::create($request->validated());
             DB::commit();
 
             Alert::success('Success', 'Source details has been saved.');
 
         }
-        catch (Exception $ex) {
-
+        catch (\Throwable $th) {
             DB::rollBack();
-            throw $ex; // use better error handling, for now, this will do;
         }
 
         return back();
@@ -50,7 +46,6 @@ class SourceController extends Controller
         DB::beginTransaction();
 
         try {
-
             $source = Source::findOrFail($request->source_id);
             $source->update($request->validated());
             
@@ -59,10 +54,8 @@ class SourceController extends Controller
             Alert::success('Success', 'Source details has been updated.');
 
         }
-        catch (Exception $ex) {
-
+        catch (\Throwable $th) {
             DB::rollBack();
-            throw $ex; // use better error handling, for now, this will do;
         }
 
         return back();
@@ -83,21 +76,38 @@ class SourceController extends Controller
                 ->addColumn('tp_php', function ($data) {
                     return number_format($data->tp_php, 2, '.', ',');
                 })
-                ->addColumn('mandatory_peripherals', function ($data) {
-                    if (!empty($data->mandatory_peripherals)) {
-                        return $data->mandatory_peripherals;
-                    }
-                    else {
+                ->addColumn('item_group', function ($data) {
+                    if (empty($data->item_group)) {
                         return "None";
                     }
+                    return $data->item_group;
+                })
+                ->addColumn('uom', function ($data) {
+                    if (empty($data->uom)) {
+                        return "None";
+                    }
+                    return $data->uom;
+                })
+                ->addColumn('segment', function ($data) {
+                    if (empty($data->segment)) {
+                        return "None";
+                    }
+                    return $data->segment;
+                })
+                ->addColumn('mandatory_peripherals', function ($data) {
+                    if (empty($data->mandatory_peripherals)) {
+                        return "None";
+                    }
+                    return $data->mandatory_peripherals;
                 })
                 ->addColumn('cost_of_peripherals', function ($data) {
-                    if (!empty($data->cost_of_peripherals)) {
-                        return number_format($data->cost_of_peripherals, 2, '.', ',');
+                    if (empty($data->cost_of_peripherals)) {
+                        return 'None';
                     }
-                    else {
-                        return "None";
-                    }
+                    return number_format($data->cost_of_peripherals, 2, '.', ',');
+                })
+                ->addColumn('standard_price', function ($data) {
+                    return number_format($data->standard_price, 2, '.', ',');
                 })
                 ->addColumn('actions', function ($data) {
                     if(auth()->user()->can('source_edit')) {

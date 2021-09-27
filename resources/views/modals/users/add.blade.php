@@ -15,15 +15,27 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control" name="name" id="name"
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name"
                                     value="{{ old('name') }}" required>
+
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" name="email" id="email"
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email"
                                     value="{{ old('email') }}" required>
+
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -31,15 +43,27 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" name="password" id="password"
-                                    value="{{ old('password') }}" required autocomplete="new-password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password"
+                                    value="{{ old('password') }}" autocomplete="new-password" required>
+
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password_confirmation">Confirm Password</label>
-                                <input type="password" class="form-control" name="password_confirmation" id="password_confirmation"
-                                    value="{{ old('password_confirmation') }}" required autocomplete="new-password">
+                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" id="password_confirmation"
+                                    value="{{ old('password_confirmation') }}" autocomplete="new-password" required>
+
+                                @error('password_confirmation')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -49,19 +73,18 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="role">User Role</label>
-                                <select class="form-control" name="role" id="role" required>
+                                <select class="form-control @error('role') is-invalid @enderror" name="role" id="role" required>
                                     <option value="" selected disabled>Select user role</option>
-                                    @if(auth()->user()->hasRole('Super Administrator'))
                                         @foreach(\Spatie\Permission\Models\Role::orderBy('name', 'asc')->get() as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endforeach
-                                    @elseif(auth()->user()->hasRole('Administrator'))
-                                        @foreach(\Spatie\Permission\Models\Role::where('name', '!=', 'Super Administrator')
-                                            ->orderBy('name', 'asc')->get() as $role)
-                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                        @endforeach
-                                    @endif
                                 </select>
+
+                                @error('role')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>

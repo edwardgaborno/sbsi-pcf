@@ -21,12 +21,12 @@ class CreateSourcesTable extends Migration
             $table->decimal('unit_price', 11, 2);
             $table->decimal('currency_rate');
             $table->decimal('tp_php', 12, 2);
-            $table->string('item_group');
-            $table->string('uom');
+            $table->string('item_group')->nullable();
+            $table->string('uom')->nullable();
             $table->string('mandatory_peripherals')->nullable();
             $table->decimal('cost_of_peripherals', 11, 2)->nullable();
             $table->string('segment')->nullable();
-            $table->string('item_category');
+            $table->string('item_category')->nullable();
             $table->decimal('standard_price', 11, 2);
             $table->string('profitability');
             $table->timestamps();

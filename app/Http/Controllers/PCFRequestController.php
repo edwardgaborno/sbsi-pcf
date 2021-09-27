@@ -443,7 +443,7 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.validity AS validity',
                 'p_c_f_requests.delivery AS delivery',
                 'p_c_f_requests.warranty AS warranty',
-                'p_c_f_requests.date_bidding AS date_biding',
+                'p_c_f_requests.date_bidding AS date_bidding',
                 'p_c_f_requests.bid_docs_price AS bid_docs_price',
                 'p_c_f_requests.psr AS psr',
                 'p_c_f_requests.manager AS manager',

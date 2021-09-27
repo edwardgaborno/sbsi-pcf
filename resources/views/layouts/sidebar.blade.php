@@ -4,7 +4,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
-            <img class="ml-2" src="{{ asset('img/sbsi-logo.png') }}" alt="SBSI Logo" width="100px;">
+            <img class="ml-2" src="{{ asset('img/sbsi-logo.png') }}" alt="SBSI Logo" width="90px;">
         </div>
         {{-- <div class="sidebar-brand-text mx-3">PCF Monitoring</div> --}}
     </a>

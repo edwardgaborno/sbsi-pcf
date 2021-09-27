@@ -98,7 +98,7 @@
         $(function() {
             $('#source_dataTable').DataTable({
                 "stripeClasses": [],
-                processing: false,
+                processing: true,
                 serverSide: true,
                 responsive: true,
                 searchable: true,
@@ -173,7 +173,7 @@
             }
         })
 
-        const element = document.querySelectorAll('#unit_price, #currency_rate, #cost_of_peripherals, #edit_unit_price, #edit_currency_rate');
+        const element = document.querySelectorAll('#unit_price, #currency_rate, #cost_of_peripherals');
         element.forEach(i => {
             i.addEventListener('input', function() {
                 calculateTP();
@@ -184,12 +184,14 @@
         const edit_element = document.querySelectorAll('#edit_unit_price, #edit_currency_rate, #edit_cost_of_peripherals');
         edit_element.forEach(j => {
             j.addEventListener('input', function() {
+                calculateTP();
                 editCalculateStandardPrice();
             });
         });
 
         $("#item_category, #edit_item_category").change(function(){
             calculateStandardPrice();
+            editCalculateStandardPrice();
             profitability();
         });
 
@@ -240,16 +242,16 @@
             }
             else {
                 if (!isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
                 }
                 else if (isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
                 }
                 else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
                 }
                 else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
                 }
             }
         }
@@ -279,16 +281,16 @@
             }
             else {
                 if (!isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
-                    edit_standard_price.value = ((((edit_tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                    edit_standard_price.value = ((((edit_tp_php * 1.3) + edit_cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
                 }
                 else if (isNaN(edit_cost_of_peripherals) && edit_item_category == "MACHINE") {
-                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                    edit_standard_price.value = ((((edit_tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
                 }
                 else if (!isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
-                    edit_standard_price.value = ((((edit_tp_php * 1.15) + edit_cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                    edit_standard_price.value = ((((edit_tp_php * 1.3) + edit_cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
                 }
                 else if (isNaN(edit_cost_of_peripherals) && edit_item_category !== "MACHINE") {
-                    edit_standard_price.value = ((((edit_tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                    edit_standard_price.value = ((((edit_tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
                 }
             }
         }
@@ -317,10 +319,23 @@
         }
     </script>
 
-    {{-- <script>
+    <script>
         @if (count($errors) > 0)
-            $('#editSourceModal').modal('show');
             $('#addSourceModal').modal('show');
+            $('#addSourceModal').on('shown.bs.modal', function () {
+                $('#editSourceModal').modal('hide');
+            });
         @endif
-    </script> --}}
+    </script>
+
+    <script>
+        @if (count($errors) > 0)
+        $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
+            $('#editSourceModal').modal('show');
+            $('#editSourceModal').on('shown.bs.modal', function (e) {
+                $('#addSourceModal').modal('hide');
+            });
+        });
+        @endif
+    </script>
 @endsection

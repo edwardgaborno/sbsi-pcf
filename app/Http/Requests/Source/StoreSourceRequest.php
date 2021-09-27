@@ -25,19 +25,34 @@ class StoreSourceRequest extends FormRequest
     {
         return [
             'supplier' => 'required|string|unique:sources,supplier',
-            'item_code' => 'nullable|string',
-            'description' => 'nullable|string',
-            'unit_price' => 'nullable|string',
-            'currency_rate' => 'nullable|string',
-            'tp_php' => 'nullable|numeric',
-            'item_group' => 'nullable|string',
-            'uom' => 'nullable|string',
-            'mandatory_peripherals' => 'nullable|string',
-            'cost_of_peripherals' => 'nullable|numeric',
-            'segment' => 'nullable|string',
+            'item_code' => 'required|string',
+            'description' => 'required|string',
+            'unit_price' => 'required|numeric',
+            'currency_rate' => 'required|numeric',
+            'tp_php' => 'required|numeric',
+            'item_group' => 'sometimes|nullable|string',
+            'uom' => 'sometimes|nullable|string',
+            'mandatory_peripherals' => 'sometimes|nullable|string',
+            'cost_of_peripherals' => 'sometimes|nullable|numeric',
+            'segment' => 'sometimes|nullable|string',
             'item_category' => 'required|string',
-            'standard_price' => 'nullable|numeric',
-            'profitability' => 'nullable|string',
+            'standard_price' => 'required|numeric',
+            'profitability' => 'required|string',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'supplier.required' => 'This is a required field.',
+            'item_code.required' => 'This is a required field.',
+            'description.required' => 'This is a required field.',
+            'unit_price.required' => 'This is a required field.',
+            'currency_rate.required' => 'This is a required field.',
+            'item_category.required' => 'This is a required field.',
+            'tp_php.required' => 'This is a required field.',
+            'standard_price.required' => 'This is a required field.',
+            'profitability.required' => 'This is a required field.',
         ];
     }
 }

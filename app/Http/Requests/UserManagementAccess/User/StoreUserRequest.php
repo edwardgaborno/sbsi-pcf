@@ -27,7 +27,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             // use email:rfc,dns to check if the user's email is real email address
-            'email' => 'required|email:rfc|string|max:255|unique:users',
+            'email' => 'required|email:rfc,dns|string|max:255|unique:users',
             'password' => [
                 'required', 
                 'confirmed', 
@@ -36,9 +36,19 @@ class StoreUserRequest extends FormRequest
                 //        ->mixedCase()
                 //        ->numbers()
                 //        ->symbols()
-                //        ->uncompromised(3)
+                        ->uncompromised(3)
             ],
             'role' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'This is a required field.',
+            'email.required' => 'This is a required field.',
+            'password.required' => 'This is a required field.',
+            'role.required' => 'This is a required field.',
         ];
     }
 }

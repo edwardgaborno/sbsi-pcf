@@ -199,7 +199,7 @@
             </tr>
             <tr>
                 <th>DATE OF BIDDING:</th>
-                <td><center>{{ $get_pcf_list[0]->date_biding }}</center></td>
+                <td><center>{{ Carbon\Carbon::parse($get_pcf_list[0]->date_bidding)->format('F d, Y') }}</center></td>
             </tr>
             <tr>
                 <th>BID DOCS PRICE:</th>
