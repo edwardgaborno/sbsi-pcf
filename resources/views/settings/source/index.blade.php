@@ -330,12 +330,12 @@
 
     <script>
         @if (count($errors) > 0)
-        $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
-            $('#editSourceModal').modal('show');
-            $('#editSourceModal').on('shown.bs.modal', function (e) {
-                $('#addSourceModal').modal('hide');
+            $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
+                $('#editSourceModal').modal('show');
+                $('#editSourceModal').on('shown.bs.modal', function () {
+                    $('#addSourceModal').modal('hide');
+                });
             });
-        });
         @endif
     </script>
 @endsection

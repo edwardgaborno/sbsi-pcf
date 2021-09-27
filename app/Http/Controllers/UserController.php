@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Yajra\Datatables\Datatables;
@@ -14,7 +13,7 @@ use App\Http\Requests\UserManagementAccess\User\StoreUserRequest;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $this->authorize('user_access');
 
@@ -28,7 +27,6 @@ class UserController extends Controller
         DB::beginTransaction();
 
         $data = $request->validated();
-
         //get role name
         $role = Role::find($data['role']);
 
@@ -47,9 +45,8 @@ class UserController extends Controller
 
             Alert::success('Success', 'User has been created.');
         }
-        catch (Exception $ex) {
+        catch (\Throwable $th) {
             DB::rollBack();
-            throw $ex; // use better error handling, for now this will do;
         }
 
         return back();
@@ -206,7 +203,7 @@ class UserController extends Controller
 
         if (!empty($id)) {
             $approveUser = User::find($id);
-            $approveUser->is_approve = true;
+            $approveUser->is_approved = true;
             $approveUser->save();
 
             return response()->json(['success' => 'success'], 200);

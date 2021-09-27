@@ -88,6 +88,7 @@
             $('#dataTable').DataTable({
                 "stripeClasses": [],
                 processing: false,
+                responsive: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
