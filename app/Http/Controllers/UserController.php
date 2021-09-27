@@ -84,11 +84,11 @@ class UserController extends Controller
                 })
                 ->addColumn('status', function ($data) {
 
-                    if ($data->status == 1 && $data->is_approve == 1) {
+                    if ($data->status == true && $data->is_approved == true) {
                         $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-success">Approved</span>';
-                    } else if($data->status == 1 && $data->is_approve == 0) {
+                    } else if ($data->status == true && $data->is_approved == false) {
                         $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-warning">Pending</span>';
-                    } else if($data->status == 0 && $data->is_approve == 1) {
+                    } else if ($data->status == false && $data->is_approved == true) {
                         $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-success">Approved</span>';
                     } else {
                         $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-warning">Pending</span>';
@@ -97,7 +97,7 @@ class UserController extends Controller
                     return $status;
                 })
                 ->addColumn('actions', function ($data) {
-                    if($data->status == 0 && $data->is_approve == 0) {
+                    if($data->status == 0 && $data->is_approved == 0) {
                         return
                         ' 
                         <td style="text-align: center; vertical-align: middle">
@@ -125,7 +125,7 @@ class UserController extends Controller
                             </a>
                         </td>
                         ';
-                    } else if($data->status == 1 && $data->is_approve == 0) {
+                    } else if($data->status == 1 && $data->is_approved == 0) {
                         return
                         ' 
                         <td style="text-align: center; vertical-align: middle">
@@ -153,7 +153,7 @@ class UserController extends Controller
                             </a>
                         </td>
                         ';
-                    } else if($data->status == 0 && $data->is_approve == 1) {
+                    } else if($data->status == 0 && $data->is_approved == 1) {
                         return
                         ' 
                         <td style="text-align: center; vertical-align: middle">
@@ -206,7 +206,7 @@ class UserController extends Controller
 
         if (!empty($id)) {
             $approveUser = User::find($id);
-            $approveUser->is_approve = 1;
+            $approveUser->is_approve = true;
             $approveUser->save();
 
             return response()->json(['success' => 'success'], 200);
@@ -221,7 +221,7 @@ class UserController extends Controller
 
         if (!empty($id)) {
             $enableUser = User::find($id);
-            $enableUser->status = 1;
+            $enableUser->status = true;
             $enableUser->save();
 
             return response()->json(['success' => 'success'], 200);
@@ -236,7 +236,7 @@ class UserController extends Controller
 
         if (!empty($id)) {
             $disableUser = User::find($id);
-            $disableUser->status = 0;
+            $disableUser->status = false;
             $disableUser->save();
 
             return response()->json(['success' => 'success'], 200);
