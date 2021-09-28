@@ -69,6 +69,7 @@
                     </div>
                     <!-- End Left Element -->
                     <!-- Right Element -->
+                    @can('role_access')
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -88,6 +89,7 @@
                             </div>
                         </div>
                     </div>
+                    @endcan
                     <!-- End Right Element -->
                 </div>
                 <div class="modal-footer">

@@ -93,10 +93,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/ajax/users-list', [UserController::class, 'usersList'])->name('.list');
             Route::post('/store', [UserController::class, 'store'])->name('.store');
             Route::put('/update', [UserController::class, 'update'])->name('.update');
-            Route::get('/ajax/approve-user-account/{id}', [UserController::class, 'approveUser'])->name('.approve_user');
-            Route::get('/ajax/enable-user-account/{id}', [UserController::class, 'enableUser'])->name('.enable_user');
-            Route::get('/ajax/disable-user-account/{id}', [UserController::class, 'disableUser'])->name('.disable_user');
-            Route::get('/ajax/delete-user-account/{id}', [UserController::class, 'destroy'])->name('.delete_user');
+            Route::get('/ajax/approve/account/{user_id}', [UserController::class, 'approveUser'])->name('.approve');
+            Route::get('/ajax/enable/account/{user_id}', [UserController::class, 'enableUser'])->name('.enable');
+            Route::get('/ajax/disable/account/{user_id}', [UserController::class, 'disableUser'])->name('.disable');
+            Route::delete('/ajax/delete-user-account/{user_id}', [UserController::class, 'destroy'])->name('.delete');
+
+            Route::get('/details/{user_id}', [UserController::class, 'userDetails'])->name('.details');
         });
     });
 
