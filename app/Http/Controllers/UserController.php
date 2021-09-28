@@ -103,40 +103,38 @@ class UserController extends Controller
                 })
                 ->addColumn('status', function ($data) {
 
-                    if ($data->status == true && $data->is_approved == true) {
+                    if ($data->status == 1 && $data->is_approved == 1) {
                         $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-success">Approved</span>';
-                    } else if ($data->status == true && $data->is_approved == false) {
-                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-warning">Pending</span>';
-                    } else if ($data->status == false && $data->is_approved == true) {
-                        $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-success">Approved</span>';
+                    } else if ($data->status == 1 && $data->is_approved == 0) {
+                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-light">Pending for Approval</span>';
+                    } else if ($data->status == 0 && $data->is_approved == 1) {
+                        $status = '<span class="badge badge-danger">Account Disabled</span> <span class="badge badge-success">Approved</span>';
                     } else {
-                        $status = '<span class="badge badge-danger">Disabled</span> <span class="badge badge-warning">Pending</span>';
+                        $status = '<span class="badge badge-danger">Account Disabled</span> <span class="badge badge-light">Pending for Approval</span>';
                     }
 
                     return $status;
                 })
                 ->addColumn('actions', function ($data) {
-                    if($data->status == false && $data->is_approved == false) {
+                    if($data->status == 0 && $data->is_approved == 0) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '">
+                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
-                        <a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '">
+                        <a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
                             <i class="far fa-check-circle"></i> Enable</a>
-                        <a href="javascript:void(0)" class="badge badge-info editUser" data-id="' . $data->id . '">
-                            <i class="fas fa-user-edit"></i> Edit</a>
                         <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-minus"></i> Delete</a>';
                     } else if($data->status == 1 && $data->is_approved == 0) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '">
+                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
-                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '">
+                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
                             <i class="fas fa-ban"></i> Disable</a>
                         <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-minus"></i> Delete</a>';
                     } else if($data->status == 0 && $data->is_approved == 1) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '">
+                        '<a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
                             <i class="far fa-check-circle"></i> Enable</a>
                         <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-minus"></i> Delete</a>';
@@ -145,7 +143,7 @@ class UserController extends Controller
                         return
                         '<a href="javascript:void(0)" class="badge badge-info editUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-edit"></i> Edit</a>
-                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '">
+                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
                             <i class="fas fa-ban"></i> Disable</a>
                         <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-minus"></i> Delete</a>';
@@ -167,39 +165,42 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function approveUser(Request $request, $user_id)
+    public function approveUser($id)
     {
-        $this->authorize('approve_user');
+        if (!empty($id)) {
+            $approveUser = User::find($id);
+            $approveUser->is_approved = 1;
+            $approveUser->save();
 
-        if ($request->ajax()) {
-            $user = User::findOrFail($user_id);
-            $user->update([
-                'is_approved' => true,
-            ]);
-
-            return response()->json('Success', 200);
+            return response()->json(['success' => 'success'], 200);
         }
+
+        return response()->json(['error' => 'invalid'], 401);
     }
 
-    public function enableUser($user_id)
+    public function enableUser($id)
     {
-        $this->authorize('enable_user');
+        if (!empty($id)) {
+            $enableUser = User::find($id);
+            $enableUser->status = 1;
+            $enableUser->save();
 
-        User::findOrFail($user_id)->update([
-            'status' => true,
-        ]);
+            return response()->json(['success' => 'success'], 200);
+        }
 
-        return response()->json(['success' => 'success'], 200);
+        return response()->json(['error' => 'invalid'], 401);
     }
 
-    public function disableUser($user_id)
+    public function disableUser($id)
     {
-        $this->authorize('disable_user');
+        if (!empty($id)) {
+            $disableUser = User::find($id);
+            $disableUser->status = 0;
+            $disableUser->save();
 
-        User::findOrFail($user_id)->update([
-            'status' => false,
-        ]);
+            return response()->json(['success' => 'success'], 200);
+        }
 
-        return response()->json(['success' => 'success'], 200);
+        return response()->json(['error' => 'invalid'], 401);
     }
 }

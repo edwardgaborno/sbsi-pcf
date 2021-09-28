@@ -140,13 +140,10 @@
             }
         });
 
-        // approve user;
-        $('#user_dataTable').on('click', '.approveUser', function (e) {
-            e.preventDefault();
-            user_id = $(this).data('id');
+        function approveUser(data) {
             Swal.fire({
                 title: 'Approve User Account',
-                text: "This account is awaiting administrative approval",
+                text: "Are you sure?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -154,34 +151,36 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    var id = data.data('id');
                     $.ajax({
-                        method: 'GET',
-                        url: '/user-management/users/ajax/approve/account/' + user_id,
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/approve-user-account/' + id,
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            'X-CSRF-Token': '{{ csrf_token() }}',
                         },
-                    }).done(function(data) {
-                        $("#user_dataTable").DataTable().ajax.reload();
-                        Swal.fire(
-                            'Success!',
-                            'User account has been approved.',
-                            'success'
-                        )
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        success: function(response) {
+                            //reload table 
+                            $("#user_dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been approved',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
                     });
                 }
             })
-        });
+        }
         
-        // enable user;
-        $('#user_dataTable').on('click', '.enableUser', function (e) {
-            e.preventDefault();
-            user_id = $(this).data('id');
+        function enableUser(data) {
             Swal.fire({
                 title: 'Enable User Account',
                 text: "Are you sure?",
@@ -192,37 +191,38 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    var id = data.data('id');
                     $.ajax({
-                        method: 'GET',
-                        url: '/user-management/users/ajax/enable/account/' + user_id,
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/enable-user-account/' + id,
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            'X-CSRF-Token': '{{ csrf_token() }}',
                         },
-                    }).done(function(data) {
-                        $("#user_dataTable").DataTable().ajax.reload();
-                        Swal.fire(
-                            'Success!',
-                            'User account has been enabled',
-                            'success'
-                        )
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        success: function(response) {
+                            //reload table 
+                            $("#user_dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been enabled',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
                     });
                 }
             })
-        });
-
-        // disable user;
-        $('#user_dataTable').on('click', '.disableUser', function (e) {
-            e.preventDefault();
-            user_id = $(this).data('id');
+        }
+        function disableUser(data) {
             Swal.fire({
                 title: 'Disable User Account',
-                text: "This will disable the account",
+                text: "Are you sure?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -230,29 +230,35 @@
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    var id = data.data('id');
                     $.ajax({
-                        method: 'GET',
-                        url: '/user-management/users/ajax/disable/account/' + user_id,
+                        type: 'GET',
+                        dataType: 'json',
+                        url: '/user-management/users/ajax/disable-user-account/' + id,
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            'X-CSRF-Token': '{{ csrf_token() }}',
                         },
-                    }).done(function(data) {
-                        $("#user_dataTable").DataTable().ajax.reload();
-                        Swal.fire(
-                            'Success!',
-                            'User account has been disabled',
-                            'success'
-                        )
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        success: function(response) {
+                            //reload table 
+                            $("#user_dataTable").DataTable().ajax.reload(null, false);
+                            Swal.fire(
+                                'Success!',
+                                'User account has been disabled',
+                                'success'
+                            )
+                        },
+                        error: function(response) {
+                            Swal.fire(
+                                'Something went wrong!',
+                                'Please contact your system administrator!',
+                                'error'
+                            )
+                        }
                     });
                 }
             })
-        });
+        }
+
 
         // delete user;
         $('#user_dataTable').on('click', '.deleteUser', function (e) {
@@ -270,7 +276,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         method: 'DELETE',
-                        url: '/user-management/users/ajax/delete-user-account/' + user_id,
+                        url: '/user-management/users/ajax/delete/account/' + user_id,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
@@ -291,5 +297,25 @@
                 }
             })
         });
+    </script>
+
+    <script>
+        @if (count($errors) > 0)
+            $('#addUserModal').modal('show');
+            $('#addUserModal').on('shown.bs.modal', function () {
+                $('#editUserModal').modal('hide');
+            });
+        @endif
+    </script>
+
+    <script>
+        @if (count($errors) > 0)
+            $('#user_dataTable').on('click', '.editUser', function (e) {
+                $('#editUserModal').modal('show');
+                $('#editUserModal').on('shown.bs.modal', function () {
+                    $('#addUserModal').modal('hide');
+                });
+            });
+        @endif
     </script>
 @endsection

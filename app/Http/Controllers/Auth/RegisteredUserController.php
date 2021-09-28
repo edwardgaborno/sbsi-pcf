@@ -49,7 +49,6 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'user_type' => 'PSR',
             ]);
 
             //assign role   
@@ -61,7 +60,9 @@ class RegisteredUserController extends Controller
 
             // Auth::login($user);
 
-            return redirect(RouteServiceProvider::HOME);
+            // return redirect(RouteServiceProvider::HOME);
+
+            return redirect()->route('login')->withStatus('Your account is awaiting administrative approval. You may login once an approval has been made.');
         }
         catch (\Throwable $th) {
             DB::rollBack();
