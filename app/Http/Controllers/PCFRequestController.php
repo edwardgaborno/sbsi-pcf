@@ -115,13 +115,13 @@ class PCFRequestController extends Controller
             return Datatables::of($pcfRequest)
                 ->addColumn('status', function ($data) {
                     if (auth()->user()->can('pcf_request_edit') && $data->status_id == 1) {
-                        return $data->status->find(1)->name;
+                        return '<span class="badge badge-light">' . $data->status->find(1)->name . '</span>';
                     }
                     elseif (auth()->user()->can('pcf_request_edit') && $data->status_id == 8) {
-                        return $data->status->name;
+                        return '<span class="badge badge-light">' . $data->status->name . '</span>';
                     }
                     else {
-                        return $data->status->name;
+                        return '<span class="badge badge-light">' . $data->status->name . '</span>';
                     }
                 })
                 ->addColumn('actions', function ($data) {
@@ -195,7 +195,7 @@ class PCFRequestController extends Controller
                             }
                             elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                                 ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
-                                    return 'For Sales Assistant Approval';
+                                    return '<span class="badge badge-light">For Sales Assistant Approval</span>';
                             }
                             elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                                 ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
@@ -229,7 +229,7 @@ class PCFRequestController extends Controller
                             }
                             elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                                 ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
-                                    return 'For Sales Assistant Approval';
+                                    return '<span class="badge badge-light">For Sales Assistant Approval</span>';
                             }
                             elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                                 ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
@@ -326,7 +326,7 @@ class PCFRequestController extends Controller
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
-        if ($user->can('psr_mgr_reject_cf') &&  $pcfRequest->status_id == 1) {
+        if ($user->can('psr_mgr_reject_pcf') &&  $pcfRequest->status_id == 1) {
             $status = 8;
         } else if ($user->can('mktg_reject_pcf') &&  $pcfRequest->status_id == 2) {
             $status = 8;
@@ -338,7 +338,7 @@ class PCFRequestController extends Controller
             $status = 8;
         } else if ($user->can('sales_asst_reject_pcf') &&  $pcfRequest->status_id == 6) {
             $status = 8;
-        } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 5 
+        } else if ($user->can('sales_asst_reject_pcf') &&  $pcfRequest->status_id == 5 
                 && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
                 $status = 8;
         } else {

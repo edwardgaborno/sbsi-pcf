@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Source;
+use App\Models\PCFList;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,20 @@ class SourceController extends Controller
         try {
             $source = Source::findOrFail($request->source_id);
             $source->update($request->validated());
+
+            $joins = DB::table('sources')
+                    ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
+                    ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price', 'p_c_f_lists.id as list_id')
+                    ->get();
+
+            foreach($joins as $key => $join) {
+                $pcfList = PCFList::where('id', $join->list_id);
+                $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
+
+                $pcfList->update([
+                    'above_standard_price' => $asp,
+                ]);
+            }
             
             DB::commit();
 

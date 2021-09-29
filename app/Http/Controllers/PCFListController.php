@@ -28,7 +28,6 @@ class PCFListController extends Controller
                     ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price', 'sources.id as source_id')
                     ->get();
 
-
             foreach($joins as $join) {
                 $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
 

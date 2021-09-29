@@ -143,7 +143,7 @@
         function approveUser(data) {
             Swal.fire({
                 title: 'Approve User Account',
-                text: "Are you sure?",
+                text: "This account is awaiting administrative approval",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -183,7 +183,7 @@
         function enableUser(data) {
             Swal.fire({
                 title: 'Enable User Account',
-                text: "Are you sure?",
+                text: "This will enable the account",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -222,7 +222,7 @@
         function disableUser(data) {
             Swal.fire({
                 title: 'Disable User Account',
-                text: "Are you sure?",
+                text: "This will disable the user account",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

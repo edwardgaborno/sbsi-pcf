@@ -9,7 +9,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title>@yield('title')</title>
         <meta name="description" content="Scientific Biotech Specialties Web Laboratory Information System" />
-        <link rel="icon" href="{{ asset('img/sbsi-32px-favicon-1.png') }}">
+        <link rel="icon" href="{{ asset('img/sbsi-favicon.ico') }}">
         <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.css"/>
         @stack('styles')
@@ -60,9 +60,6 @@
 
         <!-- Custom scripts for all pages-->
         <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
-        <!-- sbsi js -->
-        <script src="{{ asset('js/sbsi.js') }}"></script>
 
         <!-- Sweet alert 2 -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
