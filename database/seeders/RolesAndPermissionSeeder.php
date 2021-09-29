@@ -166,10 +166,6 @@ class RolesAndPermissionSeeder extends Seeder
             'download_pcf',
             'view_quotation',
             'download_quotation',
-            'sales_asst_approve_pcf',
-            'sales_asst_reject_pcf',
-            'sales_asst_approve_quotation',
-            'sales_asst_reject_quotation',
         ]);
 
         $adminRole = Role::create(['name' => 'Administrator']);

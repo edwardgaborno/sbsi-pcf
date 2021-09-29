@@ -57,6 +57,13 @@
         .inclusionTable {
             position: relative;
             top: 80px;
+            width: 100%;
+        }
+
+        .inclusionTable th,
+        .inclusionTable td {
+            padding: 5px;
+            text-align: center;
         }
 
         .termsTable {
@@ -153,11 +160,19 @@
     </table>
 
     <table class="inclusionTable">
-        <tbody>         
+        <thead>
             <tr>
-                <td style="font-weight: bold">PACKAGE INCLUSIONS:</td>
-                <td></td>
-            </tr> 
+                <th colspan="5" style="text-align: left;">PACKAGE INCLUSIONS</th>
+            </tr>
+        </thead>
+        <tbody>         
+                <tr>
+                    <td>
+                    @foreach ($pcfInclusions as $inclusion)
+                        {{ $inclusion->description }}, 
+                    @endforeach
+                    </td>
+                </tr>
         </tbody>
     </table>
 

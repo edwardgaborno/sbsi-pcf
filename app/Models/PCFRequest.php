@@ -38,7 +38,7 @@ class PCFRequest extends Model implements HasMedia
     public function countDistinct($value)
     {
         $counts = DB::table('p_c_f_lists')
-                ->select(DB::raw('COUNT(DISTINCT above_standard_price) as totalDistinct'))
+                ->select(DB::raw('COUNT(DISTINCT above_standard_price) AS totalDistinct'))
                 ->where('pcf_no', $value)
                 ->get();
         

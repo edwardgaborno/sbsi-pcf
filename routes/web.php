@@ -105,7 +105,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
             Route::get('/', [SourceController::class, 'index'])->name('.index');
-            Route::get('/ajax/source-list', [SourceController::class, 'sourceList'])->name('.list');
+            Route::get('/ajax/source-list/full', [SourceController::class, 'adminSourceList'])->name('.full_list');
+            Route::get('/ajax/source-list/psr', [SourceController::class, 'psrSourceList'])->name('.psr_list');
             Route::post('/store', [SourceController::class, 'store'])->name('.store');
             Route::put('/update', [SourceController::class, 'update'])->name('.update');
 

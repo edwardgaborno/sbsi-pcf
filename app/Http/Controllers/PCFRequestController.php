@@ -109,7 +109,6 @@ class PCFRequestController extends Controller
         if ($request->ajax()) {
             $pcfRequest = PCFRequest::with('status')
                         ->select('p_c_f_requests.*')
-                        ->where('status_id', '!=', 7) //once approved by sales assistant, hide data;
                         ->get();
 
             return Datatables::of($pcfRequest)
@@ -194,10 +193,6 @@ class PCFRequestController extends Controller
                                 return $wUploadedQuotation;
                             }
                             elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
-                                    return '<span class="badge badge-light">For Sales Assistant Approval</span>';
-                            }
-                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
                                 ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
                                     return $wUploadedQuotation;
                             }
@@ -223,27 +218,7 @@ class PCFRequestController extends Controller
                             }
                         }
                         else {
-                            if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                            ($data->countDistinct($data->pcf_no) > 1)) {
-                                return $wQuotation_action;
-                            }
-                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'YES') {
-                                    return '<span class="badge badge-light">For Sales Assistant Approval</span>';
-                            }
-                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
-                                    return $wQuotation_action;
-                            }
-                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1)) {
-                                    return $wQuotation_action;
-                            }
-                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
-                                ($data->countDistinct($data->pcf_no) > 1)) {
-                                    return $wQuotation_action;
-                            }
-                            elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
+                            if (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
                                 return $approval_action;
                             }
                             elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
@@ -252,8 +227,21 @@ class PCFRequestController extends Controller
                             elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
                                 return $approval_action;
                             }
-                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
-                                return $wQuotation_action;
+                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4) &&
+                                ($data->countDistinct($data->pcf_no) > 1)) {
+                                    return $wQuotation_action;
+                            }
+                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4) &&
+                                ($data->countDistinct($data->pcf_no) == 1)) {
+                                    return $wQuotation_action;
+                            }
+                            elseif ((auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) &&
+                                ($data->countDistinct($data->pcf_no) > 1)) {
+                                    return $wQuotation_action;
+                            }
+                            elseif ((auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) &&
+                                ($data->countDistinct($data->pcf_no) == 1)) {
+                                    return $wQuotation_action;
                             }
                         }
                     }
@@ -287,21 +275,28 @@ class PCFRequestController extends Controller
         } else if ($user->can('mktg_approve_pcf') &&  $pcfRequest->status_id == 2) {
             $status = 3;
         } else if ($user->can('acct_approve_pcf') &&  $pcfRequest->status_id == 3) {
+
             $status = 4;
             $pcfRequest->update(['approved_by' => $user->id,]);
-        } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4) {
+
+        } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
+                && $pcfRequest->countDistinct($pcfRequest->pcf_no) > 1) {
             $status = 5;
-        } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
-            $status = 6;
+        } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
+                && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
+
+            $status = 7;
 
             $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
             $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
 
-        } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 6) {
-            $status = 7; 
-        } else if ($user->can('sales_asst_approve_pcf') &&  $pcfRequest->status_id == 5 
-                && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
+        } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
+
             $status = 7;
+
+            $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
+            $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
@@ -336,11 +331,6 @@ class PCFRequestController extends Controller
             $status = 8;
         } else if ($user->can('cfo_reject_pcf') &&  $pcfRequest->status_id == 5) {
             $status = 8;
-        } else if ($user->can('sales_asst_reject_pcf') &&  $pcfRequest->status_id == 6) {
-            $status = 8;
-        } else if ($user->can('sales_asst_reject_pcf') &&  $pcfRequest->status_id == 5 
-                && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
-                $status = 8;
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
@@ -509,7 +499,18 @@ class PCFRequestController extends Controller
             ->orderBy('p_c_f_lists.id', 'DESC')
             ->get();
 
-            $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcf_no'));
+            $pcfInclusions = PCFInclusion::select(
+                'p_c_f_inclusions.type as type',
+                'p_c_f_inclusions.serial_no as serial_no',
+                'p_c_f_inclusions.quantity as quantity',
+                'sources.item_code as item_code',
+                'sources.description as description',
+            )
+            ->join('sources', 'sources.id', 'p_c_f_inclusions.source_id')
+            ->where('pcf_no',$pcf_no)
+            ->get();
+
+            $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcfInclusions', 'pcf_no'));
             $pdf->setPaper('legal', 'portrait');
             return $pdf->stream('quotation.pdf', array("Attachment" => false));
         }

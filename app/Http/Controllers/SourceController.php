@@ -76,12 +76,12 @@ class SourceController extends Controller
         return back();
     }
 
-    public function sourceList(Request $request)
+    public function adminSourceList(Request $request)
     {
         $this->authorize('source_access');
 
         if ($request->ajax()) {
-            $sources = Source::orderBy('id', 'desc')->get();
+            $sources = Source::latest()->get();
 
             return Datatables::of($sources)
                 ->addIndexColumn()
@@ -135,6 +135,18 @@ class SourceController extends Controller
                     }
                 })
                 ->rawColumns(['actions'])
+                ->make(true);
+        }
+    }
+
+    public function psrSourceList(Request $request)
+    {
+        $this->authorize('source_access');
+
+        if ($request->ajax()) {
+            $sources = Source::select('supplier', 'item_code', 'description')->latest()->get();
+
+            return Datatables::of($sources)
                 ->make(true);
         }
     }

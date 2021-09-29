@@ -302,7 +302,7 @@
                         'success'
                     );
                     //refresh added items table
-                    $('#edit_pcfItem_dataTable').DataTable().ajax.reload();
+                    $('#edit_pcfItem_dataTable').DataTable().ajax.reload(null, false);
                     getGrandTotal(pcf_no);
                 },
                 error: function (response) {
@@ -341,7 +341,7 @@
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#edit_pcfItem_dataTable').DataTable().ajax.reload();
+                        $('#edit_pcfItem_dataTable').DataTable().ajax.reload(null, false);
                         getGrandTotal(pcf_no);
                     }).fail(function(jqXHR, textStatus, errorThrown) {
                         Swal.fire(
@@ -575,7 +575,7 @@
                         'success'
                     );
                     //referesh FOC data table
-                    $('#edit_pcfFOC_dataTable').DataTable().ajax.reload();
+                    $('#edit_pcfFOC_dataTable').DataTable().ajax.reload(null, false);
                     //get grand totals 
                     getGrandTotal(pcf_no);
                 },
@@ -615,7 +615,7 @@
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#edit_pcfFOC_dataTable').DataTable().ajax.reload();
+                        $('#edit_pcfFOC_dataTable').DataTable().ajax.reload(null, false);
                         getGrandTotal(pcf_no);
                     }).fail(function(jqXHR, textStatus, errorThrown) {
                         Swal.fire(
@@ -745,7 +745,7 @@
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload();
+                        $('#pcf_dataTable').DataTable().ajax.reload(null, false);
                     }).fail(function(jqXHR, textStatus, errorThrown) {
                         Swal.fire(
                             'Something went wrong!',
@@ -781,7 +781,7 @@
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload();
+                        $('#pcf_dataTable').DataTable().ajax.reload(null, false);
                     }).fail(function(jqXHR, textStatus, errorThrown) {
                         Swal.fire(
                             'Something went wrong!',

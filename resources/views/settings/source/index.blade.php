@@ -42,7 +42,7 @@
                                         @endcan
                                     </div>
                                 </div>
-
+                            @if(auth()->user()->hasRole('Administrator'))
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped" id="source_dataTable" width="100%"
@@ -72,6 +72,25 @@
                                         </table>
                                     </div>
                                 </div>
+                            @endif
+                            @if(auth()->user()->hasRole('PSR'))
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="psrSource_dataTable" width="100%"
+                                            cellspacing="0">
+                                            <thead>
+                                                <tr bgcolor="gray" class="text-white">
+                                                    <th>Supplier</th>
+                                                    <th>Item Code</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
                             </div>
                         </div>
                     </div>
@@ -96,6 +115,28 @@
 @section('scripts')
     <script>
         $(function() {
+            $('#psrSource_dataTable').DataTable({
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    url: "{{ route('settings.source.psr_list') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [
+                    { data: 'supplier' },
+                    { data: 'item_code' },
+                    { data: 'description' },
+                ],
+            });
+        });
+
+        $(function() {
             $('#source_dataTable').DataTable({
                 "stripeClasses": [],
                 processing: true,
@@ -104,7 +145,7 @@
                 searchable: true,
                 ordering: true,
                 ajax: {
-                    url: "{{ route('settings.source.list') }}",
+                    url: "{{ route('settings.source.full_list') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -128,7 +169,6 @@
                     { data: 'actions', orderable: false, searchable: false }
                 ],
             });
-
         });
 
         let source_id;
