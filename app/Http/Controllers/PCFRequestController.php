@@ -125,27 +125,22 @@ class PCFRequestController extends Controller
                 })
                 ->addColumn('actions', function ($data) {
 
-                    $vAction = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
-                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
-
-                    $uploadedPcf = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
-                                    <i class="fas fa-edit"></i> Edit</a>
-                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" 
+                    $vAction = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
                     $wEdit_action = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="fas fa-edit"></i> Edit</a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                                 
-                    $approval_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                    $approval = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
-                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-success" 
+                                <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                     
-                    $wQuotation_action = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
+                    $wQuotation = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
@@ -154,11 +149,16 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
+                    $uploadedPcf = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
+                                    <i class="fas fa-edit"></i> Edit</a>
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
+                                    rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
+
                     $wUploadApproval = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-down"></i> Disapprove</a>
-                                <a target="_blank" href="' . $data->path() .'" class="badge badge-success" 
+                                <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                     
                     $wUploadedQuotation = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
@@ -170,8 +170,18 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
+                    $salesAsstView = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
+                                        rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)
+                                    <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
+                                        rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
+
+                    $uploadedPcf_salesAsstView = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
+                                        rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>
+                                    <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
+                                        rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
+
                     if (auth()->user()->can('pcf_request_edit')) {
-                        if ($data->status_id == 8){
+                        if ($data->status_id == 7){
                             if (!empty($data->pcf_document)) { //check if there's an uploaded file, show it instead;
                                 return $uploadedPcf;
                             } else {
@@ -188,23 +198,7 @@ class PCFRequestController extends Controller
                     }
                     else {
                         if (!empty($data->pcf_document)) {
-                            if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                            ($data->countDistinct($data->pcf_no) > 1)) {
-                                return $wUploadedQuotation;
-                            }
-                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1) && $data->checkColumnValue($data->pcf_no) == 'NO') {
-                                    return $wUploadedQuotation;
-                            }
-                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 5) &&
-                                ($data->countDistinct($data->pcf_no) == 1)) {
-                                    return $wUploadedQuotation;
-                            }
-                            elseif (auth()->user()->can('sales_asst_approve_pcf') && ($data->status_id == 6) &&
-                                ($data->countDistinct($data->pcf_no) > 1)) {
-                                    return $wUploadedQuotation;
-                            }
-                            elseif (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
+                            if (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
                                 return $wUploadApproval;
                             }
                             elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
@@ -216,32 +210,31 @@ class PCFRequestController extends Controller
                             elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
                                 return $wUploadedQuotation;
                             }
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) {
+                                return $wUploadedQuotation;
+                            }
+                            elseif (auth()->user()->can('sales_asst_view') && ($data->status_id == 6)) {
+                                return $uploadedPcf_salesAsstView;
+                            }
                         }
                         else {
                             if (auth()->user()->can('psr_mgr_approve_pcf') && ($data->status_id == 1)) {
-                                return $approval_action;
+                                return $approval;
                             }
                             elseif (auth()->user()->can('mktg_approve_pcf') && ($data->status_id == 2)) {
-                                return $approval_action;
+                                return $approval;
                             }
                             elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
-                                return $approval_action;
+                                return $approval;
                             }
-                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4) &&
-                                ($data->countDistinct($data->pcf_no) > 1)) {
-                                    return $wQuotation_action;
+                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
+                                return $wQuotation;
                             }
-                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4) &&
-                                ($data->countDistinct($data->pcf_no) == 1)) {
-                                    return $wQuotation_action;
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) {
+                                return $wQuotation;
                             }
-                            elseif ((auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) &&
-                                ($data->countDistinct($data->pcf_no) > 1)) {
-                                    return $wQuotation_action;
-                            }
-                            elseif ((auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) &&
-                                ($data->countDistinct($data->pcf_no) == 1)) {
-                                    return $wQuotation_action;
+                            elseif (auth()->user()->can('sales_asst_view') && ($data->status_id == 6)) {
+                                    return $salesAsstView;
                             }
                         }
                     }
@@ -280,22 +273,31 @@ class PCFRequestController extends Controller
             $pcfRequest->update(['approved_by' => $user->id,]);
 
         } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
-                && $pcfRequest->countDistinct($pcfRequest->pcf_no) > 1) {
-            $status = 5;
+            && $pcfRequest->countDistinct($pcfRequest->id) > 1) {
+
+                $status = 5;
+
         } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
-                && $pcfRequest->countDistinct($pcfRequest->pcf_no) == 1) {
+            && $pcfRequest->countDistinct($pcfRequest->id) == 1
+            && $pcfRequest->checkColumnValue($pcfRequest->id) == 'NO') {
 
-            $status = 7;
+                $status = 5;
 
-            $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
-            $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+        } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
+            && $pcfRequest->countDistinct($pcfRequest->id) == 1
+            && $pcfRequest->checkColumnValue($pcfRequest->id) == 'YES') {
+
+                $status = 6;
+
+                $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
+                $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
 
         } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
 
-            $status = 7;
+                $status = 6;
 
-            $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
-            $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+                $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
+                $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
 
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -322,15 +324,15 @@ class PCFRequestController extends Controller
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
         if ($user->can('psr_mgr_reject_pcf') &&  $pcfRequest->status_id == 1) {
-            $status = 8;
+            $status = 7;
         } else if ($user->can('mktg_reject_pcf') &&  $pcfRequest->status_id == 2) {
-            $status = 8;
+            $status = 7;
         } else if ($user->can('acct_reject_pcf') &&  $pcfRequest->status_id == 3) {
-            $status = 8;
+            $status = 7;
         } else if ($user->can('nsm_reject_pcf') &&  $pcfRequest->status_id == 4) {
-            $status = 8;
+            $status = 7;
         } else if ($user->can('cfo_reject_pcf') &&  $pcfRequest->status_id == 5) {
-            $status = 8;
+            $status = 7;
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }

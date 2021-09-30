@@ -39,7 +39,7 @@ class PCFRequest extends Model implements HasMedia
     {
         $counts = DB::table('p_c_f_lists')
                 ->select(DB::raw('COUNT(DISTINCT above_standard_price) AS totalDistinct'))
-                ->where('pcf_no', $value)
+                ->where('p_c_f_request_id', $value)
                 ->get();
         
         foreach($counts as $count) {
@@ -49,7 +49,7 @@ class PCFRequest extends Model implements HasMedia
 
     public function checkColumnValue($value)
     {
-        $data = PCFList::select('above_standard_price')->where('pcf_no', $value)->get();
+        $data = PCFList::select('above_standard_price')->where('p_c_f_request_id', $value)->get();
 
         foreach($data as $datum) {
             return $datum->above_standard_price;

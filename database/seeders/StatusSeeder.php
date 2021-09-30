@@ -31,9 +31,6 @@ class StatusSeeder extends Seeder
                 'name' => 'Approved by National Sales Manager',
             ],
             [
-                'name' => 'Approved by Chief Finance Officer',
-            ],
-            [
                 'name' => 'Approved',
             ],
             [

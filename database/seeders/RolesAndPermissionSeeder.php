@@ -63,6 +63,7 @@ class RolesAndPermissionSeeder extends Seeder
             'view_pcf',
             'download_pcf',
             'upload_pcf',
+            'sales_asst_view',
 
             'view_quotation',
             'download_quotation',
@@ -83,11 +84,6 @@ class RolesAndPermissionSeeder extends Seeder
             'cfo_reject_pcf',
             'cfo_approve_quotation',
             'cfo_reject_quotation',
-
-            'sales_asst_approve_pcf',
-            'sales_asst_reject_pcf',
-            'sales_asst_approve_quotation',
-            'sales_asst_reject_quotation',
         ];
 
         foreach ($permissions as $permission) {
@@ -166,6 +162,7 @@ class RolesAndPermissionSeeder extends Seeder
             'download_pcf',
             'view_quotation',
             'download_quotation',
+            'sales_asst_view',
         ]);
 
         $adminRole = Role::create(['name' => 'Administrator']);

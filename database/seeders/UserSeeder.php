@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
         //for testing purposes accts;
         $admin = User::create([
             'name' => 'Administrator',
-            'email' => 'test1@user.com',
+            'email' => 'test0@user.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
@@ -41,6 +41,18 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('Administrator');
+
+        //for testing purposes accts;
+        $admin = User::create([
+            'name' => 'PSR',
+            'email' => 'test1@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
+
+        $admin->assignRole('PSR');
 
         //for testing purposes accts;
         $psr_mgr = User::create([
