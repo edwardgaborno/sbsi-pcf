@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Yajra\Datatables\Datatables;
@@ -168,9 +169,10 @@ class UserController extends Controller
     public function approveUser($id)
     {
         if (!empty($id)) {
-            $approveUser = User::find($id);
-            $approveUser->is_approved = 1;
-            $approveUser->save();
+            $user = User::find($id);
+            $user->is_approved = 1;
+            $user->markEmailAsVerified();
+            $user->save();
 
             return response()->json(['success' => 'success'], 200);
         }
@@ -181,9 +183,9 @@ class UserController extends Controller
     public function enableUser($id)
     {
         if (!empty($id)) {
-            $enableUser = User::find($id);
-            $enableUser->status = 1;
-            $enableUser->save();
+            $user = User::find($id);
+            $user->status = 1;
+            $user->save();
 
             return response()->json(['success' => 'success'], 200);
         }
@@ -194,9 +196,10 @@ class UserController extends Controller
     public function disableUser($id)
     {
         if (!empty($id)) {
-            $disableUser = User::find($id);
-            $disableUser->status = 0;
-            $disableUser->save();
+            $user = User::find($id);
+            $user->status = 0;
+            $user->email_verified_at = NULL;
+            $user->save();
 
             return response()->json(['success' => 'success'], 200);
         }

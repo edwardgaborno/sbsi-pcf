@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class isUserApproveMiddleware
+class IsUserApproveMiddleware
 {
     /**
      * Handle an incoming request.
@@ -25,7 +25,7 @@ class isUserApproveMiddleware
             
                 $request->session()->regenerateToken();
             
-                return redirect('/')->withErrors('Your account needs an administrator approval in order to login');
+                return redirect('/')->withErrors('Your account is awaiting approval. Please check back later.');
             }
         }
 
