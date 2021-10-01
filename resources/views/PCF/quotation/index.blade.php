@@ -16,6 +16,11 @@
             float: right !important;
         }
 
+        .packageInclusions {
+            position: relative;
+            top: 80px;
+        }
+
         .headerTable {
             margin-left: auto;
             margin-right: auto;
@@ -55,13 +60,16 @@
         }
 
         .inclusionTable {
+            border: 1px solid;
+            border-collapse: collapse;
             position: relative;
-            top: 80px;
+            top: 85px;
             width: 100%;
         }
 
         .inclusionTable th,
         .inclusionTable td {
+            border: 1px solid;
             padding: 5px;
             text-align: center;
         }
@@ -74,14 +82,14 @@
 
         .thanksTable {
             position: relative;
-            top: 110px;
+            top: 130px;
             width: 100%;
         }
 
         .signatoryTable {
             width: 100%;
             position: relative;
-            top: 160px;
+            top: 180px;
         }
 
     </style>
@@ -159,22 +167,33 @@
         </tbody>
     </table>
 
+    <div class="packageInclusions">
+        <span><strong>PACKAGE INCLUSIONS</strong></span>
+    </div>
+
+    @foreach ($pcfInclusions as $inclusion)
+    @if($inclusion)
     <table class="inclusionTable">
-        <thead>
+        <thead style="background-color: #122D60 ; color: white">
             <tr>
-                <th colspan="5" style="text-align: left;">PACKAGE INCLUSIONS</th>
+                <th>ITEM CODE</th>
+                <th>ITEM DESCRIPTION</th>
+                <th colspan="2">SERIAL NO. ( IF MACHINE TO BE BID IS NOT BRAND NEW)</th>
+                <th>QTY</th>
             </tr>
         </thead>
-        <tbody>         
+        <tbody>
                 <tr>
-                    <td>
-                    @foreach ($pcfInclusions as $inclusion)
-                        {{ $inclusion->description }}, 
-                    @endforeach
-                    </td>
+                    <td>{{ $inclusion->item_code }}</td>
+                    <td>{{ $inclusion->description }}</td>
+                    <td>{{ $inclusion->serial_no }}</td>
+                    <td>{{ $inclusion->type }}</td>
+                    <td>{{ $inclusion->quantity }}</td>
                 </tr>
         </tbody>
     </table>
+    @endif
+    @endforeach
 
     <table class="termsTable">
         <tbody>         
