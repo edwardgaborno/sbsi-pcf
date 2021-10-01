@@ -8,28 +8,25 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class ApprovePCFRequestNotification extends Notification
+class AccountingDisapprovedPCFRequestNotification extends Notification
 {
     use Queueable;
 
-    private $salesAsst, $acct, $institution, $supplier, $psr, $nsm, $cfo;
+    private $salesAsst, $name, $institution, $supplier, $psr;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($salesAsst, $acct, $institution, $supplier, $psr, $nsm , $cfo)
+    public function __construct($salesAsst, $name, $institution, $supplier, $psr)
     {
         $this->salesAsst = $salesAsst;
-        $this->acct = $acct;
+        $this->acct = $name;
         $this->institution = $institution;
         $this->supplier = $supplier;
         $this->psr = $psr;
-        $this->nsm = $nsm;
-        $this->cfo = $cfo;
     }
-
 
     /**
      * Get the notification's delivery channels.
@@ -53,9 +50,10 @@ class ApprovePCFRequestNotification extends Notification
         return (new MailMessage)
                     ->cc($this->salesAsst)
                     ->subject('PCF Request Status')
-                    ->greeting(new HtmlString('<center>Heads up, PCF-RFQ has been approved</center>'))
-                    ->line(new HtmlString('Just letting you know that ' . $this->acct . ' has copied you on <q>PCF NO._' . $this->institution . '_' . $this->supplier . '_'.$this->psr.'</q>
-                    to inform you that your request for Quotation has been approved by Ma\'am ' . $this->nsm .'/NSM and Ma\'am ' . $this->cfo .'/CFO.'))
+                    ->greeting(new HtmlString('<center>Heads up, PCF-RFQ has been declined</center>'))
+                    ->line(new HtmlString('Just letting you know that ' . $this->acct . ' has copied you on <q>PCF NO._' . $this->institution . '_' . $this->supplier . '_' . $this->psr .'</q>'))
+                    ->line(new HtmlString('<i>Your request is below profit limit, please have it approved by Sir Roberto Manaois/CEO.</i>'))
+                    ->line('We\'ll email you again once we received your approved PCF-RFQ.')
                     ->line(new HtmlString('<strong>Thank you!</strong>'));
     }
 

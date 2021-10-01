@@ -25,13 +25,13 @@ class PCFListController extends Controller
 
             $joins = DB::table('sources')
                     ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
-                    ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price', 'sources.id as source_id')
+                    ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price')
                     ->get();
 
             foreach($joins as $join) {
                 $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
 
-                $pcfList->update([
+                $pcfList->where('id', $pcfList->id)->update([
                     'above_standard_price' => $asp,
                 ]);
             }

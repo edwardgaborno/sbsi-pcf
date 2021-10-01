@@ -8,28 +8,25 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class ApprovePCFRequestNotification extends Notification
+class AccountingApprovedPCFRequestNotification extends Notification
 {
     use Queueable;
 
-    private $salesAsst, $acct, $institution, $supplier, $psr, $nsm, $cfo;
-
+    private $salesAsst, $acct, $institution, $supplier, $psr;
+    
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($salesAsst, $acct, $institution, $supplier, $psr, $nsm , $cfo)
+    public function __construct($salesAsst, $acct, $institution, $supplier, $psr)
     {
         $this->salesAsst = $salesAsst;
         $this->acct = $acct;
         $this->institution = $institution;
         $this->supplier = $supplier;
         $this->psr = $psr;
-        $this->nsm = $nsm;
-        $this->cfo = $cfo;
     }
-
 
     /**
      * Get the notification's delivery channels.
@@ -53,10 +50,9 @@ class ApprovePCFRequestNotification extends Notification
         return (new MailMessage)
                     ->cc($this->salesAsst)
                     ->subject('PCF Request Status')
-                    ->greeting(new HtmlString('<center>Heads up, PCF-RFQ has been approved</center>'))
-                    ->line(new HtmlString('Just letting you know that ' . $this->acct . ' has copied you on <q>PCF NO._' . $this->institution . '_' . $this->supplier . '_'.$this->psr.'</q>
-                    to inform you that your request for Quotation has been approved by Ma\'am ' . $this->nsm .'/NSM and Ma\'am ' . $this->cfo .'/CFO.'))
-                    ->line(new HtmlString('<strong>Thank you!</strong>'));
+                    ->greeting(new HtmlString('<center>Heads up, PCF-RFQ has been validated</center>'))
+                    ->line(new HtmlString('Just letting you know that ' . $this->acct . ' has copied you on <q>PCF NO._' . $this->institution . '_' . $this->supplier . '_' . $this->psr .'</q>'))
+                    ->line(new HtmlString('<strong>There\'s nothing you need to do.</strong> We\'ll email you again when everyone has approved.'));
     }
 
     /**

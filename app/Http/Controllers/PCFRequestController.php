@@ -16,7 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
 use App\Notifications\ApprovePCFRequestNotification;
-use Illuminate\Contracts\Support\ValidatedData;
+use App\Notifications\AccountingApprovedPCFRequestNotification;
+use App\Notifications\AccountingDisapprovedPCFRequestNotification;
 
 class PCFRequestController extends Controller
 {
@@ -261,7 +262,10 @@ class PCFRequestController extends Controller
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
-        $requestor = User::find($pcfRequest->created_by);
+        $psr = User::find($pcfRequest->created_by);
+        $salesAsst = User::role('Sales Assistant')->get();
+        $nsms = User::role('National Sales Manager')->get(); 
+        $cfos = User::role('Chief Finance Officer')->get(); 
 
         if ($user->can('psr_mgr_approve_pcf') &&  $pcfRequest->status_id == 1) {
             $status = 2;
@@ -270,7 +274,18 @@ class PCFRequestController extends Controller
         } else if ($user->can('acct_approve_pcf') &&  $pcfRequest->status_id == 3) {
 
             $status = 4;
+
             $pcfRequest->update(['approved_by' => $user->id,]);
+
+            foreach($salesAsst as $asst) {
+                $psr->notify(new AccountingApprovedPCFRequestNotification(
+                    $asst->email,
+                    $user->name,
+                    $pcfRequest->institution, 
+                    $pcfRequest->supplier,
+                    $psr->name
+                ));
+            }
 
         } else if ($user->can('nsm_approve_pcf') &&  $pcfRequest->status_id == 4 
             && $pcfRequest->countDistinct($pcfRequest->id) > 1) {
@@ -287,17 +302,45 @@ class PCFRequestController extends Controller
             && $pcfRequest->countDistinct($pcfRequest->id) == 1
             && $pcfRequest->checkColumnValue($pcfRequest->id) == 'YES') {
 
+                $acct = User::find($pcfRequest->approved_by);
                 $status = 6;
 
-                $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
-                $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+                foreach($salesAsst as $asst) {
+                    foreach($nsms as $nsm) {
+                        foreach($cfos as $cfo) {
+                            $psr->notify(new ApprovePCFRequestNotification(
+                                $asst->email,
+                                $acct->name, 
+                                $pcfRequest->institution, 
+                                $pcfRequest->supplier,
+                                $psr->name,
+                                $nsm->name,
+                                $cfo->name
+                            ));
+                        }
+                    }
+                }
 
         } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
 
+                $acct = User::find($pcfRequest->approved_by);
                 $status = 6;
 
-                $date = Carbon::parse($pcfRequest->date)->format('l, jS \of F Y');
-                $requestor->notify(new ApprovePCFRequestNotification($requestor->name,$date));
+                foreach($salesAsst as $asst) {
+                    foreach($nsms as $nsm) {
+                        foreach($cfos as $cfo) {
+                            $psr->notify(new ApprovePCFRequestNotification(
+                                $asst->email,
+                                $acct->name, 
+                                $pcfRequest->institution, 
+                                $pcfRequest->supplier,
+                                $psr->name,
+                                $nsm->name,
+                                $cfo->name
+                            ));
+                        }
+                    }
+                }
 
         } else {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -323,12 +366,27 @@ class PCFRequestController extends Controller
         $user = auth()->user();
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
 
+        $psr = User::find($pcfRequest->created_by);
+        $acct = User::find($user->id);
+        $salesAsst = User::role('Sales Assistant')->get(); 
+
         if ($user->can('psr_mgr_reject_pcf') &&  $pcfRequest->status_id == 1) {
             $status = 7;
         } else if ($user->can('mktg_reject_pcf') &&  $pcfRequest->status_id == 2) {
             $status = 7;
         } else if ($user->can('acct_reject_pcf') &&  $pcfRequest->status_id == 3) {
             $status = 7;
+
+            foreach($salesAsst as $asst) {
+                $psr->notify(new AccountingDisapprovedPCFRequestNotification(
+                    $asst->email,
+                    $acct->name, 
+                    $pcfRequest->institution, 
+                    $pcfRequest->supplier,
+                    $psr->name
+                ));
+            }
+
         } else if ($user->can('nsm_reject_pcf') &&  $pcfRequest->status_id == 4) {
             $status = 7;
         } else if ($user->can('cfo_reject_pcf') &&  $pcfRequest->status_id == 5) {

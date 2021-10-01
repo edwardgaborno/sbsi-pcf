@@ -828,7 +828,7 @@
             
             var maxDate = year + '-' + month + '-' + day;
 
-            $('#edit_date, #edit_date_bidding').attr('min', maxDate);
+            $('#edit_date_bidding').attr('min', maxDate);
         });
     </script>
 @endsection
