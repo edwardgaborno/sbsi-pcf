@@ -31,11 +31,12 @@ class PCFInclusionController extends Controller
         return response()->json(['success' => 'success'], 200);
     }
 
-    public function pcfFOCList(Request $request)
+    public function pcfFOCList(Request $request, $pcf_no)
     {
         if ($request->ajax()) {
             $pcfInclusion = PCFInclusion::with('source')
                     ->select('p_c_f_inclusions.*')
+                    ->where('pcf_no', $pcf_no)
                     ->get();
 
             return Datatables::of($pcfInclusion)

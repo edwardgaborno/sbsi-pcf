@@ -522,11 +522,12 @@ class PCFRequestController extends Controller
                 'users.name as name',
             )
             ->join('p_c_f_requests', 'p_c_f_requests.approved_by', 'users.id')
+            ->where('p_c_f_requests.pcf_no', $pcf_no)
             ->get();
             
             $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no', 'approver'));
             $pdf->setPaper('legal', 'portrait');
-            return $pdf->stream('pcf_request.pdf', array("Attachment" => false));
+            return $pdf->stream('PCF NO_'. $get_pcf_list[0]->institution .'_' . $get_pcf_list[0]->supplier . '_' .$get_pcf_list[0]->psr .'.pdf', array("Attachment" => false));
         }
 
         return response()->json(['error' => 'invalid request'], 400);

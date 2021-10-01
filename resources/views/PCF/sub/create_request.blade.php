@@ -157,7 +157,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="bid_docs_price">Bid Docs Price</label>
-                                            <input type="text" class="form-control" name="bid_docs_price" id="bid_docs_price"
+                                            <input type="number" class="form-control" name="bid_docs_price" id="bid_docs_price"
                                                 value="{{ old('bid_docs_price') }}" required>
                                         </div>
                                     </div>
