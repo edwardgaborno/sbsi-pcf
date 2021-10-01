@@ -10,12 +10,12 @@
         <title>@yield('title')</title>
         <meta name="description" content="Scientific Biotech Specialties Web Laboratory Information System" />
         <link rel="icon" href="{{ asset('img/sbsi-favicon.ico') }}">
-        <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.css"/>
-        @stack('styles')
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/r-2.2.9/datatables.min.css"/>
+        @stack('styles')
         <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     </head>
     <body id="page-top">
@@ -51,9 +51,9 @@
             </div>
         </div>
         <!-- Bootstrap core JavaScript-->
-        <script src="{{ asset('dist/jquery/jquery.min.js') }}"></script>
-        <script src="{{ asset('dist/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.2/r-2.2.9/datatables.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/r-2.2.9/datatables.min.js"></script>
         @stack('scripts')
         <!-- Core plugin JavaScript-->
         <script src="{{ asset('dist/jquery-easing/jquery.easing.min.js') }}"></script>

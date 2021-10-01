@@ -42,7 +42,7 @@
                                         @endcan
                                     </div>
                                 </div>
-                            @if(auth()->user()->hasRole('Administrator'))
+                            @if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped" id="source_dataTable" width="100%"
