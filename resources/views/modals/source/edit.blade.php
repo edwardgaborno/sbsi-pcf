@@ -1,5 +1,5 @@
-<div class="modal fade" id="editSourceModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="editSourceModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl ">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Source Details</h5>
@@ -100,7 +100,7 @@
                     <!-- End Left Element -->
                     <!-- Right Element -->
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_item_group">Item Group</label>
                                 <input type="text" class="form-control @error('item_group') is-invalid @enderror" name="item_group" id="edit_item_group"
@@ -113,9 +113,7 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_uom">UOM</label>
                                 <input type="text" class="form-control @error('uom') is-invalid @enderror" name="uom" id="edit_uom"

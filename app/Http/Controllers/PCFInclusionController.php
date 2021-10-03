@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\PCFInclusion;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
-use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\PCFInclusion\StorePCFInclusionRequest;
 
 class PCFInclusionController extends Controller
@@ -18,7 +17,7 @@ class PCFInclusionController extends Controller
             'p_c_f_request_id' => $request->p_c_f_request_id,
         ]);
 
-        alert()->success('Success','The item has been added.');
+        alert()->success('Success','Item has been added');
 
         return back();
     }

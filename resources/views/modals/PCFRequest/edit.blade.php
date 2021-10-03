@@ -1,4 +1,4 @@
-<div class="modal fade" id="editPCFRequestModal" tabindex="-1">
+<div class="modal fade" id="editPCFRequestModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">

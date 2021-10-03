@@ -9,7 +9,6 @@ use App\Models\PCFInclusion;
 use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
-use Carbon\Carbon;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +31,8 @@ class PCFRequestController extends Controller
 
     public function create(PCFList $pCFList)
     {
+        $this->authorize('pcf_request_create');
+
         //get max value of pcf number
         $pcfMaxVal = PCFRequest::max('pcf_no');
 
@@ -69,7 +70,7 @@ class PCFRequestController extends Controller
             ]);
 
             DB::commit();
-            alert()->success('Success','PCF Request has been created.');
+            alert()->success('Success','PCF Request has been created');
         }
         catch (\Throwable $th) {
 
@@ -93,7 +94,7 @@ class PCFRequestController extends Controller
             ]);
 
             DB::commit();
-            alert()->success('Success','PCF Request has been updated.');
+            alert()->success('Success','PCF Request has been updated');
 
         }
         catch (\Throwable $th) {
@@ -401,7 +402,7 @@ class PCFRequestController extends Controller
             ]);
 
             DB::commit();
-            return response()->json(['success' => 'success'], 200);
+            alert()->success('Success','You have approved the PCF Request.');
         }
         catch (\Throwable $th) {
             DB::rollBack();

@@ -37,4 +37,15 @@ class StorePCFListRequest extends FormRequest
             'profit_rate' => 'nullable|numeric',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'pcf_no.required' => 'This is a required field.',
+            'source_id.required' => 'This is a required field.',
+            'quantity.required' => 'This is a required field.',
+            'sales.required' => 'This is a required field.',
+            'total_sales.required' => 'This is a required field.',
+        ];
+    }
 }

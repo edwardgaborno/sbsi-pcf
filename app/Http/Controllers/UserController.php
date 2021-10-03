@@ -22,6 +22,11 @@ class UserController extends Controller
         return view('users.index');
     }
 
+    public function create()
+    {
+        return view('users.create');
+    }
+
     public function store(StoreUserRequest $request)
     {
         $this->authorize('user_create');
@@ -48,7 +53,7 @@ class UserController extends Controller
             DB::rollBack();
         }
 
-        return back();
+        return redirect()->route('users.index');
     }
 
     public function update(UpdateUserRequest $request)
@@ -62,11 +67,20 @@ class UserController extends Controller
 
         try {
             $user = User::findOrFail($request->user_id);
-            $user->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
+
+            if($request->filled('password')) {
+                $user->update([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                ]);
+            }
+            else {
+                $user->update([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                ]);
+            }
             $user->removeRole($user->roles->first());
             $user->assignRole($role->name);
 

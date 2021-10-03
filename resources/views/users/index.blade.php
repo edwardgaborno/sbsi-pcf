@@ -34,9 +34,8 @@
                                 <div class="card-header py-3">
                                     <div class="row">
                                         <div class="col-md-4 offset-md-8">
-                                            <a href="#" data-toggle="modal" data-target="#addUserModal"
-                                                class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
-                                                User</a>
+                                            <a href="{{ route('users.create') }}" id="#addUser" class="btn btn-primary float-right">
+                                                <i class="fas fa-plus-circle"></i> Create New User</a>
                                         </div>
                                     </div>
                                 </div>
@@ -52,7 +51,7 @@
                                                     <th>Email</th>
                                                     <th>User Type</th>
                                                     <th>Status</th>
-                                                    <th>Actions</th>
+                                                    <th style="text-align: center; vertical-align: middle">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -70,7 +69,6 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('modals.users.add')
         @include('modals.users.edit')
         <!-- End of Modal Component -->
         <!-- Footer -->
@@ -301,21 +299,7 @@
 
     <script>
         @if (count($errors) > 0)
-            $('#addUserModal').modal('show');
-            $('#addUserModal').on('shown.bs.modal', function () {
-                $('#editUserModal').modal('hide');
-            });
-        @endif
-    </script>
-
-    <script>
-        @if (count($errors) > 0)
-            $('#user_dataTable').on('click', '.editUser', function (e) {
-                $('#editUserModal').modal('show');
-                $('#editUserModal').on('shown.bs.modal', function () {
-                    $('#addUserModal').modal('hide');
-                });
-            });
+            $('#editUserModal').modal('show');
         @endif
     </script>
 @endsection

@@ -13,17 +13,29 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label for="source_item_code-i">Test Code</label>
+                            <label for="source_item_code-i">Item Code</label>
                             <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $pcf_no }}"> <!-- pcf no -->
                             
-                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
+                            <select name="source_id" id="source_item_code-i" class="form-control @error('source_id') is-invalid @enderror select2" required></select>
+
+                            @error('source_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="description">Item Description</label>
-                            <input type="text" class="form-control" name="description" id="description-i"
-                                placeholder="Description" readonly required>
+                            <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description-i"
+                                placeholder="Description" readonly >
+
+                            @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
 
                             <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
                                 placeholder="currency rate" >
@@ -48,22 +60,40 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="quantity_add_item">Quantity (Per Year)</label>
-                            <input type="number" class="form-control" name="quantity" id="quantity-i"
+                            <input type="number" class="form-control @error('quantity') is-invalid @enderror" name="quantity" id="quantity-i"
                                 value="{{ old('quantity') }}" required disabled>
+
+                            @error('quantity')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="sales_add_item">Sales</label>
-                            <input type="number" class="form-control" name="sales" id="sales-i"
+                            <input type="number" class="form-control @error('sales') is-invalid @enderror" name="sales" id="sales-i"
                                 value="{{ old('sales') }}" required disabled>
+
+                            @error('sales')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="total_sales_add_item">Total Sales</label>
-                            <input type="text" class="form-control" name="total_sales" id="total_sales-i"
+                            <input type="text" class="form-control @error('total_sales') is-invalid @enderror" name="total_sales" id="total_sales-i"
                                 value="{{ old('total_sales') }}" readonly required>
+
+                            @error('total_sales')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-2">

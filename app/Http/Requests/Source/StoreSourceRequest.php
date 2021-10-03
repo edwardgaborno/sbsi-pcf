@@ -24,8 +24,8 @@ class StoreSourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'supplier' => 'required|string|unique:sources,supplier',
-            'item_code' => 'required|string',
+            'supplier' => 'required|string',
+            'item_code' => 'required|string|unique:sources,item_code',
             'description' => 'required|string',
             'unit_price' => 'required|numeric',
             'currency_rate' => 'required|numeric',

@@ -40,9 +40,8 @@
                                     @can('pcf_request_create')
                                         <div class="row">
                                             <div class="col-md-4 offset-md-8">
-                                                <a href="{{ route('PCF.create_request') }}"
-                                                    class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
-                                                    Request</a>
+                                                <a href="{{ route('PCF.create_request') }}" class="btn btn-primary float-right">
+                                                    <i class="fas fa-plus-circle"></i> New PCF Request</a>
                                             </div>
                                         </div>
                                     @endcan
@@ -79,7 +78,6 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('modals.PCFRequest.add')
         @include('modals.PCFRequest.edit')
         <!-- End of Modal Component -->
         <!-- Footer -->
@@ -117,7 +115,20 @@
         });
     </script>
 
-    <script> 
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
         let pcf_request_id;
 
         $('#pcf_dataTable').on('click', '.editPCFRequest', function (e) {
@@ -166,11 +177,11 @@
                     editItemDataTable(pcf_request_id);
                     editFOCDataTable(pcf_request_id)
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    )
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                 });
             }
         });
@@ -225,7 +236,7 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: '/settings.source/get-details/source=' + source_id,
+                    url: '/settings.source/get-description/source=' + source_id,
                     contentType: "application/json; charset=utf-8",
                     cache: false,
                     dataType: 'json',
@@ -240,11 +251,11 @@
 
                     calculateOpex();
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    )
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                     clearItemInputs();
                 });
             }
@@ -296,22 +307,22 @@
                 },
                 success: function(response) {
                     clearItemInputs();
-                    Swal.fire(
-                        'Success!',
-                        'Item added successfully!',
-                        'success'
-                    );
-                    //refresh added items table
                     $('#edit_pcfItem_dataTable').DataTable().ajax.reload(null, false);
                     getGrandTotal(pcf_no);
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Removed',
+                        text: 'The product has been added to the current request.'
+                    })
+                    $("#source_item_code-i").val('').trigger('change')
                 },
                 error: function (response) {
                     clearItemInputs();
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    );
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                 },
             });
         }); 
@@ -343,12 +354,17 @@
                     }).done(function(data) {
                         $('#edit_pcfItem_dataTable').DataTable().ajax.reload(null, false);
                         getGrandTotal(pcf_no);
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Removed',
+                            text: 'The product has been removed from the current item listing.'
+                        })
                     }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
                     });
                 }
             })
@@ -511,7 +527,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '/settings.source/get-details/source=' + source_id,
+                url: '/settings.source/get-description/source=' + source_id,
                 contentType: "application/json; charset=utf-8",
                 cache: false,
                 dataType: 'json',
@@ -522,11 +538,11 @@
 
                     calculateOpexFOC();
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    )
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                     clearFOCInputs();
                 });
             }
@@ -569,23 +585,22 @@
                 },
                 success: function(data) {
                     clearFOCInputs();
-                    Swal.fire(
-                        'Success!',
-                        'Item added successfully!',
-                        'success'
-                    );
-                    //referesh FOC data table
                     $('#edit_pcfFOC_dataTable').DataTable().ajax.reload(null, false);
-                    //get grand totals 
                     getGrandTotal(pcf_no);
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Removed',
+                        text: 'The product has been added to the current request.'
+                    })
+                    $("#source_item_code-foc").val('').trigger('change')
                 },
                 error: function (data) {
                     clearFOCInputs();
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    );
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                 },
             });
         });
@@ -617,12 +632,17 @@
                     }).done(function(data) {
                         $('#edit_pcfFOC_dataTable').DataTable().ajax.reload(null, false);
                         getGrandTotal(pcf_no);
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Removed',
+                            text: 'The product has been removed from the current item listing.'
+                        })
                     }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
                     });
                 }
             })
@@ -711,11 +731,11 @@
                 $("#edit_annual_profit").val(response.annual_profit);
                 $("#edit_annual_profit_rate").val(response.annual_profit_rate);
             }).fail(function(jqXHR, textStatus, errorThrown) {
-                Swal.fire(
-                    'Something went wrong!',
-                    'Please contact your system administrator!',
-                    'error'
-                )
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops! Something went wrong.',
+                    text: 'Please contact your system administrator.'
+                })
             });
         }
     </script>
@@ -746,12 +766,16 @@
                         dataType: 'json',
                     }).done(function(data) {
                         $('#pcf_dataTable').DataTable().ajax.reload(null, false);
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Your approval has been recorded.'
+                        })
                     }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
                     });
                 }
             });
@@ -782,12 +806,16 @@
                         dataType: 'json',
                     }).done(function(data) {
                         $('#pcf_dataTable').DataTable().ajax.reload(null, false);
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Your disapproval has been recorded.'
+                        })
                     }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
                     });
                 }
             });

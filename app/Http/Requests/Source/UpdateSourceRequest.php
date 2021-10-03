@@ -25,12 +25,12 @@ class UpdateSourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'supplier' => [
+            'supplier' => 'required|string',
+            'item_code' => [
                 'required',
                 'string',
-                Rule::unique('sources')->ignore($this->source_id)
+                Rule::unique('sources')->ignore($this->source_id),
             ],
-            'item_code' => 'required|string',
             'description' => 'required|string',
             'unit_price' => 'required|numeric',
             'currency_rate' => 'required|numeric',

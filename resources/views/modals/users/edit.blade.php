@@ -1,5 +1,5 @@
 <div class="modal fade" id="editUserModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Update User Account</h5>
@@ -17,7 +17,7 @@
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="edit_name"
-                                    value="{{ old('name') }}" >
+                                    value="{{ old('name') }}" required>
 
                                 <input type="hidden" class="form-control" name="user_id" id="user_id">
 
@@ -32,7 +32,7 @@
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="edit_email"
-                                    value="{{ old('email') }}" >
+                                    value="{{ old('email') }}" required>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -47,7 +47,7 @@
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="edit_password"
-                                    value="{{ old('password') }}" autocomplete="new-password" >
+                                    value="{{ old('password') }}" autocomplete="new-password" required>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -60,7 +60,7 @@
                             <div class="form-group">
                                 <label for="password_confirmation">Confirm Password</label>
                                 <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" id="edit_password_confirmation"
-                                    value="{{ old('password_confirmation') }}" autocomplete="new-password" >
+                                    value="{{ old('password_confirmation') }}" autocomplete="new-password" required>
 
                                 @error('password_confirmation')
                                     <span class="invalid-feedback" role="alert">
@@ -77,7 +77,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="role">User Role</label>
-                                <select class="form-control @error('role') is-invalid @enderror" name="role" id="edit_role" >
+                                <select class="form-control @error('role') is-invalid @enderror" name="role" id="edit_role" required>
                                     <option value="" selected disabled>Select user role</option>
                                         @foreach(\Spatie\Permission\Models\Role::orderBy('name', 'asc')->get() as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>

@@ -20,6 +20,13 @@ class SourceController extends Controller
         return view('settings.source.index');
     }
 
+    public function create()
+    {
+        $this->authorize('source_create');
+
+        return view('settings.source.create');
+    }
+
     public function store(StoreSourceRequest $request)
     {
         $this->authorize('source_store');
@@ -27,17 +34,18 @@ class SourceController extends Controller
         DB::beginTransaction();
 
         try {
+
             Source::create($request->validated());
             DB::commit();
 
-            Alert::success('Success', 'Source details has been saved.');
+            Alert::success('Success', 'The source has been added');
 
         }
         catch (\Throwable $th) {
             DB::rollBack();
         }
 
-        return back();
+        return redirect()->route('settings.source.index');
     }
 
     public function update(UpdateSourceRequest $request)
@@ -55,7 +63,7 @@ class SourceController extends Controller
                     ->select('sources.standard_price as standard_price', 'p_c_f_lists.sales as unit_price', 'p_c_f_lists.id as list_id')
                     ->get();
 
-            foreach($joins as $key => $join) {
+            foreach($joins as $join) {
                 $pcfList = PCFList::where('id', $join->list_id);
                 $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
 
@@ -66,14 +74,14 @@ class SourceController extends Controller
             
             DB::commit();
 
-            Alert::success('Success', 'Source details has been updated.');
+            Alert::success('Success', 'The source has been updated');
 
         }
         catch (\Throwable $th) {
             DB::rollBack();
         }
 
-        return back();
+        return redirect()->route('settings.source.index');
     }
 
     public function adminSourceList(Request $request)
@@ -81,7 +89,10 @@ class SourceController extends Controller
         $this->authorize('source_access');
 
         if ($request->ajax()) {
-            $sources = Source::latest()->get();
+            $sources = Source::latest()
+                ->select('id', 'supplier', 'item_code', 'description', 'unit_price', 'currency_rate', 'tp_php', 'item_group', 'uom',
+                        'mandatory_peripherals', 'cost_of_peripherals', 'segment', 'item_category', 'standard_price', 'profitability')
+                ->get();
 
             return Datatables::of($sources)
                 ->addIndexColumn()
@@ -127,11 +138,8 @@ class SourceController extends Controller
                 ->addColumn('actions', function ($data) {
                     if(auth()->user()->can('source_edit')) {
                         return
-                        '
-                        <a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
-                            data-id="'. $data->id .'">
-                            <i class="far fa-edit"></i> Edit
-                        </a>';
+                        '<a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
+                            data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>';
                     }
                 })
                 ->rawColumns(['actions'])
@@ -160,12 +168,29 @@ class SourceController extends Controller
         return ['results' => $sources];
     }
 
+    public function sourceDetails($source_id)
+    {
+        $this->authorize('source_access');
+        
+        $source = Source::find($source_id);
+
+        if (!$source) {
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
+
+        return response()->json($source);
+    }
+
     public function sourceDescription($source_id)
     {
         $this->authorize('source_access');
         
-        $source = Source::findOrFail($source_id);
-        
+        $source = Source::select('item_code', 'description', 'currency_rate', 'tp_php', 'cost_of_peripherals')->find($source_id);
+
+        if (!$source) {
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
+
         return response()->json($source);
     }
 }

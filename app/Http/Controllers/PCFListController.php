@@ -37,13 +37,12 @@ class PCFListController extends Controller
             }
 
             DB::commit();
+            alert()->success('Success','Item has been added');
         }
         catch (\Throwable $th) {
 
             DB::rollBack();
         }
-
-        alert()->success('Success','PCF Request Item has been added.');
 
         return back();
     }

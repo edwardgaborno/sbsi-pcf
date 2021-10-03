@@ -87,6 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('user-management/users')->group(function () {
         Route::name('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('.index');
+            Route::get('/create', [UserController::class, 'create'])->name('.create');
             Route::get('/ajax/users-list', [UserController::class, 'usersList'])->name('.list');
             Route::post('/store', [UserController::class, 'store'])->name('.store');
             Route::put('/update', [UserController::class, 'update'])->name('.update');
@@ -103,13 +104,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
             Route::get('/', [SourceController::class, 'index'])->name('.index');
+            Route::get('/create', [SourceController::class, 'create'])->name('.create');
             Route::get('/ajax/source-list/full', [SourceController::class, 'adminSourceList'])->name('.full_list');
             Route::get('/ajax/source-list/psr', [SourceController::class, 'psrSourceList'])->name('.psr_list');
             Route::post('/store', [SourceController::class, 'store'])->name('.store');
             Route::put('/update', [SourceController::class, 'update'])->name('.update');
 
             Route::get('/source/web/search/', [SourceController::class, 'sourceSearch'])->name('.source_search');
-            Route::get('/get-details/source={source_id}', [SourceController::class, 'sourceDescription'])->name('.source_description');
+            Route::get('/get-details/source={source_id}', [SourceController::class, 'sourceDetails'])->name('.source_details');
+            Route::get('/get-description/source={source_id}', [SourceController::class, 'sourceDescription'])->name('.source_description');
         });
     });
 

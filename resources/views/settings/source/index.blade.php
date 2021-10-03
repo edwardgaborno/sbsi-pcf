@@ -35,9 +35,7 @@
                                     <div class="row">
                                         @can('source_create')
                                         <div class="col-md-4 offset-md-8">
-                                            <a href="#" data-toggle="modal" data-target="#addSourceModal"
-                                                class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> New
-                                                Source</a>
+                                            <a href="{{ route('settings.source.create') }}" class="btn btn-primary float-right"><i class="fas fa-plus-circle"></i> Create New Source</a>
                                         </div>
                                         @endcan
                                     </div>
@@ -100,7 +98,6 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('modals.source.add')
         @include('modals.source.edit')
         <!-- End of Modal Component -->
         <!-- Footer -->
@@ -114,6 +111,19 @@
 
 @section('scripts')
     <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
         $(function() {
             $('#psrSource_dataTable').DataTable({
                 "stripeClasses": [],
@@ -204,97 +214,40 @@
                     $('#edit_standard_price').val(data.standard_price);
                     $('#edit_profitability').val(data.profitability);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Swal.fire(
-                        'Something went wrong!',
-                        'Please contact your system administrator!',
-                        'error'
-                    )
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
                 });
             }
         })
 
-        const element = document.querySelectorAll('#unit_price, #currency_rate, #cost_of_peripherals');
-        element.forEach(i => {
-            i.addEventListener('input', function() {
-                calculateTP();
-                calculateStandardPrice();
-            });
-        });
-
         const edit_element = document.querySelectorAll('#edit_unit_price, #edit_currency_rate, #edit_cost_of_peripherals');
         edit_element.forEach(j => {
             j.addEventListener('input', function() {
-                calculateTP();
+                editCalculateTP();
                 editCalculateStandardPrice();
             });
         });
 
-        $("#item_category, #edit_item_category").change(function(){
-            calculateStandardPrice();
+        $("#edit_item_category").change(function(){
             editCalculateStandardPrice();
-            profitability();
+            document.getElementById("edit_item_category").value !== "MACHINE"
+                ? document.getElementById("edit_profitability").value = "50%"
+                : document.getElementById("edit_profitability").value = "30%"
         });
 
-        function calculateTP()
+        function editCalculateTP()
         {
-            const unit_price = parseFloat(document.getElementById("unit_price").value);
-            const currency_rate = parseFloat(document.getElementById("currency_rate").value);
             const edit_unit_price = parseFloat(document.getElementById("edit_unit_price").value);
             const edit_currency_rate = parseFloat(document.getElementById("edit_currency_rate").value);
 
-            const tp_php = document.getElementById("tp_php");
-            const edit_tp_php = document.getElementById("edit_tp_php");
-
-            if (!isNaN(unit_price) && !isNaN(currency_rate)) {
-                tp_php.value = (unit_price * currency_rate).toFixed(2);
-            }
-            else if (!isNaN(edit_unit_price) && !isNaN(edit_currency_rate)) {
-                edit_tp_php.value = (edit_unit_price * edit_currency_rate).toFixed(2);
-            }
-            else {
-                tp_php.value = '';
-                edit_tp_php.value = '';
-            }
+            (!isNaN(edit_unit_price) && !isNaN(edit_currency_rate))
+                ? document.getElementById("edit_tp_php").value = (edit_unit_price * edit_currency_rate).toFixed(2)
+                : document.getElementById("edit_tp_php").value = ''
         }
 
-        function calculateStandardPrice()
-        {
-            const currency_rate = document.getElementById("currency_rate").value;
-            const tp_php = parseFloat(document.getElementById("tp_php").value);
-            const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value);
-            const item_category = document.getElementById("item_category").value;
-
-            const standard_price = document.getElementById("standard_price");
-
-            if (currency_rate == 1) {
-                if (!isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
-                }
-                else if (isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
-                }
-                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
-                }
-                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
-                }
-            }
-            else {
-                if (!isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
-                }
-                else if (isNaN(cost_of_peripherals) && item_category == "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
-                }
-                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
-                }
-                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
-                }
-            }
-        }
 
         function editCalculateStandardPrice()
         {
@@ -334,48 +287,11 @@
                 }
             }
         }
-
-        function profitability() 
-        {
-            const item_category = document.getElementById("item_category").value;
-            const profitability = document.getElementById("profitability");
-
-            const edit_item_category = document.getElementById("edit_item_category").value;
-            const edit_profitability = document.getElementById("edit_profitability");
-
-            if (item_category !== "MACHINE") {
-                profitability.value = "50%"
-            }
-            else {
-                profitability.value = "30%"
-            }
-
-            if (edit_item_category !== "MACHINE") {
-                edit_profitability.value = "50%"
-            }
-            else {
-                edit_profitability.value = "30%"
-            }
-        }
     </script>
 
     <script>
         @if (count($errors) > 0)
-            $('#addSourceModal').modal('show');
-            $('#addSourceModal').on('shown.bs.modal', function () {
-                $('#editSourceModal').modal('hide');
-            });
-        @endif
-    </script>
-
-    <script>
-        @if (count($errors) > 0)
-            $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
-                $('#editSourceModal').modal('show');
-                $('#editSourceModal').on('shown.bs.modal', function () {
-                    $('#addSourceModal').modal('hide');
-                });
-            });
+            $('#editSourceModal').modal('show');
         @endif
     </script>
 @endsection
