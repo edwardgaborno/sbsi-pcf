@@ -30,100 +30,100 @@ class UserSeeder extends Seeder
         $user->assignRole('Super Administrator');
         //permissions will be set on authservice provider Boot function
 
-        // //for testing purposes accts;
-        // $admin = User::create([
-        //     'name' => 'Administrator',
-        //     'email' => 'test0@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $admin = User::create([
+            'name' => 'Administrator',
+            'email' => 'test0@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $admin->assignRole('Administrator');
+        $admin->assignRole('Administrator');
 
-        // //for testing purposes accts;
-        // $admin = User::create([
-        //     'name' => 'PSR',
-        //     'email' => 'test1@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $admin = User::create([
+            'name' => 'PSR',
+            'email' => 'test1@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $admin->assignRole('PSR');
+        $admin->assignRole('PSR');
 
-        // //for testing purposes accts;
-        // $psr_mgr = User::create([
-        //     'name' => 'PSR Manager',
-        //     'email' => 'test2@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $psr_mgr = User::create([
+            'name' => 'PSR Manager',
+            'email' => 'test2@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $psr_mgr->assignRole('PSR Manager');
+        $psr_mgr->assignRole('PSR Manager');
 
-        // //for testing purposes accts;
-        // $mktg = User::create([
-        //     'name' => 'Marketing',
-        //     'email' => 'test3@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $mktg = User::create([
+            'name' => 'Marketing',
+            'email' => 'test3@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $mktg->assignRole('Marketing');
+        $mktg->assignRole('Marketing');
 
-        // //for testing purposes accts;
-        // $acct = User::create([
-        //     'name' => 'Accounting',
-        //     'email' => 'test4@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $acct = User::create([
+            'name' => 'Accounting',
+            'email' => 'test4@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $acct->assignRole('Accounting');
+        $acct->assignRole('Accounting');
 
-        // //for testing purposes accts;
-        // $nsm = User::create([
-        //     'name' => 'National Sales Manager',
-        //     'email' => 'test5@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $nsm = User::create([
+            'name' => 'National Sales Manager',
+            'email' => 'test5@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $nsm->assignRole('National Sales Manager');
+        $nsm->assignRole('National Sales Manager');
 
-        // //for testing purposes accts;
-        // $cfo = User::create([
-        //     'name' => 'Chief Finance Officer',
-        //     'email' => 'test6@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $cfo = User::create([
+            'name' => 'Chief Finance Officer',
+            'email' => 'test6@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $cfo->assignRole('Chief Finance Officer');
+        $cfo->assignRole('Chief Finance Officer');
 
-        // //for testing purposes accts;
-        // $sales_asst = User::create([
-        //     'name' => 'Sales Assistant',
-        //     'email' => 'test7@user.com',
-        //     'password' => Hash::make('12345'),
-        //     'is_approved' => true,
-        //     'status' => true,
-        //     'email_verified_at' => Carbon::now()
-        // ]);
+        //for testing purposes accts;
+        $sales_asst = User::create([
+            'name' => 'Sales Assistant',
+            'email' => 'test7@user.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'email_verified_at' => Carbon::now()
+        ]);
 
-        // $sales_asst->assignRole('Sales Assistant');
+        $sales_asst->assignRole('Sales Assistant');
     }
 }

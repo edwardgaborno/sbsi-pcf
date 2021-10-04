@@ -199,11 +199,15 @@
             </tr>
             <tr>
                 <th>DATE OF BIDDING:</th>
+                @if($get_pcf_list[0]->date_bidding)
                 <td><center>{{ Carbon\Carbon::parse($get_pcf_list[0]->date_bidding)->format('F d, Y') }}</center></td>
+                @endif
             </tr>
             <tr>
                 <th>BID DOCS PRICE:</th>
-                <td><center>{{ number_format($get_pcf_list[0]->bid_docs_price,2) }}</center></td>
+                @if($get_pcf_list[0]->bid_docs_price)
+                <td><center>{{ number_format($get_pcf_list[0]->bid_docs_price, 2) }}</center></td>
+                @endif
             </tr>
             <tr>
                 <th>PSR and MANAGER:</th>

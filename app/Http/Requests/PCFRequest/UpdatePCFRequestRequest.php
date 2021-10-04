@@ -37,8 +37,8 @@ class UpdatePCFRequestRequest extends FormRequest
             'delivery' => 'required|string',
             'warranty' => 'nullable|string',
             'contract_duration' => 'required|string',
-            'date_bidding' => 'required|date',
-            'bid_docs_price' => 'required|numeric',
+            'date_bidding' => 'sometimes|nullable|date',
+            'bid_docs_price' => 'sometimes|nullable|numeric',
             'manager' => 'required|string',
             'annual_profit' => 'required|numeric',
             'annual_profit_rate' => 'required|numeric'

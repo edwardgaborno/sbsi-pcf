@@ -61,19 +61,18 @@ class PCFRequestController extends Controller
                 'created_by' => auth()->user()->id,
             ]);
 
-            PCFList::where('pcf_no', $pcfRequest->pcf_no)->update([
-                'p_c_f_request_id' => $pcfRequest->id,
-            ]);
+            $pcfList = PCFList::where('pcf_no', $pcfRequest->pcf_no)->update(['p_c_f_request_id' => $pcfRequest->id]);
+            PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update(['p_c_f_request_id' => $pcfRequest->id]);
 
-            PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update([
-                'p_c_f_request_id' => $pcfRequest->id,
-            ]);
+            if ($pcfList == 0) {
+                toast()->info('Info', 'You are required to add at least one (1) product in the Item List section.');
+                return back();
+            }
 
             DB::commit();
             alert()->success('Success','PCF Request has been created');
         }
         catch (\Throwable $th) {
-
             DB::rollBack();
         }
 
@@ -229,10 +228,16 @@ class PCFRequestController extends Controller
                             elseif (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 3)) {
                                 return $approval;
                             }
-                            elseif (auth()->user()->can('nsm_approve_pcf') && ($data->status_id == 4)) {
+                            elseif (auth()->user()->can('nsm_approve_pcf') && (($data->status_id == 5) || ($data->status_id == 6))) {
+                                return $salesAsstView;
+                            }
+                            elseif (auth()->user()->can('nsm_approve_pcf')) {
                                 return $wQuotation;
                             }
-                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) {
+                            elseif (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 6)) {
+                                return $salesAsstView;
+                            }
+                            elseif (auth()->user()->can('cfo_approve_pcf')) {
                                 return $wQuotation;
                             }
                             elseif (auth()->user()->can('sales_asst_view') && ($data->status_id == 6)) {
@@ -303,24 +308,7 @@ class PCFRequestController extends Controller
             && $pcfRequest->countDistinct($pcfRequest->id) == 1
             && $pcfRequest->checkColumnValue($pcfRequest->id) == 'YES') {
 
-                $acct = User::find($pcfRequest->approved_by);
-                $status = 6;
-
-                foreach($salesAsst as $asst) {
-                    foreach($nsms as $nsm) {
-                        foreach($cfos as $cfo) {
-                            $psr->notify(new ApprovePCFRequestNotification(
-                                $asst->email,
-                                $acct->name, 
-                                $pcfRequest->institution, 
-                                $pcfRequest->supplier,
-                                $psr->name,
-                                $nsm->name,
-                                $cfo->name
-                            ));
-                        }
-                    }
-                }
+                $status = 5;
 
         } else if ($user->can('cfo_approve_pcf') &&  $pcfRequest->status_id == 5) {
 
@@ -545,6 +533,7 @@ class PCFRequestController extends Controller
                 'p_c_f_lists.quantity AS quantity',
                 'p_c_f_lists.sales AS sales',
                 'p_c_f_lists.total_sales AS total_sales',
+
                 'p_c_f_requests.date AS date',
                 'p_c_f_requests.institution AS institution',
                 'p_c_f_requests.address AS address',
@@ -553,6 +542,8 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.validity AS validity',
                 'p_c_f_requests.delivery AS delivery',
                 'p_c_f_requests.warranty AS warranty',
+                'p_c_f_requests.status_id AS status',
+
                 'sources.item_code as item_code',
                 'sources.description as description',
             )
@@ -570,7 +561,7 @@ class PCFRequestController extends Controller
                 'sources.description as description',
             )
             ->join('sources', 'sources.id', 'p_c_f_inclusions.source_id')
-            ->where('pcf_no',$pcf_no)
+            ->where('pcf_no', $pcf_no)
             ->get();
 
             $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcfInclusions', 'pcf_no'));

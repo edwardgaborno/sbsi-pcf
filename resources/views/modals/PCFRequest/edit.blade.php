@@ -181,14 +181,14 @@
                                         <div class="form-group">
                                             <label for="edit_date_bidding">Date of Bidding</label>
                                             <input type="date" class="form-control" name="date_bidding" id="edit_date_bidding"
-                                                value="{{ old('date_bidding') }}" required>
+                                                value="{{ old('date_bidding') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="specimen_type">Bid Docs Price</label>
                                             <input type="text" class="form-control" name="bid_docs_price" id="edit_bid_docs_price"
-                                                value="{{ old('bid_docs_price') }}" required>
+                                                value="{{ old('bid_docs_price') }}">
                                         </div>
                                     </div>
                                 </div>

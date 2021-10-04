@@ -33,8 +33,8 @@ class CreatePCFRequestsTable extends Migration
             $table->string('delivery');
             $table->string('warranty')->nullable();
             $table->string('contract_duration');
-            $table->date('date_bidding');
-            $table->decimal('bid_docs_price')->default(0.00);
+            $table->date('date_bidding')->nullable();
+            $table->decimal('bid_docs_price')->nullable();
             $table->string('psr'); // we can get the name of the PSR by using the column created by;
             $table->string('manager');
             $table->decimal('annual_profit', 12, 2)->default(0.00);

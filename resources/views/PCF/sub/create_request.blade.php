@@ -63,7 +63,7 @@
                                             <div class="form-group">
                                                 <label for="date">Date</label>
                                                 <input type="date" class="form-control @error('date') is-invalid @enderror" name="date" id="date"
-                                                    value="{{ old('date') }}" required>
+                                                    value="{{ \Carbon\Carbon::now()->toDateString() }}" required readonly>
 
                                                 @error('date')
                                                     <span class="invalid-feedback" role="alert">
@@ -232,22 +232,29 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label for="date_bidding">Date of Bidding</label>
-                                                <input type="date" class="form-control @error('date_bidding') is-invalid @enderror" name="date_bidding" id="date_bidding"
-                                                    value="{{ old('date_bidding') }}" required>
-
-                                                @error('date_bidding')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
+                                                <label for="bid_docs_price">Date Bidding</label>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                            <input type="checkbox" id="dateBiddingCheckBox" aria-label="Checkbox for following date input">
+                                                        </div>
+                                                    </div>
+                                                    <input type="date" class="form-control @error('date_bidding') is-invalid @enderror" name="date_bidding" id="date_bidding"
+                                                        value="{{ old('date_bidding') }}">
+                                                    
+                                                    @error('date_bidding')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="bid_docs_price">Bid Docs Price</label>
                                                 <input type="number" class="form-control @error('bid_docs_price') is-invalid @enderror" name="bid_docs_price" id="bid_docs_price"
-                                                    value="{{ old('bid_docs_price') }}" required>
+                                                    value="{{ old('bid_docs_price') }}">
 
                                                 @error('bid_docs_price')
                                                     <span class="invalid-feedback" role="alert">
@@ -790,6 +797,15 @@
         var now = new Date(),
         minDate = now.toISOString().substring(0,10);
 
-        $('#date, #date_bidding').prop('min', minDate);
+        $('#date_bidding').prop('min', minDate);
+    </script>
+
+    <script>
+        $(function() {
+            const ckbox = document.getElementById('dateBiddingCheckBox');
+            ckbox.checked == true
+                ? document.getElementById("date_bidding").disabled = true
+                : document.getElementById("date_bidding").disabled = false
+        });
     </script>
 @endsection

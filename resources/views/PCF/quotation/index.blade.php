@@ -224,17 +224,23 @@
             </tr>
         </tbody>
     </table>
-
-    <table class="signatoryTable" style="margin: 0 auto; text-align:center">
+    <table class="signatoryTable" style="text-align:center">
         <tr>
-            <td style="font-weight: bold;">IRYNE I. DE LEON</td>
-            <td style="font-weight: bold;">PERSEVERANDA A. IBEA, CPA</td>
+            @if($pcfList[0]->status == 5)
+            <td style="font-weight: bold; width: 45%">IRYNE I. DE LEON</td>
+            <td style="font-weight: bold; width: 55%;"></td>
+            @endif
+
+            @if($pcfList[0]->status == 6)
+            <td style="font-weight: bold; width: 45%">IRYNE I. DE LEON</td>
+            <td style="font-weight: bold; width: 55%;">PERSEVERANDA A. IBEA, CPA</td>
+            @endif
         </tr>
         <tr>
             <td>National Sales Manager</td>
             <td>Chief Finance Officer</td>
         </tr>
- </table>
+    </table>
 </body>
 
 </html>

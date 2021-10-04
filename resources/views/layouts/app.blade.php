@@ -56,8 +56,8 @@
         @stack('scripts')
         <!-- Custom scripts for all pages-->
         <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-        @include('sweetalert::alert')
         <!-- Sweet alert 2 -->
+        @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@11"])
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @yield('scripts')
     </body>
