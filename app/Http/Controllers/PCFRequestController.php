@@ -399,10 +399,11 @@ class PCFRequestController extends Controller
         try {
             $pcfRequest->update([
                 'status_id' => $status,
+                'approved_by' => NULL,
             ]);
 
             DB::commit();
-            alert()->success('Success','You have approved the PCF Request.');
+            return response()->json(['success' => 'success'], 200);
         }
         catch (\Throwable $th) {
             DB::rollBack();

@@ -728,8 +728,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             }).done(function(response) {
-                $("#edit_annual_profit").val(response.annual_profit);
-                $("#edit_annual_profit_rate").val(response.annual_profit_rate);
+                document.getElementById("edit_annual_profit").value = response.annual_profit;
+                document.getElementById("edit_annual_profit_rate").value = response.annual_profit_rate;
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 Toast.fire({
                     icon: 'error',
@@ -843,21 +843,10 @@
     </script>
 
     <script>
-        $(function(){
-            var dtToday = new Date();
-            
-            var month = dtToday.getMonth() + 1;
-            var day = dtToday.getDate();
-            var year = dtToday.getFullYear();
-            if(month < 10)
-                month = '0' + month.toString();
-            if(day < 10)
-                day = '0' + day.toString();
-            
-            var maxDate = year + '-' + month + '-' + day;
+        var now = new Date(),
+        minDate = now.toISOString().substring(0,10);
 
-            $('#edit_date_bidding').attr('min', maxDate);
-        });
+        $('#edit_date_bidding').prop('min', minDate);
     </script>
 @endsection
 
