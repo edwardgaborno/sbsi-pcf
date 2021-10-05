@@ -10,8 +10,7 @@
         <div class="card shadow mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <form id="pcfListForm" action="{{ route('PCF.sub.store_items') }}" method="POST">
-                        @csrf
+                    <form id="pcfListForm">
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">

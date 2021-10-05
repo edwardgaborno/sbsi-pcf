@@ -335,7 +335,7 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('PCF.sub.as_bundled_confirmation')
+
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -449,20 +449,21 @@
     //end of select2 function
 
     //on pcfList form submit; ajax
-    $('#edit_pcfListForm').on('submit',function(e){
+    $('#pcfListForm').on('submit', function(e) {
         e.preventDefault();
-        let pcf_no = $("#edit_pcf_no-i").val();
-        let p_c_f_request_id = $("#pcf_request_id-i").val();
-
         $.ajax({
-            url: "{{ route('PCF.sub.store_items') }}",
-            method:'POST',
-            data: {
-                _token: "{{ csrf_token() }}",
-                pcf_no:pcf_no,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+            url: "{{ route('PCF.sub.item_count', $pcf_no) }}",
+            method:'POST',
             success: function(response) {
+                if(response > 1) {
 
+                }
+                else {
+                    
+                }
             },
             error: function (response) {
 

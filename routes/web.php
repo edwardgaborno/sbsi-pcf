@@ -72,7 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('PCF.sub')->group(function () {
         Route::name('PCF.sub')->group(function () {
             Route::get('/ajax/item-list/{pcf_no}', [PCFListController::class, 'pcfItemList'])->name('.item_list');
-            Route::get('/ajax/count/{pcf_no}', [PCFListController::class, 'pcfItemCount'])->name('.item_count');
+            Route::post('/ajax/count/{pcf_no}', [PCFListController::class, 'pcfItemCount'])->name('.item_count');
             Route::post('/store-items', [PCFListController::class, 'store'])->name('.store_items');
             Route::delete('/ajax/delete/pcf-list/{item_id}', [PCFListController::class, 'destroy'])->name('.destroy_item');
 
