@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFList;
 use Illuminate\Http\Request;
-use Alert;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\PCFList\StorePCFListRequest;
@@ -18,7 +17,6 @@ class PCFListController extends Controller
         DB::beginTransaction();
 
         try {
-
             $pcfList = PCFList::create($request->validated() + [
                 'p_c_f_request_id' => $request->p_c_f_request_id,
             ]);
@@ -110,5 +108,14 @@ class PCFListController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+    }
+
+    public function pcfItemCount($pcf_no)
+    {
+        $this->authorize('pcf_request_access');
+
+        $pcfList = PCFList::where('pcf_no', $pcf_no)->count();
+                
+        return response()->json($pcfList);
     }
 }

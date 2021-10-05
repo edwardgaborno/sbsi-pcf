@@ -3,6 +3,15 @@
 
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .accordion .fa {
+            margin-right: 0.5rem;
+        }
+
+        .accordion button, .accordion button:hover, .accordion button:focus {
+            text-decoration: none;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -34,10 +43,11 @@
                     <a href="{{ route('PCF.index') }}" class="btn btn-sm btn-light mr-2"><i class="fas fa-arrow-circle-left"></i> Back to index page</a>
                 </div>
                 <br>
-                
-                @include('PCF.sub.partials.items')
-                @include('PCF.sub.partials.foc')
-                
+                <div class="accordion" id="accordionExample">
+                    @include('PCF.sub.partials.items')
+                    @include('PCF.sub.partials.foc')
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
@@ -232,11 +242,14 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label for="bid_docs_price">Date Bidding</label>
+                                                <label for="date_bidding">Date Bidding</label>
                                                 <div class="input-group mb-3">
                                                     <div class="input-group-prepend">
                                                         <div class="input-group-text">
                                                             <input type="checkbox" id="dateBiddingCheckBox" aria-label="Checkbox for following date input">
+                                                            <label class="form-check-label" for="dateBiddingCheckBox">
+                                                                N/A
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <input type="date" class="form-control @error('date_bidding') is-invalid @enderror" name="date_bidding" id="date_bidding"
@@ -322,7 +335,7 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-
+        @include('PCF.sub.as_bundled_confirmation')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -434,6 +447,28 @@
         document.getElementById("sales-i").disabled = true;
     });
     //end of select2 function
+
+    //on pcfList form submit; ajax
+    $('#edit_pcfListForm').on('submit',function(e){
+        e.preventDefault();
+        let pcf_no = $("#edit_pcf_no-i").val();
+        let p_c_f_request_id = $("#pcf_request_id-i").val();
+
+        $.ajax({
+            url: "{{ route('PCF.sub.store_items') }}",
+            method:'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                pcf_no:pcf_no,
+            },
+            success: function(response) {
+
+            },
+            error: function (response) {
+
+            },
+        });
+    }); 
 
     const element = document.querySelectorAll('#sales-i, #quantity-i');
     element.forEach(i => {
@@ -801,11 +836,49 @@
     </script>
 
     <script>
-        $(function() {
-            const ckbox = document.getElementById('dateBiddingCheckBox');
-            ckbox.checked == true
-                ? document.getElementById("date_bidding").disabled = true
-                : document.getElementById("date_bidding").disabled = false
+        $('#dateBiddingCheckBox').change(function() {
+            if($(this).is(":checked")) {
+                document.getElementById('date_bidding').type = 'text';
+                document.getElementById("date_bidding").readOnly = true;
+
+                document.getElementById("bid_docs_price").readOnly = true;
+            }
+            else {
+                document.getElementById('date_bidding').type = 'date';
+                document.getElementById("date_bidding").readOnly = false;
+
+                document.getElementById("bid_docs_price").readOnly = false;
+            }
+        });
+    </script>
+
+    <script>
+        $(function () {
+        // Add minus icon for collapse element which is open by default
+        $(".collapse.show").each(function () {
+            $(this)
+            .prev(".card-header")
+            .find(".fa")
+            .addClass("fa-minus")
+            .removeClass("fa-plus");
+        });
+
+        // Toggle plus minus icon on show hide of collapse element
+        $(".collapse")
+            .on("show.bs.collapse", function () {
+            $(this)
+                .prev(".card-header")
+                .find(".fa")
+                .removeClass("fa-plus")
+                .addClass("fa-minus");
+            })
+            .on("hide.bs.collapse", function () {
+            $(this)
+                .prev(".card-header")
+                .find(".fa")
+                .removeClass("fa-minus")
+                .addClass("fa-plus");
+            });
         });
     </script>
 @endsection
