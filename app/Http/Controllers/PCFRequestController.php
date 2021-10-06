@@ -494,7 +494,7 @@ class PCFRequestController extends Controller
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
-            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->orderBy('p_c_f_lists.id', 'ASC')
             ->get();
 
             $get_pcf_inclusions = PCFInclusion::select(
@@ -550,7 +550,7 @@ class PCFRequestController extends Controller
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
-            ->orderBy('p_c_f_lists.id', 'DESC')
+            ->orderBy('p_c_f_lists.id', 'ASC')
             ->get();
 
             $pcfInclusions = PCFInclusion::select(

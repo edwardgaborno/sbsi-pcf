@@ -335,7 +335,7 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-
+        @include('PCF.sub.partials.bundle_options')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -357,7 +357,7 @@
         position: 'top-end',
         showConfirmButton: false,
         showCloseButton: true,
-        timer: 3000,
+        timer: 2500,
         timerProgressBar: true,
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -386,7 +386,7 @@
                 { data: 'quantity' },
                 { data: 'sales' },
                 { data: 'total_sales' },
-                { data: 'action' },
+                { data: 'actions' },
             ],
         });
         getGrandTotal();
@@ -455,21 +455,73 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "{{ route('PCF.sub.item_count', $pcf_no) }}",
+            url: "{{ route('PCF.sub.store_items') }}",
             method:'POST',
+            data: {
+                pcf_no: document.getElementById("pcf_no").value,
+                source_id: document.getElementById("source_item_code-i").value,
+                quantity: document.getElementById("quantity-i").value,
+                sales: document.getElementById("sales-i").value,
+                total_sales: document.getElementById("total_sales-i").value,
+                opex: document.getElementById("opex-i").value,
+                net_sales: document.getElementById("net_sales-i").value,
+                gross_profit: document.getElementById("gross_profit-i").value,
+                total_gross_profit: document.getElementById("total_gross_profit-i").value,
+                total_net_sales: document.getElementById("total_net_sales-i").value,
+                profit_rate: document.getElementById("profit_rate-i").value
+            },
             success: function(response) {
-                if(response > 1) {
-
-                }
-                else {
-                    
-                }
+                clearItemInputs();
+                $("#source_item_code-i").val('').trigger('change')
+                getGrandTotal(pcf_no);
+                $('#pcfItem_datatable').DataTable().ajax.reload();
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Added',
+                    text: 'The product has been added to the current item list.'
+                })
             },
             error: function (response) {
-
+                clearItemInputs();
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops! Something went wrong.',
+                    text: 'Please contact your system administrator.'
+                })
             },
         });
-    }); 
+    });
+
+
+    $('#pcfItem_datatable').on('click', '.pcfListCreateBundle', function (e) {
+        e.preventDefault();
+        $('#bundleItemsModal').modal('show');
+        let item_id = $(this).data('id');
+    })
+    $('#userDelBtn').on('click', function (e) {
+        e.preventDefault();
+        let id = item_id;
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '/admin/user_management_access/users/' + id,
+            type: 'POST',
+            data: {
+                '_method': 'DELETE',
+            },
+            success: function (response) {
+                $modal.modal('hide');
+                var oTable = $('#uma_users_datatable').DataTable();
+                oTable.ajax.reload();
+                Toast.fire({
+                    title: 'Deleted',
+                    html: `The user has been deleted.`,
+                    icon: 'success',
+                });
+            }
+        })
+    });
 
     const element = document.querySelectorAll('#sales-i, #quantity-i');
     element.forEach(i => {
@@ -561,20 +613,19 @@
     }
 
     function clearItemInputs() {
-        $("#item_code-i").val("");
-        $("#description-i").val("");
-        $("#rate-i").val("");
-        $("#tp_php-i").val("");
-        $("#cost_periph-i").val("");
-        $("#quantity-i").val("");
-        $("#sales-i").val("");
-        $("#total_sales-i").val("");
-        $("#opex-i").val("");
-        $("#net_sales-i").val("");
-        $("#gross_profit-i").val("");
-        $("#total_gross_profit-i").val("");
-        $("#total_net_sales-i").val("");
-        $("#profit_rate-i").val("");
+        document.getElementById("description-i").value,
+        document.getElementById("currency_rate-i").value,
+        document.getElementById("tp_php-i").value
+        document.getElementById("cost_of_peripherals-i").value
+        document.getElementById("quantity-i").value,
+        document.getElementById("sales-i").value,
+        document.getElementById("total_sales-i").value,
+        document.getElementById("opex-i").value,
+        document.getElementById("net_sales-i").value,
+        document.getElementById("gross_profit-i").value,
+        document.getElementById("total_gross_profit-i").value,
+        document.getElementById("total_net_sales-i").value,
+        document.getElementById("profit_rate-i").value
     }
 
     //delete item from pcfList table
@@ -880,6 +931,82 @@
                 .removeClass("fa-minus")
                 .addClass("fa-plus");
             });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            let count = 1;
+            dynamic_field(count);
+            function dynamic_field(number) {
+                html = '<tr>';
+                html += '<td><select name="source_id[]" id="item_code_bundle" class="form-control itemCodeBundle" required></select></td>';
+                html += '<td><input type="text" class="form-control" name="description[]" id="description_bundle" placeholder="Description" readonly ></td>';
+                html += '<td><input type="number" class="form-control" name="quantity[]" id="quantity_bundle" required></td>';
+                if (number > 1) {
+                    html += '<td><button type="button" name="remove" class="btn btn-danger btn-icon remove"><i class="fas fa-minus-circle"></i></button></td></tr>';
+                    $('#bundleItemsTable tbody').append(html);
+                }
+                else {
+                    html += '<td><button type="button" name="add" id="add" class="btn btn-success btn-icon"><i class="fas fa-plus-circle"></i></button></td></tr>';
+                    $('#bundleItemsTable tbody').html(html);
+                    initSelect2();
+                }
+            }
+
+            $(document).on('click', '#add', function () {
+                count++;
+                dynamic_field(count);
+            });
+            
+            $(document).on('click', '.remove', function () {
+                count--;
+                $(this).closest("tr").remove();
+            });
+
+            //start of select2 function -- item_code
+            function initSelect2() {
+                $("#item_code_bundle").select2({
+                    dropdownParent: $('#bundleItemsModal'),
+                    allowClear: true,
+                    minimumInputLength: 3,
+                    placeholder: 'Item code',
+                    ajax: {
+                        url: '{{ route("settings.source.source_search") }}',
+                        dataType: 'json',
+                    },
+                });
+
+                $('#item_code_bundle').on('select2:select', function (e) {
+                    var data = e.params.data;
+                    var source_id = data.id
+                    if(source_id) {
+                        $.ajax({
+                            method: 'GET',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '/settings.source/get-description/source=' + source_id,
+                            contentType: "application/json; charset=utf-8",
+                            cache: false,
+                            dataType: 'json',
+                        }).done(function(data) {
+                            document.getElementById("description_bundle").value = data.description;
+                        }).fail(function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Oops! Something went wrong.',
+                                text: 'Please contact your system administrator.'
+                            });
+                        });
+                    }
+                });
+
+                $("#item_code_bundle").on('change', function(e) {
+                    document.getElementById("description_bundle").value = "";
+                    document.getElementById("quantity_bundle").value = "";
+                });
+            }
         });
     </script>
 @endsection

@@ -60,7 +60,7 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="quantity_add_item">Quantity (Per Year)</label>
+                                    <label for="quantity_add-i">Quantity (Per Year)</label>
                                     <input type="number" class="form-control @error('quantity') is-invalid @enderror" name="quantity" id="quantity-i"
                                         value="{{ old('quantity') }}" required disabled>
 
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="sales_add_item">Sales</label>
+                                    <label for="sales_add-i">Sales</label>
                                     <input type="number" class="form-control @error('sales') is-invalid @enderror" name="sales" id="sales-i"
                                         value="{{ old('sales') }}" required disabled>
 
@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="total_sales_add_item">Total Sales</label>
+                                    <label for="total_sales_add-i">Total Sales</label>
                                     <input type="text" class="form-control @error('total_sales') is-invalid @enderror" name="total_sales" id="total_sales-i"
                                         value="{{ old('total_sales') }}" readonly required>
 
@@ -99,8 +99,8 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="submit_item"></label>
-                                        <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item">
+                                    <label for="submit"></label>
+                                        <button type="submit" class="btn btn-primary form-control btn-submit" id="submit">
                                             <i class="fas fa-plus-circle"></i> Add Item</button>
                                 </div>
                             </div>
@@ -119,7 +119,7 @@
                                 <th>Quantity (Per Year)</th>
                                 <th>Sales</th>
                                 <th>Total Sales</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr> 
                         </thead>
                         <tbody>

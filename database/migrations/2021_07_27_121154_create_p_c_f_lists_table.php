@@ -29,15 +29,13 @@ class CreatePCFListsTable extends Migration
             $table->integer('quantity');
             $table->decimal('sales', 11, 2)->default(0.00);
             $table->decimal('total_sales', 12, 2)->default(0.00);
-            // $table->decimal('transfer_price', 11, 2)->default(0.00); // not being used; source id can be use to get required data in the future
-            // $table->decimal('mandatory_peripherals', 11, 2)->default(0.00); // not being used; source id can be use to get required data in the future
             $table->decimal('opex', 11, 2)->default(0.00);
             $table->decimal('net_sales', 11, 2)->default(0.00);
             $table->decimal('gross_profit', 11, 2)->default(0.00);
             $table->decimal('total_gross_profit', 12, 2)->default(0.00);
             $table->decimal('total_net_sales', 12, 2)->default(0.00);
             $table->double('profit_rate', 11, 2)->default(0.00);
-            $table->tinyInteger('as_bundled')->default(0);
+            $table->tinyInteger('is_bundled')->default(0);
             $table->string('above_standard_price')->nullable();
             $table->timestamps();
         });

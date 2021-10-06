@@ -70,15 +70,16 @@ class PCFListController extends Controller
                 ->addColumn('total_sales', function ($data) {
                     return number_format($data->total_sales, 2, '.', ',');
                 })
-                ->addColumn('action', function ($data) {
+                ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
-                        return
-                        '<a href="javascript:void(0)" class="badge badge-danger pcfListDelete" data-id="' . $data->id . '">
-                            <i class="fas fa-trash-alt"></i> Delete Item</a>
-                        ';
+                        return '
+                            <a href="javascript:void(0)" class="badge badge-primary pcfListCreateBundle" data-toggle="modal" data-id="' . $data->id . '">
+                                <i class="fas fa-box"></i> Bundle Items</a>
+                            <a href="javascript:void(0)" class="pcfListDelete" data-id="' . $data->id . '">
+                                <i class="fas fa-trash-alt text-danger"></i></a>';
                     }
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['actions'])
                 ->make(true);
         }
     }
@@ -97,25 +98,14 @@ class PCFListController extends Controller
                 ->addColumn('total_sales', function ($data) {
                     return number_format($data->total_sales, 2, '.', ',');
                 })
-                ->addColumn('action', function ($data) {
+                ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
-                        return
-                        '<a href="javascript:void(0)" class="badge badge-danger pcfListDelete" data-id="' . $data->id . '">
-                            <i class="fas fa-trash-alt"></i> Delete Item</a>
-                        ';
+                        return '<a href="javascript:void(0)" class="badge badge-danger pcfListDelete" data-id="' . $data->id . '">
+                            <i class="fas fa-trash-alt"></i> Delete Item</a>';
                     }
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['actions'])
                 ->make(true);
         }
-    }
-
-    public function pcfItemCount($pcf_no)
-    {
-        $this->authorize('pcf_request_access');
-
-        $pcfList = PCFList::where('pcf_no', $pcf_no)->count();
-                
-        return response()->json($pcfList);
     }
 }
