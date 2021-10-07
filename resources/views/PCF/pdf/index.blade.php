@@ -270,6 +270,16 @@
                 <td>{{ number_format($request->sales,2) }}</td>
                 <td>{{ number_format($request->total_sales,2) }}</td>
                 <td>{{ $request->above_standard_price }}</td>
+            @foreach ($itemBundles as $bundle)
+                <tr>
+                    <td>{{ $bundle->item_code }}</td>
+                    <td>{{ $bundle->description }}</td>
+                    <td>{{ $bundle->quantity }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endforeach
             </tr>
             @php
                 $grand_total_sales += $request->total_sales; 
@@ -304,6 +314,15 @@
                     <td>{{ $request->type }}</td>
                     <td>{{ $request->quantity }}</td>
                 </tr>
+                @foreach ($machineBundles as $bundle)
+                <tr>
+                    <td>{{ $bundle->item_code }}</td>
+                    <td>{{ $bundle->description }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ $bundle->quantity }}</td>
+                </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>

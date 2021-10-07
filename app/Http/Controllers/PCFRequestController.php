@@ -489,7 +489,6 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.manager AS manager',
                 'p_c_f_requests.annual_profit AS annual_profit',
                 'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
-
             )
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
@@ -514,8 +513,28 @@ class PCFRequestController extends Controller
             ->join('p_c_f_requests', 'p_c_f_requests.approved_by', 'users.id')
             ->where('p_c_f_requests.pcf_no', $pcf_no)
             ->get();
+
+            $itemBundles = PCFList::select(
+                'bundle_products.quantity AS quantity',
+
+                'sources.item_code AS item_code',
+                'sources.description AS description'
+            )
+            ->join('bundle_products', 'bundle_products.p_c_f_list_id', 'p_c_f_lists.id')
+            ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->get();
+
+            $machineBundles = PCFInclusion::select(
+                'bundle_products.quantity AS quantity',
+
+                'sources.item_code AS item_code',
+                'sources.description AS description'
+            )
+            ->join('bundle_products', 'bundle_products.p_c_f_inclusion_id', 'p_c_f_inclusions.id')
+            ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->get();
             
-            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no', 'approver'));
+            $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no', 'approver', 'itemBundles', 'machineBundles'));
             $pdf->setPaper('legal', 'portrait');
             return $pdf->stream('PCF NO_'. $get_pcf_list[0]->institution .'_' . $get_pcf_list[0]->supplier . '_' .$get_pcf_list[0]->psr .'.pdf', array("Attachment" => false));
         }
@@ -564,7 +583,27 @@ class PCFRequestController extends Controller
             ->where('pcf_no', $pcf_no)
             ->get();
 
-            $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcfInclusions', 'pcf_no'));
+            $itemBundles = PCFList::select(
+                'bundle_products.quantity AS quantity',
+
+                'sources.item_code AS item_code',
+                'sources.description AS description'
+            )
+            ->join('bundle_products', 'bundle_products.p_c_f_list_id', 'p_c_f_lists.id')
+            ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->get();
+
+            $machineBundles = PCFInclusion::select(
+                'bundle_products.quantity AS quantity',
+
+                'sources.item_code AS item_code',
+                'sources.description AS description'
+            )
+            ->join('bundle_products', 'bundle_products.p_c_f_inclusion_id', 'p_c_f_inclusions.id')
+            ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->get();
+
+            $pdf = PDF::loadView('PCF.quotation.index', compact('pcfList', 'pcfInclusions', 'pcf_no', 'itemBundles', 'machineBundles'));
             $pdf->setPaper('legal', 'portrait');
             return $pdf->stream('quotation.pdf', array("Attachment" => false));
         }

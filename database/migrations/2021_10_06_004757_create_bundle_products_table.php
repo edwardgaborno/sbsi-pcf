@@ -20,6 +20,11 @@ class CreateBundleProductsTable extends Migration
                 ->constrained('p_c_f_lists')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->foreignId('p_c_f_inclusion_id')
+                ->nullable()
+                ->constrained('p_c_f_inclusions')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->foreignId('source_id')
                 ->nullable()
                 ->constrained('sources')

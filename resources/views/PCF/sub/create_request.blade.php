@@ -45,7 +45,7 @@
                 <br>
                 <div class="accordion" id="accordionExample">
                     @include('PCF.sub.partials.items')
-                    @include('PCF.sub.partials.foc')
+                    @include('PCF.sub.partials.machines')
                 </div>
                 <br>
                 <div class="row">
@@ -335,7 +335,8 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('PCF.sub.partials.bundle_options')
+        @include('PCF.sub.partials.items_bundle_options')
+        @include('PCF.sub.partials.machines_bundle_options')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -490,37 +491,6 @@
                 })
             },
         });
-    });
-
-
-    $('#pcfItem_datatable').on('click', '.pcfListCreateBundle', function (e) {
-        e.preventDefault();
-        $('#bundleItemsModal').modal('show');
-        let item_id = $(this).data('id');
-    })
-    $('#userDelBtn').on('click', function (e) {
-        e.preventDefault();
-        let id = item_id;
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: '/admin/user_management_access/users/' + id,
-            type: 'POST',
-            data: {
-                '_method': 'DELETE',
-            },
-            success: function (response) {
-                $modal.modal('hide');
-                var oTable = $('#uma_users_datatable').DataTable();
-                oTable.ajax.reload();
-                Toast.fire({
-                    title: 'Deleted',
-                    html: `The user has been deleted.`,
-                    icon: 'success',
-                });
-            }
-        })
     });
 
     const element = document.querySelectorAll('#sales-i, #quantity-i');
@@ -747,6 +717,48 @@
     });
     //end of select2 function;
 
+    //on pcfMachinesForm submit; ajax
+    $('#pcfMachinesForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{ route('PCF.sub.store_foc') }}",
+            method:'POST',
+            data: {
+                pcf_no: document.getElementById("pcf_no").value,
+                source_id: document.getElementById("source_item_code-foc").value,
+                serial_no: document.getElementById("serial_no-foc").value,
+                type: document.getElementById("type-foc").value,
+                quantity: document.getElementById("quantity-foc").value,
+                opex: document.getElementById("opex-foc").value,
+                total_cost: document.getElementById("total_cost-foc").value,
+                cost_year: document.getElementById("cost_year-foc").value,
+                depreciable_life: document.getElementById("depreciable_life-foc").value,
+            },
+            success: function(response) {
+                clearFOCInputs();
+                $("#source_item_code-foc").val('').trigger('change')
+                getGrandTotal(pcf_no);
+                $('#pcfFOC_dataTable').DataTable().ajax.reload();
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Added',
+                    text: 'The product has been added to the current item list.'
+                })
+            },
+            error: function (response) {
+                clearFOCInputs();
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops! Something went wrong.',
+                    text: 'Please contact your system administrator.'
+                })
+            },
+        });
+    });
+
     //FOC Opex Function
     function calculateOpexFOC()
     {
@@ -881,132 +893,364 @@
     </script>
 
     <script>
-        var now = new Date(),
-        minDate = now.toISOString().substring(0,10);
-
-        $('#date_bidding').prop('min', minDate);
-    </script>
-
-    <script>
-        $('#dateBiddingCheckBox').change(function() {
-            if($(this).is(":checked")) {
-                document.getElementById('date_bidding').type = 'text';
-                document.getElementById("date_bidding").readOnly = true;
-
-                document.getElementById("bid_docs_price").readOnly = true;
-            }
-            else {
-                document.getElementById('date_bidding').type = 'date';
-                document.getElementById("date_bidding").readOnly = false;
-
-                document.getElementById("bid_docs_price").readOnly = false;
-            }
-        });
-    </script>
-
-    <script>
         $(function () {
-        // Add minus icon for collapse element which is open by default
-        $(".collapse.show").each(function () {
-            $(this)
-            .prev(".card-header")
-            .find(".fa")
-            .addClass("fa-minus")
-            .removeClass("fa-plus");
-        });
+            $('#pcfItem_datatable').on('click', '.pcfListCreateBundle', function (e) {
+                e.preventDefault();
+                $('#bundleItemsModal').modal('show');
 
-        // Toggle plus minus icon on show hide of collapse element
-        $(".collapse")
-            .on("show.bs.collapse", function () {
-            $(this)
-                .prev(".card-header")
-                .find(".fa")
-                .removeClass("fa-plus")
-                .addClass("fa-minus");
+                document.getElementById("pcfList_id").value = $(this).data('id');
+
+                $('#pcfItemBundle_datatable').DataTable().clear().destroy();
+                getBundleItem($(this).data('id'));
             })
-            .on("hide.bs.collapse", function () {
-            $(this)
-                .prev(".card-header")
-                .find(".fa")
-                .removeClass("fa-minus")
-                .addClass("fa-plus");
-            });
-        });
-    </script>
+            $('#pcfListBundleForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('PCF.sub.store_bundle_options') }}",
+                    method:'POST',
+                    data: {
+                        p_c_f_list_id: document.getElementById("pcfList_id").value,
+                        source_id: document.getElementById("item_code_bundle").value,
+                        quantity: document.getElementById("quantity_bundle").value,
+                    },
+                    success: function(response) {
+                        $("#item_code_bundle").val('').trigger('change')
+                        document.getElementById("description_bundle").value = "";
+                        document.getElementById("quantity_bundle").value = "";
 
-    <script>
-        $(function () {
-            let count = 1;
-            dynamic_field(count);
-            function dynamic_field(number) {
-                html = '<tr>';
-                html += '<td><select name="source_id[]" id="item_code_bundle" class="form-control itemCodeBundle" required></select></td>';
-                html += '<td><input type="text" class="form-control" name="description[]" id="description_bundle" placeholder="Description" readonly ></td>';
-                html += '<td><input type="number" class="form-control" name="quantity[]" id="quantity_bundle" required></td>';
-                if (number > 1) {
-                    html += '<td><button type="button" name="remove" class="btn btn-danger btn-icon remove"><i class="fas fa-minus-circle"></i></button></td></tr>';
-                    $('#bundleItemsTable tbody').append(html);
-                }
-                else {
-                    html += '<td><button type="button" name="add" id="add" class="btn btn-success btn-icon"><i class="fas fa-plus-circle"></i></button></td></tr>';
-                    $('#bundleItemsTable tbody').html(html);
-                    initSelect2();
-                }
-            }
+                        $('#pcfItemBundle_datatable').DataTable().ajax.reload();
 
-            $(document).on('click', '#add', function () {
-                count++;
-                dynamic_field(count);
-            });
-            
-            $(document).on('click', '.remove', function () {
-                count--;
-                $(this).closest("tr").remove();
-            });
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Added',
+                            text: 'Item has been added as a bundle'
+                        })
+                    },
+                    error: function (response) {
+                        $("#item_code_bundle").val('').trigger('change')
+                        document.getElementById("description_bundle").value = "";
+                        document.getElementById("quantity_bundle").value = "";
 
-            //start of select2 function -- item_code
-            function initSelect2() {
-                $("#item_code_bundle").select2({
-                    dropdownParent: $('#bundleItemsModal'),
-                    allowClear: true,
-                    minimumInputLength: 3,
-                    placeholder: 'Item code',
-                    ajax: {
-                        url: '{{ route("settings.source.source_search") }}',
-                        dataType: 'json',
+                        $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
                     },
                 });
+            });
 
-                $('#item_code_bundle').on('select2:select', function (e) {
-                    var data = e.params.data;
-                    var source_id = data.id
-                    if(source_id) {
+            $("#item_code_bundle").select2({
+                dropdownParent: $('#bundleItemsModal'),
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("settings.source.source_search") }}',
+                    dataType: 'json',
+                },
+            });
+
+            $('#item_code_bundle').on('select2:select', function (e) {
+                var data = e.params.data;
+                var source_id = data.id
+                if(source_id) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        cache: false,
+                        method: 'GET',
+                        url: '/settings.source/get-description/source=' + source_id,
+                    }).done(function(data) {
+                        document.getElementById("description_bundle").value = data.description;
+                        document.getElementById("quantity_bundle").disabled = false;
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        });
+                    });
+                }
+            });
+
+            $("#item_code_bundle").on('change', function(e) {
+                document.getElementById("description_bundle").value = "";
+                document.getElementById("quantity_bundle").value = "";
+                document.getElementById("quantity_bundle").disabled = true;
+            });
+
+            $('#pcfItemBundle_datatable').on('click', '.pcfListBundleDelete', function (e) {
+                e.preventDefault();
+                bundleItemId = $(this).data('id');
+                Swal.fire({
+                    title: 'Remove item?',
+                    text: "This item will be removed as a bundled product",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Confirm'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
-                            method: 'GET',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '/settings.source/get-description/source=' + source_id,
-                            contentType: "application/json; charset=utf-8",
-                            cache: false,
-                            dataType: 'json',
-                        }).done(function(data) {
-                            document.getElementById("description_bundle").value = data.description;
+                            method: 'DELETE',
+                            url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
+                        }).done(function(response) {
+                            $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Removed',
+                                text: 'The product has been removed from the current item listing.'
+                            })
                         }).fail(function(jqXHR, textStatus, errorThrown) {
                             Toast.fire({
                                 icon: 'error',
                                 title: 'Oops! Something went wrong.',
                                 text: 'Please contact your system administrator.'
-                            });
+                            })
                         });
                     }
+                })
+            });
+
+            //scripts for getting bundleItem, starts here;
+            function getBundleItem(bundleItemId) {
+                $('#pcfItemBundle_datatable').DataTable({
+                    "stripeClasses": [],
+                    processing: false,
+                    serverSide: true,
+                    responsive: true,
+                    searchable: true,
+                    ordering: true,
+                    ajax: {
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url : "/PCF.sub/ajax/bundled/item-list/" + bundleItemId,
+                    },
+                    columns: [
+                        { data: 'source.item_code' },
+                        { data: 'source.description' },
+                        { data: 'quantity' },
+                        { data: 'actions' },
+                    ],
+                });
+            };
+
+            $('#pcfFOC_dataTable').on('click', '.pcfInclusionsCreateBundle', function (e) {
+                e.preventDefault();
+                $('#bundleMachinesModal').modal('show');
+
+                document.getElementById("pcfInclusion_id").value = $(this).data('id');
+
+                $('#pcfInclusionsBundle_datatable').DataTable().clear().destroy();
+                getInclusionBundledItem($(this).data('id'));
+            })
+
+            $('#pcfMachinesBundleForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('PCF.sub.store_bundle_options') }}",
+                    method:'POST',
+                    data: {
+                        p_c_f_inclusion_id: document.getElementById("pcfInclusion_id").value,
+                        source_id: document.getElementById("machine_item_code_bundle").value,
+                        quantity: document.getElementById("machine_quantity_bundle").value,
+                    },
+                    success: function(response) {
+                        $("#machine_item_code_bundle").val('').trigger('change')
+                        document.getElementById("machine_description_bundle").value = "";
+                        document.getElementById("machine_quantity_bundle").value = "";
+
+                        $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Added',
+                            text: 'Item has been added as a bundle'
+                        })
+                    },
+                    error: function (response) {
+                        $("#machine_item_code_bundle").val('').trigger('change')
+                        document.getElementById("machine_description_bundle").value = "";
+                        document.getElementById("machine_quantity_bundle").value = "";
+
+                        $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
+                    },
+                });
+            });
+
+            $("#machine_item_code_bundle").select2({
+                dropdownParent: $('#bundleMachinesModal'),
+                allowClear: true,
+                minimumInputLength: 3,
+                placeholder: 'Item code',
+                ajax: {
+                    url: '{{ route("settings.source.source_search") }}',
+                    dataType: 'json',
+                },
+            });
+
+            $('#machine_item_code_bundle').on('select2:select', function (e) {
+                var data = e.params.data;
+                var source_id = data.id
+                if(source_id) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        cache: false,
+                        method: 'GET',
+                        url: '/settings.source/get-description/source=' + source_id,
+                    }).done(function(data) {
+                        document.getElementById("machine_description_bundle").value = data.description;
+                        document.getElementById("machine_quantity_bundle").disabled = false;
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        });
+                    });
+                }
+            });
+
+            $("#machine_item_code_bundle").on('change', function(e) {
+                document.getElementById("machine_description_bundle").value = "";
+                document.getElementById("machine_quantity_bundle").value = "";
+                document.getElementById("machine_quantity_bundle").disabled = true;
+            });
+
+            $('#pcfInclusionsBundle_datatable').on('click', '.pcfInclusionBundleDelete', function (e) {
+                e.preventDefault();
+                bundleItemId = $(this).data('id');
+                Swal.fire({
+                    title: 'Remove item?',
+                    text: "This item will be removed as a bundled product",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Confirm'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            method: 'DELETE',
+                            url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
+                        }).done(function(response) {
+                            $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Removed',
+                                text: 'The product has been removed from the current item listing.'
+                            })
+                        }).fail(function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Oops! Something went wrong.',
+                                text: 'Please contact your system administrator.'
+                            })
+                        });
+                    }
+                })
+            });
+
+            //scripts for getting bundleItem, starts here;
+            function getInclusionBundledItem(bundledItemId) {
+                $('#pcfInclusionsBundle_datatable').DataTable({
+                    "stripeClasses": [],
+                    processing: false,
+                    serverSide: true,
+                    responsive: true,
+                    searchable: true,
+                    ordering: true,
+                    ajax: {
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url : "/PCF.sub/ajax/bundled/machines-list/" + bundledItemId,
+                    },
+                    columns: [
+                        { data: 'source.item_code' },
+                        { data: 'source.description' },
+                        { data: 'quantity' },
+                        { data: 'actions' },
+                    ],
+                });
+            };
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $(".collapse.show").each(function () {
+                $(this)
+                .prev(".card-header")
+                .find(".fa")
+                .addClass("fa-minus")
+                .removeClass("fa-plus");
+            });
+            $(".collapse")
+                .on("show.bs.collapse", function () {
+                $(this)
+                    .prev(".card-header")
+                    .find(".fa")
+                    .removeClass("fa-plus")
+                    .addClass("fa-minus");
+                })
+                .on("hide.bs.collapse", function () {
+                $(this)
+                    .prev(".card-header")
+                    .find(".fa")
+                    .removeClass("fa-minus")
+                    .addClass("fa-plus");
                 });
 
-                $("#item_code_bundle").on('change', function(e) {
-                    document.getElementById("description_bundle").value = "";
-                    document.getElementById("quantity_bundle").value = "";
-                });
-            }
+            var now = new Date(),
+            minDate = now.toISOString().substring(0,10);
+
+            $('#date_bidding').prop('min', minDate);
+
+            $('#dateBiddingCheckBox').change(function() {
+                if($(this).is(":checked")) {
+                    document.getElementById('date_bidding').type = 'text';
+                    document.getElementById("date_bidding").readOnly = true;
+
+                    document.getElementById("bid_docs_price").readOnly = true;
+                }
+                else {
+                    document.getElementById('date_bidding').type = 'date';
+                    document.getElementById("date_bidding").readOnly = false;
+
+                    document.getElementById("bid_docs_price").readOnly = false;
+                }
+            })   
         });
     </script>
 @endsection

@@ -42,7 +42,7 @@
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-striped" id="user_dataTable" width="100%"
+                                        <table class="table table-striped table-bordered dt-responsive nowrap" id="user_dataTable" width="100%"
                                             cellspacing="0">
                                             <thead>
                                                 <tr bgcolor="gray" class="text-white">

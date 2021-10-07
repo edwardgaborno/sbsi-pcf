@@ -10,7 +10,7 @@
         <div class="card shadow mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <form id="second_table" action="{{ route('PCF.sub.store_foc') }}" method="POST">
+                    <form id="pcfMachinesForm">
                         @csrf
                         <div class="row">
                             <div class="col-md-2">
@@ -103,7 +103,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped" id="pcfFOC_dataTable" width="100%"
+                    <table class="table table-striped table-bordered dt-responsive nowrap" id="pcfFOC_dataTable" width="100%"
                         cellspacing="0">
                         <thead>
                             <tr bgcolor="gray" class="text-white">

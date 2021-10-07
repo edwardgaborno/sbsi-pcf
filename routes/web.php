@@ -7,6 +7,7 @@ use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
+use App\Http\Controllers\BundleProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +80,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/ajax/foc-list/{pcf_no}', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
             Route::post('/store-foc', [PCFInclusionController::class, 'store'])->name('.store_foc');
             Route::delete('/ajax/delete/pcf-foc/{foc_id}', [PCFInclusionController::class, 'destroy'])->name('.destroy_foc');
+
+            Route::get('/ajax/bundled/item-list/{item_id}', [BundleProductController::class, 'pcfItemBundledProductLists'])->name('.bundled_item_lists');
+            Route::get('/ajax/bundled/machines-list/{item_id}', [BundleProductController::class, 'pcfInclusionsBundledProductLists'])->name('.bundled_machine_lists');
+            Route::post('/store/items-as-bundle/', [BundleProductController::class, 'store'])->name('.store_bundle_options');
+            Route::delete('/ajax/delete/bundled-item/{item_id}', [BundleProductController::class, 'destroy'])->name('.destroy_bundle');
 
             Route::get('/ajax/get-grand-total/{pcf_no}', [PCFRequestController::class, 'getGrandTotal'])->name('.get_grand_total');
         });

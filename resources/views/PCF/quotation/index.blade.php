@@ -163,6 +163,16 @@
                 <td>{{ number_format($request->sales,2) }}</td>
                 <td>{{ number_format($request->total_sales,2) }}</td>
             </tr>
+                @foreach ($itemBundles as $bundle)
+                <tr>
+                    <td>{{ $bundle->item_code }}</td>
+                    <td>{{ $bundle->description }}</td>
+                    <td>{{ $bundle->quantity }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>
@@ -183,13 +193,22 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td>{{ $inclusion->item_code }}</td>
+                <td>{{ $inclusion->description }}</td>
+                <td>{{ $inclusion->serial_no }}</td>
+                <td>{{ $inclusion->type }}</td>
+                <td>{{ $inclusion->quantity }}</td>
+            </tr>
+            @foreach ($machineBundles as $bundle)
                 <tr>
-                    <td>{{ $inclusion->item_code }}</td>
-                    <td>{{ $inclusion->description }}</td>
-                    <td>{{ $inclusion->serial_no }}</td>
-                    <td>{{ $inclusion->type }}</td>
-                    <td>{{ $inclusion->quantity }}</td>
+                    <td>{{ $bundle->item_code }}</td>
+                    <td>{{ $bundle->description }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ $bundle->quantity }}</td>
                 </tr>
+            @endforeach
         </tbody>
     </table>
     @endif
