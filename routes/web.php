@@ -49,14 +49,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::name('PCF')->group(function () {
             Route::get('/', [PCFRequestController::class, 'index'])->name('.index');
             Route::get('/create-request', [PCFRequestController::class, 'create'])->name('.create_request');
+            Route::get('/{p_c_f_request}/edit', [PCFRequestController::class, 'edit'])->name('.edit');
             Route::post('/store', [PCFRequestController::class, 'store'])->name('.store');
-            Route::put('/update', [PCFRequestController::class, 'update'])->name('.update');
+            Route::put('/{p_c_f_request}', [PCFRequestController::class, 'update'])->name('.update');
 
             Route::get('/ajax/list', [PCFRequestController::class, 'pcfRequestList'])->name('.list');
-            Route::get('/ajax/items-list/{pcf_request_id}', [PCFListController::class, 'pcfRequestList'])->name('.items_list');
-            Route::get('/ajax/inclusions-list/{pcf_request_id}', [PCFInclusionController::class, 'pcfRequestInclusion'])->name('.inclusions_list');
+            Route::get('/ajax/items-list/{p_c_f_request}', [PCFListController::class, 'pcfRequestList'])->name('.items_list');
+            Route::get('/ajax/inclusions-list/{p_c_f_request}', [PCFInclusionController::class, 'pcfRequestInclusion'])->name('.inclusions_list');
 
-            Route::get('/get/pcf_details={pcf_request_id}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
+            Route::get('/get/pcf_details={p_c_f_request}', [PCFRequestController::class, 'pcfRequestDetails'])->name('.get-pcf-details');
 
             Route::get('/view-pdf/{pcf_no}', [PCFRequestController::class, 'viewPdf'])->name('.view_pdf');
 

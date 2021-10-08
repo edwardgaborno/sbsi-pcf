@@ -170,7 +170,6 @@
                     <td>{{ $bundle->quantity }}</td>
                     <td></td>
                     <td></td>
-                    <td></td>
                 </tr>
                 @endforeach
             @endforeach
@@ -245,7 +244,7 @@
     </table>
     <table class="signatoryTable" style="text-align:center">
         <tr>
-            @if($pcfList[0]->status == 5)
+            @if(in_array($pcfList[0]->status, [4, 5]))
             <td style="font-weight: bold; width: 45%">IRYNE I. DE LEON</td>
             <td style="font-weight: bold; width: 55%;"></td>
             @endif
@@ -255,10 +254,12 @@
             <td style="font-weight: bold; width: 55%;">PERSEVERANDA A. IBEA, CPA</td>
             @endif
         </tr>
+        @if(in_array($pcfList[0]->status, [4, 5, 6]))
         <tr>
             <td>National Sales Manager</td>
             <td>Chief Finance Officer</td>
         </tr>
+        @endif
     </table>
 </body>
 

@@ -39,7 +39,7 @@ class PCFInclusionController extends Controller
                     ->get();
 
             return Datatables::of($pcfInclusion)
-                ->addColumn('action', function ($data) {
+                ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-primary pcfInclusionsCreateBundle" data-toggle="modal" data-id="' . $data->id . '">
@@ -48,7 +48,7 @@ class PCFInclusionController extends Controller
                             <i class="fas fa-trash-alt text-danger"></i></a>';
                     }
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['actions'])
                 ->make(true);
         }
     }
@@ -63,7 +63,7 @@ class PCFInclusionController extends Controller
                         ->get();
 
             return Datatables::of($pcfInclusion)
-                ->addColumn('action', function ($data) {
+                ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
@@ -71,7 +71,7 @@ class PCFInclusionController extends Controller
                         ';
                     }
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['actions'])
                 ->make(true);
         }
     }

@@ -59,14 +59,18 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_show',
             'pcf_request_delete',
             'pcf_request_access',
+            'psr_download_pcf',
+            'psr_view_pcf',
+            'psr_upload_pcf',
 
             'view_pcf',
             'download_pcf',
             'upload_pcf',
-            'sales_asst_view',
+            'view_approved_pcf',
 
             'view_quotation',
             'download_quotation',
+            'view_approved_quotation',
 
             'psr_mgr_approve_pcf',
             'psr_mgr_reject_pcf',
@@ -95,34 +99,42 @@ class RolesAndPermissionSeeder extends Seeder
         $psrRole = Role::create(['name' => 'PSR']);
         $psrRole->givePermissionTo([
             'pcf_request_create',
+            'pcf_request_delete',
             'pcf_request_store',
             'pcf_request_show',
-            'pcf_request_delete',
             'pcf_request_access',
-            'download_pcf',
-            'upload_pcf',
-            'view_pcf',
+            'psr_download_pcf',
+            'psr_view_pcf',
+            'psr_upload_pcf',
             'source_access',
+            'view_pcf',
+            'view_approved_pcf',
         ]);
 
         $psrMgrRole = Role::create(['name' => 'PSR Manager']);
         $psrMgrRole->givePermissionTo([
             'pcf_request_access',
+            'pcf_request_store',
+            'pcf_request_delete',
             'pcf_request_edit',
             'pcf_request_update',
             'view_pcf',
             'psr_mgr_approve_pcf',
             'psr_mgr_reject_pcf',
+            'source_access',
         ]);
 
         $mkt_mgrRole = Role::create(['name' => 'Marketing']);
         $mkt_mgrRole->givePermissionTo([
             'pcf_request_access',
+            'pcf_request_store',
+            'pcf_request_delete',
             'pcf_request_edit',
             'pcf_request_update',
             'view_pcf',
             'mktg_approve_pcf',
             'mktg_reject_pcf',
+            'source_access',
         ]);
 
         $acctRole = Role::create(['name' => 'Accounting']);
@@ -136,6 +148,8 @@ class RolesAndPermissionSeeder extends Seeder
         $nsmRole = Role::create(['name' => 'National Sales Manager']);
         $nsmRole->givePermissionTo([
             'pcf_request_access',
+            'pcf_request_store',
+            'pcf_request_delete',
             'pcf_request_edit',
             'pcf_request_update',
             'view_pcf',
@@ -144,6 +158,9 @@ class RolesAndPermissionSeeder extends Seeder
             'download_quotation',
             'nsm_approve_pcf',
             'nsm_reject_pcf',
+            'view_approved_pcf',
+            'view_approved_quotation',
+            'source_access',
         ]);
 
         $cfoRole = Role::create(['name' => 'Chief Finance Officer']);
@@ -157,6 +174,8 @@ class RolesAndPermissionSeeder extends Seeder
             'cfo_reject_pcf',
             'cfo_approve_quotation',
             'cfo_reject_quotation',
+            'view_approved_pcf',
+            'view_approved_quotation',
         ]);
 
         $cfoRole = Role::create(['name' => 'Sales Assistant']);
@@ -166,7 +185,8 @@ class RolesAndPermissionSeeder extends Seeder
             'download_pcf',
             'view_quotation',
             'download_quotation',
-            'sales_asst_view',
+            'view_approved_pcf',
+            'view_approved_quotation',
         ]);
 
         $adminRole = Role::create(['name' => 'Administrator']);

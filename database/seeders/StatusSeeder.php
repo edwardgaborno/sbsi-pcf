@@ -25,10 +25,10 @@ class StatusSeeder extends Seeder
                 'name' => 'Approved by Marketing',
             ],
             [
-                'name' => 'Approved by Accounting',
+                'name' => 'Approved by National Sales Manager',
             ],
             [
-                'name' => 'Approved by National Sales Manager',
+                'name' => 'Approved by Accounting',
             ],
             [
                 'name' => 'Approved',
