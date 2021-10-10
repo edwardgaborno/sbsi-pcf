@@ -26,48 +26,46 @@
                     <h1 class="h3 mb-0 text-gray-800">PCF Request</h1>
                 </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <!-- DataTales Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    @can('pcf_request_create')
-                                        <div class="row">
-                                            <div class="col-md-4 offset-md-8">
-                                                <a href="{{ route('PCF.create_request') }}" class="btn btn-primary float-right">
-                                                    <i class="fas fa-plus-circle"></i> New PCF Request</a>
-                                            </div>
-                                        </div>
-                                    @endcan
-                                </div>
-
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-bordered dt-responsive" id="pcf_dataTable" width="100%"
-                                            cellspacing="0">
-                                            <thead>
-                                                <tr bgcolor="gray" class="text-white">
-                                                    <th>PCF No.</th>
-                                                    <th>Date</th>
-                                                    <th>Institution</th>
-                                                    <th>PSR</th>
-                                                    <th>Annual Profit</th>
-                                                    <th>Annual Profit Rate</th>
-                                                    <th>Status</th>
-                                                    <th style="text-align: center; vertical-align: middle">Actions</th>
-                                                </tr> 
-                                            </thead>
-                                            <tbody>
-                                                
-                                            </tbody>
-                                        </table>
+                <!-- Content Row -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow">
+                            @can('pcf_request_create')
+                            <div class="card-header py-3">
+                                <div class="row">
+                                    <div class="col-md-4 offset-md-8">
+                                        <a href="{{ route('PCF.create_request') }}" class="btn btn-primary float-right">
+                                            <i class="fas fa-plus-circle"></i> New PCF Request</a>
                                     </div>
+                                </div>
+                            </div>
+                            @endcan
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover dt-responsive" id="pcf_dataTable" width="100%"
+                                        cellspacing="0">
+                                        <thead>
+                                            <tr class="thead-dark">
+                                                <th>PCF No.</th>
+                                                <th>Date</th>
+                                                <th>Institution</th>
+                                                <th>PSR</th>
+                                                <th>Annual Profit</th>
+                                                <th>Annual Profit Rate</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr> 
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Content Row -->
+                </div>
+                <!-- Content Row -->
             </div>
             <!-- /.container-fluid -->
         </div>
@@ -104,7 +102,7 @@
                     { data: 'psr' },
                     { data: 'annual_profit' },
                     { data: 'annual_profit_rate' },
-                    { data: 'status' },
+                    { data: 'status', orderable: false },
                     { data: 'actions', orderable: false, searchable: false }
                 ],
             });
@@ -128,7 +126,7 @@
         //Approve PCF Request;
         $('#pcf_dataTable').on('click', '.approvePcfRequest', function (e) {
             e.preventDefault();
-            pcf_request_id = $(this).data('id');
+            pcfRequest_id = $(this).data('id');
             Swal.fire({
                 title: 'Approve Request',
                 text: "Are you sure?",
@@ -144,12 +142,12 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: '/PCF/ajax/approve-request/' + pcf_request_id,
+                        url: '/PCF/ajax/approve-request/' + pcfRequest_id,
                         contentType: "application/json; charset=utf-8",
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload(null, false);
+                        $('#pcf_dataTable').DataTable().ajax.reload();
                         Toast.fire({
                             icon: 'success',
                             title: 'Your approval has been recorded.'
@@ -168,7 +166,7 @@
         //Disapprove PCF Request;
         $('#pcf_dataTable').on('click', '.disapprovePcfRequest', function (e) {
             e.preventDefault();
-            pcf_request_id = $(this).data('id');
+            pcfRequest_id = $(this).data('id');
             Swal.fire({
                 title: 'Disapprove Request',
                 text: "Are you sure?",
@@ -184,12 +182,12 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: '/PCF/ajax/disapprove-request/' + pcf_request_id,
+                        url: '/PCF/ajax/disapprove-request/' + pcfRequest_id,
                         contentType: "application/json; charset=utf-8",
                         cache: false,
                         dataType: 'json',
                     }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload(null, false);
+                        $('#pcf_dataTable').DataTable().ajax.reload();
                         Toast.fire({
                             icon: 'success',
                             title: 'Your disapproval has been recorded.'

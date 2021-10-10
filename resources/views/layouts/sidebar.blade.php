@@ -49,7 +49,7 @@
         </li>
     @endcan
     <!-- Nav Item - Setting Source Menu -->
-    @can('source_access')
+    @can('pcf_source_access')
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
                 aria-controls="settings">

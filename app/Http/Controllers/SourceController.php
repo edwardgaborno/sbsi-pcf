@@ -15,7 +15,7 @@ class SourceController extends Controller
 {
     public function index()
     {
-        $this->authorize('source_access');
+        $this->authorize('pcf_source_access');
         
         return view('settings.source.index');
     }

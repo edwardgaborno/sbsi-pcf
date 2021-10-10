@@ -40,21 +40,23 @@
                         </form>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered dt-responsive nowrap" id="pcfInclusionsBundle_datatable">
-                            <thead>
-                                <tr>
-                                    <th>Item Code</th>
-                                    <th>Item Description</th>
-                                    <th>Quantity</th>
-                                    <th>Actions</th>
-                                </tr> 
-                            </thead>
-                            <tbody>
-                                
-                            </tbody>
-                        </table>
+                <div class="card shadow mb-3">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover dt-responsive nowrap" width="100%" id="pcfInclusionsBundle_datatable" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Item Code</th>
+                                        <th>Item Description</th>
+                                        <th>Quantity</th>
+                                        <th>Actions</th>
+                                    </tr> 
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

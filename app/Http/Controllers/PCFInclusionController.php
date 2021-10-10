@@ -66,9 +66,10 @@ class PCFInclusionController extends Controller
                 ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
-                            <i class="fas fa-trash-alt"></i> Delete item</a>
-                        ';
+                        '<a href="javascript:void(0)" class="badge badge-primary pcfInclusionsCreateBundle" data-toggle="modal" data-id="' . $data->id . '">
+                            <i class="fas fa-box"></i> Bundle Items</a>
+                        <a href="javascript:void(0)" class="badge badge-danger pcfInclusionDelete" data-id="' . $data->id . '">
+                            <i class="fas fa-trash-alt"></i> Delete item</a>';
                     }
                 })
                 ->rawColumns(['actions'])

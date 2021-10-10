@@ -272,114 +272,86 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <form id="edit_pcfListForm">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="edit_source_item_code-i">Item Code</label>
+                                            <div class="card-body">
+                                                <form id="edit_pcfListForm">
+                                                    @csrf
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-2">                   
+                                                            <label for="edit_source_item_code-i">Item Code</label>
+                                                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <label for="description">Item Description</label>
+                                                            <input type="text" class="form-control" name="description" id="description-i"
+                                                                placeholder="Description" readonly required>
 
-                                                                <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
-                                                            </div>
+                                                            <input type="hidden" name="pcf_request_id" id="pcf_request_id-i" class="form-control" value="{{ $p_c_f_request->id }}">
+                                                            <input type="hidden" name="pcf_no" id="edit_pcf_no-i" class="form-control" value="{{ $p_c_f_request->pcf_no }}">
+                                                            <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i">
+                                                            <input type="hidden" class="form-control" name="tp_php" id="tp_php-i">    
+                                                            <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i">
+                                                            <input type="hidden" class="form-control" name="opex" id="opex-i">
+                                                            <input type="hidden" class="form-control" name="net_sales" id="net_sales-i">
+                                                            <input type="hidden" class="form-control" name="gross_profit" id="gross_profit-i">
+                                                            <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit-i">
+                                                            <input type="hidden" class="form-control" name="total_net_sales" id="total_net_sales-i">
+                                                            <input type="hidden" class="form-control" name="profit_rate" id="profit_rate-i">
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="description">Item Description</label>
-                                                                <input type="text" class="form-control" name="description" id="description-i"
-                                                                    placeholder="Description" readonly required>
-
-                                                                <input type="hidden" name="pcf_request_id" id="pcf_request_id-i" class="form-control" value="{{ $p_c_f_request->id }}">
-                                                                <input type="hidden" name="pcf_no" id="edit_pcf_no-i" class="form-control" value="{{ $p_c_f_request->pcf_no }}">
-                                                                <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i"
-                                                                    placeholder="currency rate" >
-                                                                <input type="hidden" class="form-control" name="tp_php" id="tp_php-i"
-                                                                    placeholder="trasfer price">    
-                                                                <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i"
-                                                                    placeholder="cost peripherals">
-                                                                <input type="hidden" class="form-control" name="opex" id="opex-i"
-                                                                    placeholder="opex">
-                                                                <input type="hidden" class="form-control" name="net_sales" id="net_sales-i"
-                                                                    placeholder="net sales">
-                                                                <input type="hidden" class="form-control" name="gross_profit" id="gross_profit-i"
-                                                                    placeholder="gross profit">
-                                                                <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit-i"
-                                                                    placeholder="total gross profit">
-                                                                <input type="hidden" class="form-control" name="total_net_sales" id="total_net_sales-i"
-                                                                    placeholder="total net sales">
-                                                                <input type="hidden" class="form-control" name="profit_rate" id="profit_rate-i"
-                                                                    placeholder="profit rate">
-                                                            </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="quantity_add_item">Quantity (Per Year)</label>
+                                                            <input type="number" class="form-control" name="quantity" id="quantity-i" min="1"
+                                                                value="{{ old('quantity') }}" required disabled>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="quantity_add_item">Quantity (Per Year)</label>
-                                                                <input type="number" class="form-control" name="quantity" id="quantity-i" min="1"
-                                                                    value="{{ old('quantity') }}" required disabled>
-                                                            </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="sales_add_item">Sales</label>
+                                                            <input type="number" class="form-control" name="sales" id="sales-i"
+                                                                value="{{ old('sales') }}" required disabled>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="sales_add_item">Sales</label>
-                                                                <input type="number" class="form-control" name="sales" id="sales-i"
-                                                                    value="{{ old('sales') }}" required disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="total_sales_add_item">Total Sales</label>
-                                                                <input type="text" class="form-control" name="total_sales" id="total_sales-i"
-                                                                    value="{{ old('total_sales') }}" readonly required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="submit_item"></label>
-                                                                    <button type="submit" class="btn btn-primary form-control btn-submit" id="submit_item">
-                                                                        <i class="fas fa-plus-circle"></i> Add Item</button>
-                                                            </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="total_sales_add_item">Total Sales</label>
+                                                            <input type="text" class="form-control" name="total_sales" id="total_sales-i"
+                                                                value="{{ old('total_sales') }}" readonly required>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </form>
-                                            <div class="card">
-                                                <div class="row">
-                                                    <div class="card-body">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-striped table-bordered dt-responsive" id="edit_pcfItem_dataTable" width="100%"
-                                                                cellspacing="0">
-                                                                <thead>
-                                                                    <tr bgcolor="gray" class="text-white">
-                                                                        <th>Item Code</th>
-                                                                        <th>Item Description</th>
-                                                                        <th>Quantity (Per Year)</th>
-                                                                        <th>Sales</th>
-                                                                        <th>Total Sales</th>
-                                                                        <th>Action</th>
-                                                                    </tr> 
-                                                                </thead>
-                                                                <tbody>
-                                                                    
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                    <button type="submit" class="btn btn-primary form-control btn-submit mt-2 mb-3" id="submit_item">
+                                                        <i class="fas fa-plus-circle"></i> Add Item</button>
+                                                </form>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-hover dt-responsive" id="edit_pcfItem_dataTable" width="100%"
+                                                            cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Item Code</th>
+                                                                    <th>Item Description</th>
+                                                                    <th>Quantity (Per Year)</th>
+                                                                    <th>Sales</th>
+                                                                    <th>Total Sales</th>
+                                                                    <th>Action</th>
+                                                                </tr> 
+                                                            </thead>
+                                                            <tbody>
+                                                                
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                            <form id="edit_pcfFOCForm">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <div class="row">
+                                            <div class="card-body">
+                                                <form id="edit_pcfFOCForm">
+                                                    @csrf
+                                                    <div class="form-row">
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label for="source_item_code-foc">Item Code</label> 
-                                                                
+                                                                <label for="source_item_code-foc">Item Code</label>
                                                                 <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label for="item_description_foc">Item Description</label>
                                                                 <input type="text" class="form-control" name="description" id="description-foc"
@@ -420,23 +392,18 @@
                                                                     value="{{ old('quantity-foc') }}" required>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <label for="submit"></label>
-                                                                    <button type="submit" class="btn btn-primary form-control btn-submit" id="submit">
-                                                                        <i class="fas fa-plus-circle"></i> Add Item</button>
-                                                            </div>
-                                                        </div>
                                                     </div>
-                                                </div>
-                                            </form>
+                                                    <button type="submit" class="btn btn-primary form-control btn-submit mt-2 mb-3" id="submit">
+                                                        <i class="fas fa-plus-circle"></i> Add Item</button>
+                                                </form>
+                                            </div>
                                             <div class="row">
-                                                <div class="card-body">
+                                                <div class="col">
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped table-bordered dt-responsive" id="edit_pcfFOC_dataTable" width="100%"
+                                                        <table class="table table-striped table-hover dt-responsive" id="edit_pcfFOC_dataTable" width="100%"
                                                             cellspacing="0">
                                                             <thead>
-                                                                <tr bgcolor="gray" class="text-white">
+                                                                <tr>
                                                                     <th>Item Code</th>
                                                                     <th>Item Description</th>
                                                                     <th>Serial No.</th>
@@ -517,6 +484,7 @@
         });
 
         $('#source_item_code-i').select2({
+            width: "100%",
             allowClear: true,
             minimumInputLength: 3,
             placeholder: 'Item code',
@@ -680,6 +648,7 @@
 
         $("#item_code_bundle").select2({
             dropdownParent: $('#bundleItemsModal'),
+            width: "100%",
             allowClear: true,
             minimumInputLength: 3,
             placeholder: 'Item code',
@@ -788,8 +757,8 @@
             let item_id = $(this).data('id');
             let pcf_no = $("#edit_pcf_no-i").val();
             Swal.fire({
-                title: 'Remove Added Item',
-                text: "Are you sure?",
+                title: 'Delete Item',
+                text: "This process will remove the item and all the item associated. Ex: bundled product(s)",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -953,13 +922,14 @@
                 { data: 'serial_no' },
                 { data: 'type' },
                 { data: 'quantity' },
-                { data: 'actions' },
+                { data: 'actions', orderable: false, searchable: false },
             ],
         });
 
         //start of select2 function -- machine item code;
         $(function () {
             $('#source_item_code-foc').select2({
+                width: "100%",
                 allowClear: true,
                 minimumInputLength: 3,
                 placeholder: 'Item code',
@@ -1063,8 +1033,8 @@
             let foc_id = $(this).data('id');
             let pcf_no = $("#edit_pcf_no-foc").val();
             Swal.fire({
-                title: 'Remove Added Item',
-                text: "Are you sure?",
+                title: 'Delete Item',
+                text: "This process will remove the item and all the item associated. Ex: bundled product(s)",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -1099,6 +1069,163 @@
                 }
             })
         });
+
+        $('#edit_pcfFOC_dataTable').on('click', '.pcfInclusionsCreateBundle', function (e) {
+            e.preventDefault();
+            $('#bundleMachinesModal').modal('show');
+
+            document.getElementById("pcfInclusion_id").value = $(this).data('id');
+
+            $('#pcfInclusionsBundle_datatable').DataTable().clear().destroy();
+            getInclusionBundledItem($(this).data('id'));
+        })
+
+        $('#pcfMachinesBundleForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('PCF.sub.store_bundle_options') }}",
+                method:'POST',
+                data: {
+                    p_c_f_inclusion_id: document.getElementById("pcfInclusion_id").value,
+                    source_id: document.getElementById("machine_item_code_bundle").value,
+                    quantity: document.getElementById("machine_quantity_bundle").value,
+                },
+                success: function(response) {
+                    $("#machine_item_code_bundle").val('').trigger('change')
+                    document.getElementById("machine_description_bundle").value = "";
+                    document.getElementById("machine_quantity_bundle").value = "";
+
+                    $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Added',
+                        text: 'Item has been added as a bundle'
+                    })
+                },
+                error: function (response) {
+                    $("#machine_item_code_bundle").val('').trigger('change')
+                    document.getElementById("machine_description_bundle").value = "";
+                    document.getElementById("machine_quantity_bundle").value = "";
+
+                    $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                },
+            });
+        });
+
+        $("#machine_item_code_bundle").select2({
+            dropdownParent: $('#bundleMachinesModal'),
+            width: "100%",
+            allowClear: true,
+            minimumInputLength: 3,
+            placeholder: 'Item code',
+            ajax: {
+                url: '{{ route("settings.source.source_search") }}',
+                dataType: 'json',
+            },
+        });
+
+        $('#machine_item_code_bundle').on('select2:select', function (e) {
+            var data = e.params.data;
+            var source_id = data.id
+            if(source_id) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    cache: false,
+                    method: 'GET',
+                    url: '/settings.source/get-description/source=' + source_id,
+                }).done(function(data) {
+                    document.getElementById("machine_description_bundle").value = data.description;
+                    document.getElementById("machine_quantity_bundle").disabled = false;
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    });
+                });
+            }
+        });
+
+        $("#machine_item_code_bundle").on('change', function(e) {
+            document.getElementById("machine_description_bundle").value = "";
+            document.getElementById("machine_quantity_bundle").value = "";
+            document.getElementById("machine_quantity_bundle").disabled = true;
+        });
+
+        $('#pcfInclusionsBundle_datatable').on('click', '.pcfInclusionBundleDelete', function (e) {
+            e.preventDefault();
+            bundleItemId = $(this).data('id');
+            Swal.fire({
+                title: 'Remove item?',
+                text: "This item will be removed as a bundled product",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        method: 'DELETE',
+                        url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
+                    }).done(function(response) {
+                        $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Removed',
+                            text: 'The product has been removed from the current item listing.'
+                        })
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
+                    });
+                }
+            })
+        });
+
+        //scripts for getting bundleItem, starts here;
+        function getInclusionBundledItem(bundledItemId) {
+            $('#pcfInclusionsBundle_datatable').DataTable({
+                "stripeClasses": [],
+                processing: false,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url : "/PCF.sub/ajax/bundled/machines-list/" + bundledItemId,
+                },
+                columns: [
+                    { data: 'source.item_code' },
+                    { data: 'source.description' },
+                    { data: 'quantity' },
+                    { data: 'actions' },
+                ],
+            });
+        };
 
         //FOC Opex Function
         function calculateOpexFOC() {

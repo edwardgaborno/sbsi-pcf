@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PCFRequest;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,7 +14,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        $pendingRequests = PCFRequest::with('status')
+                    ->where('status_id', 1)
+                    ->count();
+
+        $approvedRequests = PCFRequest::with('status')
+                    ->where('status_id', 7)
+                    ->count();
+
+        $forApprovals = PCFRequest::with('status')
+                    ->whereIn('status_id', [2, 3])
+                    ->count();
+
+        return view('home.index', compact('pendingRequests', 'approvedRequests', 'forApprovals'));
     }
 
     /**

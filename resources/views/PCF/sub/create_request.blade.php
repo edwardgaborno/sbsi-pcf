@@ -56,64 +56,55 @@
                                     @csrf
                                     <!-- Left Element -->
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="pcf_no">PCF No.</label>
-                                                <input type="text" class="form-control @error('pcf_no') is-invalid @enderror" name="pcf_no" id="pcf_no"
-                                                    value="{{ old('pcf_no', $pcf_no) }}" required readonly>
+                                        <div class="form-group col-md-6">
+                                            <label for="pcf_no">PCF No.</label>
+                                            <input type="text" class="form-control @error('pcf_no') is-invalid @enderror" name="pcf_no" id="pcf_no"
+                                                value="{{ old('pcf_no', $pcf_no) }}" required readonly>
 
-                                                @error('pcf_no')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('pcf_no')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="date">Date</label>
-                                                <input type="date" class="form-control @error('date') is-invalid @enderror" name="date" id="date"
-                                                    value="{{ \Carbon\Carbon::now()->toDateString() }}" required readonly>
+                                        <div class="form-group col-md-6">
+                                            <label for="date">Date</label>
+                                            <input type="date" class="form-control @error('date') is-invalid @enderror" name="date" id="date"
+                                                value="{{ \Carbon\Carbon::now()->toDateString() }}" required readonly>
 
-                                                @error('date')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('date')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="institution">Institution</label>
-                                                <textarea class="form-control @error('institution') is-invalid @enderror" name="institution" id="institution" cols="5"
-                                                    rows="3" required>{{ old('institution') }}</textarea>
+                                        <div class="form-group col-md-6">
+                                            <label for="institution">Institution</label>
+                                            <textarea class="form-control @error('institution') is-invalid @enderror" name="institution" id="institution" cols="5"
+                                                rows="3" required>{{ old('institution') }}</textarea>
 
-                                                @error('institution')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('institution')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="address">Address</label>
-                                                <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" cols="5"
-                                                    rows="3">{{ old('address') }}</textarea>
+                                        <div class="form-group col-md-6">
+                                            <label for="address">Address</label>
+                                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" cols="5"
+                                                rows="3">{{ old('address') }}</textarea>
 
-                                                @error('address')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('address')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
+                                        <div class="form-group col-md-4">
                                                 <label for="contact_person">Contact Person</label>
                                                 <input type="text" class="form-control @error('contact_person') is-invalid @enderror" name="contact_person" id="contact_person"
                                                     value="{{ old('contact_person') }}" required>
@@ -123,203 +114,171 @@
                                                         <strong>{{ $message }}</strong>
                                                     </span>
                                                 @enderror
-                                            </div>
                                         </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="designation">Designation</label>
+                                            <input type="text" class="form-control @error('designation') is-invalid @enderror" name="designation" id="designation"
+                                                value="{{ old('designation') }}">
 
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="designation">Designation</label>
-                                                <input type="text" class="form-control @error('designation') is-invalid @enderror" name="designation" id="designation"
-                                                    value="{{ old('designation') }}">
-
-                                                @error('designation')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('designation')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="thru_duration_contract">Thru Designation</label>
+                                            <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="thru_duration_contract"
+                                                value="{{ old('thru_designation') }}">
 
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="thru_duration_contract">Thru Designation</label>
-                                                <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="thru_duration_contract"
-                                                    value="{{ old('thru_designation') }}">
-
-                                                @error('thru designation')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('thru designation')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="institution">Supplier/Manufacturer</label>
-                                                <input type="text" class="form-control @error('supplier') is-invalid @enderror" name="supplier" id="supplier"
-                                                    value="{{ old('supplier') }}" required>
+                                        <div class="form-group col-md-4">
+                                            <label for="institution">Supplier/Manufacturer</label>
+                                            <input type="text" class="form-control @error('supplier') is-invalid @enderror" name="supplier" id="supplier"
+                                                value="{{ old('supplier') }}" required>
 
-                                                @error('supplier')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('supplier')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="terms">Terms</label>
+                                            <input type="text" class="form-control @error('terms') is-invalid @enderror" name="terms" id="terms"
+                                                value="{{ old('terms') }}" required>
 
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="terms">Terms</label>
-                                                <input type="text" class="form-control @error('terms') is-invalid @enderror" name="terms" id="terms"
-                                                    value="{{ old('terms') }}" required>
-
-                                                @error('terms')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('terms')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="validity">Validity</label>
-                                                <input type="text" class="form-control @error('validity') is-invalid @enderror" name="validity" id="validity"
-                                                    value="{{ old('validity') }}" required>
-                                                
-                                                @error('validity')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="validity">Validity</label>
+                                            <input type="text" class="form-control @error('validity') is-invalid @enderror" name="validity" id="validity"
+                                                value="{{ old('validity') }}" required>
+                                            
+                                            @error('validity')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="delivery">Delivery</label>
-                                                <input type="text" class="form-control @error('delivery') is-invalid @enderror" name="delivery" id="delivery"
-                                                    value="{{ old('delivery') }}" required>
+                                        <div class="form-group col-md-6">
+                                            <label for="delivery">Delivery</label>
+                                            <input type="text" class="form-control @error('delivery') is-invalid @enderror" name="delivery" id="delivery"
+                                                value="{{ old('delivery') }}" required>
 
-                                                @error('delivery')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('delivery')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="warranty">Warranty (For Machines Only)</label>
+                                            <input type="text" class="form-control @error('warranty') is-invalid @enderror" name="warranty" id="warranty"
+                                                value="{{ old('warranty') }}">
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="warranty">Warranty (For Machines Only)</label>
-                                                <input type="text" class="form-control @error('warranty') is-invalid @enderror" name="warranty" id="warranty"
-                                                    value="{{ old('warranty') }}">
-
-                                                @error('warranty')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('warranty')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="contract_duration">Duration of Contract</label>
-                                                <input type="number" class="form-control @error('contract_duration') is-invalid @enderror" name="contract_duration" id="contract_duration"
-                                                    value="{{ old('contract_duration') }}" required>
+                                        <div class="form-group col-md-4">
+                                            <label for="contract_duration">Duration of Contract</label>
+                                            <input type="number" class="form-control @error('contract_duration') is-invalid @enderror" name="contract_duration" id="contract_duration"
+                                                value="{{ old('contract_duration') }}" required>
 
-                                                @error('contract_duration')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('contract_duration')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="date_bidding">Date Bidding</label>
-                                                <div class="input-group mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <input type="checkbox" id="dateBiddingCheckBox" aria-label="Checkbox for following date input">
-                                                            <label class="form-check-label" for="dateBiddingCheckBox">
-                                                                N/A
-                                                            </label>
-                                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="date_bidding">Date Bidding</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <input type="checkbox" id="dateBiddingCheckBox" aria-label="Checkbox for following date input">
+                                                        <label class="form-check-label" for="dateBiddingCheckBox">
+                                                            N/A
+                                                        </label>
                                                     </div>
-                                                    <input type="date" class="form-control @error('date_bidding') is-invalid @enderror" name="date_bidding" id="date_bidding"
-                                                        value="{{ old('date_bidding') }}">
-                                                    
-                                                    @error('date_bidding')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="bid_docs_price">Bid Docs Price</label>
-                                                <input type="number" class="form-control @error('bid_docs_price') is-invalid @enderror" name="bid_docs_price" id="bid_docs_price"
-                                                    value="{{ old('bid_docs_price') }}">
-
-                                                @error('bid_docs_price')
+                                                <input type="date" class="form-control @error('date_bidding') is-invalid @enderror" name="date_bidding" id="date_bidding"
+                                                    value="{{ old('date_bidding') }}" aria-describedby="date_bidding">
+                                                
+                                                @error('date_bidding')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
                                                 @enderror
                                             </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="bid_docs_price">Bid Docs Price</label>
+                                            <input type="number" class="form-control @error('bid_docs_price') is-invalid @enderror" name="bid_docs_price" id="bid_docs_price"
+                                                value="{{ old('bid_docs_price') }}">
+
+                                            @error('bid_docs_price')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="manager">Manager</label>
-                                                <select class="form-control @error('manager') is-invalid @enderror" name="manager" id="manager" required>
-                                                    <option value="" selected disabled>Select Manager</option>
-                                                    <option value="Rachelle Anne Carrera">Rachelle Anne Carrera</option>
-                                                    <option value="Gloria Cutang">Gloria Cutang</option>
-                                                    <option value="Gilbert Gravata">Gilbert Gravata</option>
-                                                </select>
+                                        <div class="form-group col-md-4">
+                                            <label for="manager">Manager</label>
+                                            <select class="form-control @error('manager') is-invalid @enderror" name="manager" id="manager" required>
+                                                <option value="" selected disabled>Select Manager</option>
+                                                <option value="Rachelle Anne Carrera">Rachelle Anne Carrera</option>
+                                                <option value="Gloria Cutang">Gloria Cutang</option>
+                                                <option value="Gilbert Gravata">Gilbert Gravata</option>
+                                            </select>
 
-                                                @error('manager')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('manager')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="annual_profit">Annual Profit</label>
-                                                <input type="text" class="form-control @error('annual_profit') is-invalid @enderror" name="annual_profit" id="annual_profit"
-                                                    value="{{ old('annual_profit','0') }}" readonly required> 
+                                        <div class="form-group col-md-4">
+                                            <label for="annual_profit">Annual Profit</label>
+                                            <input type="text" class="form-control @error('annual_profit') is-invalid @enderror" name="annual_profit" id="annual_profit"
+                                                value="{{ old('annual_profit','0') }}" readonly required> 
 
-                                                @error('annual_profit')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('annual_profit')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="annual_profit_rate">Annual Profit Rate</label>
-                                                <input type="text" class="form-control @error('annual_profit_rate') is-invalid @enderror" name="annual_profit_rate" id="annual_profit_rate"
-                                                    value="{{ old('annual_profit_rate', '0') }}" readonly required>
+                                        <div class="form-group col-md-4">
+                                            <label for="annual_profit_rate">Annual Profit Rate</label>
+                                            <input type="text" class="form-control @error('annual_profit_rate') is-invalid @enderror" name="annual_profit_rate" id="annual_profit_rate"
+                                                value="{{ old('annual_profit_rate', '0') }}" readonly required>
 
-                                                @error('annual_profit_rate')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            @error('annual_profit_rate')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <!-- End Right Element -->
@@ -396,7 +355,7 @@
     //start of select2 function -- item_code
     $(function () {
         $('#source_item_code-i').select2({
-            width: 'resolve',
+            width: "100%",
             allowClear: true,
             minimumInputLength: 3,
             placeholder: 'Item code',
@@ -605,7 +564,7 @@
         item_id = $(this).data('id');
         Swal.fire({
             title: 'Remove this item?',
-            text: "This item will be removed from the current session",
+            text: "This item will be removed from the current item listing",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -661,7 +620,7 @@
                 { data: 'serial_no' },
                 { data: 'type' },
                 { data: 'quantity' },
-                { data: 'action' },
+                { data: 'actions' },
             ],
         });
         getGrandTotal();
@@ -670,7 +629,7 @@
     //start of select2 function -- machine item code;
     $(function () {
         $('#source_item_code-foc').select2({
-            width: 'resolve',
+            width: "100%",
             allowClear: true,
             minimumInputLength: 3,
             placeholder: 'Item code',
@@ -947,6 +906,7 @@
 
             $("#item_code_bundle").select2({
                 dropdownParent: $('#bundleItemsModal'),
+                width: "100%",
                 allowClear: true,
                 minimumInputLength: 3,
                 placeholder: 'Item code',
@@ -1103,6 +1063,7 @@
 
             $("#machine_item_code_bundle").select2({
                 dropdownParent: $('#bundleMachinesModal'),
+                width: "100%",
                 allowClear: true,
                 minimumInputLength: 3,
                 placeholder: 'Item code',
@@ -1241,7 +1202,6 @@
                 if($(this).is(":checked")) {
                     document.getElementById('date_bidding').type = 'text';
                     document.getElementById("date_bidding").readOnly = true;
-
                     document.getElementById("bid_docs_price").readOnly = true;
                 }
                 else {
