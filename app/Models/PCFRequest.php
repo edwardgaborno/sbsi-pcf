@@ -17,7 +17,7 @@ class PCFRequest extends Model implements HasMedia
 
     public function path()
     {
-        return url($this->getFirstMediaUrl('pcf_request_file'));
+        return url($this->getFirstMediaUrl('approved_pcf_rfq'));
     }
 
     public function pcfList() 

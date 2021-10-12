@@ -55,7 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('/view-quotation/{pcf_no}', [PCFRequestController::class, 'viewQuotation'])->name('.view_quotation');
 
-            Route::post('/store-pcf-file', [PCFRequestController::class, 'storePCFPdfFile'])->name('.storeFile');
+            Route::put('/{p_c_f_request}/upload', [PCFRequestController::class, 'storePCFPdfFile'])->name('.putFile');
 
             Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
             Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');

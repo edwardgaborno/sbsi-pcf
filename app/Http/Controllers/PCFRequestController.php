@@ -88,10 +88,7 @@ class PCFRequestController extends Controller
         DB::beginTransaction();
 
         try {
-            $p_c_f_request->update($request->validated() + [
-                'psr' => auth()->user()->name,
-                'status_id' => 1,
-            ]);
+            $p_c_f_request->update($request->validated());
 
             DB::commit();
             alert()->success('Success','PCF Request has been updated');
@@ -109,7 +106,7 @@ class PCFRequestController extends Controller
         $this->authorize('pcf_request_access');
         
         if ($request->ajax()) {
-            $pcfRequest = PCFRequest::with('status')
+            $pcfRequest = PCFRequest::with('status', 'media')
                         ->select('p_c_f_requests.*')
                         ->get();
 
@@ -125,8 +122,8 @@ class PCFRequestController extends Controller
                 })
                 ->addColumn('actions', function ($data) {
 
-                    $uploadPcf = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
-                                    <i class="fas fa-edit"></i> Upload PCF Request</a>
+                    $uploadPcf = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
+                                    <i class="fas fa-upload"></i> Upload Approved PCF</a>
                                 <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
@@ -160,8 +157,8 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                     
-                    $wEditQuotation = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
-                                        <i class="fas fa-edit"></i> Edit</a>
+                    $wEditQuotation = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
+                                    <i class="fas fa-edit"></i> Edit</a>
                                 <a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
                                 <a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
@@ -174,8 +171,8 @@ class PCFRequestController extends Controller
                     $uploadedPcfView = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
-                    $uploadedPcfwEditView = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
-                                    <i class="fas fa-edit"></i> Upload PCF Request</a>
+                    $uploadedPcfwEditView = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
+                                    <i class="fas fa-upload"></i> Upload Approved PCF</a>
                                 <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
@@ -186,7 +183,7 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
-                    $uploadedPcfEditApproval = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
+                    $uploadedPcfEditApproval = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
                                     <i class="fas fa-edit"></i> Edit</a>
                                 <a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                     <i class="far fa-thumbs-up"></i> Approve</a>
@@ -195,7 +192,7 @@ class PCFRequestController extends Controller
                                 <a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
                     
-                    $uploadedPcfWQuotationApproval = '<a href="#" class="badge badge-info editPCFRequest" data-id="' . $data->id . '" data-toggle="modal">
+                    $uploadedPcfWQuotationApproval = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
                                     <i class="fas fa-edit"></i> Edit</a>
                             <a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal">
                                 <i class="far fa-thumbs-up"></i> Approve</a>
@@ -299,31 +296,29 @@ class PCFRequestController extends Controller
         return response()->json(['success' => 'success'], 200);
     }
 
-    public function storePCFPdfFile(Request $request)
+    public function storePCFPdfFile(Request $request, PCFRequest $p_c_f_request)
     {
         $this->authorize('psr_upload_pcf');
 
         $validatedData = $request->validate([
-            'upload_file' => ['required',],
+            'pcf_rfq' => ['required',],
         ]);
 
         DB::beginTransaction();
 
         try {
-            $pcf_request = PCFRequest::findOrFail($request->pcf_id);
-
             $temporaryFile = TemporaryFile::where('folder', $validatedData)->first();
             if ($temporaryFile) {
 
-                $pcf_request->update([
+                $p_c_f_request->update([
                     'pcf_document' => $temporaryFile->file_name,
                     'status_id' => 1,
                 ]);
 
-                $pcf_request->addMedia(storage_path('app/pcf_files/tmp/' . $request->upload_file . '/' . $temporaryFile->file_name))
-                        ->toMediaCollection('pcf_request_file');
+                $p_c_f_request->addMedia(storage_path('app/pcf_rfq/tmp/' . $request->pcf_rfq . '/' . $temporaryFile->file_name))
+                        ->toMediaCollection('approved_pcf_rfq');
 
-                rmdir(storage_path('app/pcf_files/tmp/' . $request->upload_file));
+                rmdir(storage_path('app/pcf_rfq/tmp/' . $request->pcf_rfq));
                 $temporaryFile->delete();
             }
 
@@ -334,7 +329,7 @@ class PCFRequestController extends Controller
             DB::rollBack();
         }
 
-        return back();
+        return redirect()->route('PCF.index');
     }
 
     public function getGrandTotal($pcf_no)

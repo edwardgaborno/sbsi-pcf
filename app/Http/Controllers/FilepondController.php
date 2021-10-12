@@ -9,11 +9,11 @@ class FilepondController extends Controller
 {
     public function storePCFDocument(Request $request)
     {
-        if ($request->hasFile('upload_file')) {
-            $file = $request->file('upload_file');
+        if ($request->hasFile('pcf_rfq')) {
+            $file = $request->file('pcf_rfq');
                 $filename =  $file->getClientOriginalName();
                 $folder = uniqid() . '-' .now()->timestamp;
-                $file->storeAs('pcf_files/tmp/' . $folder, $filename);
+                $file->storeAs('pcf_rfq/tmp/' . $folder, $filename);
 
                 TemporaryFile::create([
                     'folder' => $folder,

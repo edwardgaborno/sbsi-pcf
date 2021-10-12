@@ -201,6 +201,7 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_delete',
             'pcf_request_access',
             'pcf_source_access',
+            'psr_view_pcf',
             'download_pcf',
             'upload_pcf',
             'view_pcf',

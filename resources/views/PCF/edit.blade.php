@@ -37,7 +37,7 @@
                                     <h5 class="modal-title">Edit PCF Request </h5>
                                 @endcan
                                 @can('psr_upload_pcf')
-                                    <h5 class="modal-title">Upload PCF Request </h5>
+                                    <h5 class="modal-title">Upload Approved PCF Request </h5>
                                 @endcan
                                 </div>
 
@@ -64,15 +64,16 @@
                                     <div class="tab-content" id="myTabContent">
                                         @can('psr_upload_pcf')
                                         <div class="tab-pane show active fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
-                                            <form action="{{ route('PCF.storeFile') }}" method="POST">
+                                            <form action="{{ route('PCF.putFile', $p_c_f_request->id) }}" method="POST">
                                                 @csrf
+                                                @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
                                                                 <label for="upload_file"></label>
                                                                     <!--  For single file upload  -->
-                                                                    <input type="file" name="upload_file" 
+                                                                    <input type="file" name="pcf_rfq" 
                                                                         accept="application/pdf"
                                                                         class="@error('upload_file') is-invalid @enderror" 
                                                                         data-max-file-size="5MB" 
@@ -83,14 +84,13 @@
                                                                             <strong>{{ $message }}</strong>
                                                                         </span>
                                                                     @enderror
-
-                                                                    <input type="hidden" name="pcf_id" id="for_upload_id">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                    <a href="{{ route('PCF.index') }}" class="btn btn-link">
+                                                        <i class="fas fa-times"></i> Cancel</a>
                                                     <button type="submit" class="btn btn-primary">Upload</button>
                                                 </div>
                                             </form>
@@ -264,7 +264,8 @@
                                                 </div>
                                                 <!-- Content Row -->
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+                                                    <a href="{{ route('PCF.index') }}" class="btn btn-link">
+                                                        <i class="fas fa-times"></i> Cancel</a>
                                                     @can('pcf_request_edit')
                                                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
                                                     @endcan
@@ -1322,7 +1323,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var inputElement = document.querySelector('input[name="upload_file"]');
+            var inputElement = document.querySelector('input[name="pcf_rfq"]');
             var store = FilePond.create((inputElement),
             {
                 labelIdle: `Drag & Drop document file or <span class="filepond--label-action">Browse</span>`,

@@ -74,6 +74,6 @@
 <IfModule mod_headers.c>
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
 	Header set X-XSS-Protection "1; mode=block"
-	Header always append X-Frame-Options SAMEORIGIN
+	Header set X-Frame-Options "DENY"
 	Header set X-Content-Type-Options nosniff
 </IfModule>

@@ -19,7 +19,7 @@ class HomeController extends Controller
                     ->count();
 
         $approvedRequests = PCFRequest::with('status')
-                    ->where('status_id', 7)
+                    ->where('status_id', 6)
                     ->count();
 
         $forApprovals = PCFRequest::with('status')
