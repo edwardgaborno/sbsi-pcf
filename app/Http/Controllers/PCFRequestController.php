@@ -400,7 +400,7 @@ class PCFRequestController extends Controller
                 'sources.description as description',
             )
             ->join('sources', 'sources.id', 'p_c_f_inclusions.source_id')
-            ->where('pcf_no',$pcf_no)
+            ->where('pcf_no', $pcf_no)
             ->get();
 
             $approver = User::select(
@@ -418,6 +418,7 @@ class PCFRequestController extends Controller
             )
             ->join('bundle_products', 'bundle_products.p_c_f_list_id', 'p_c_f_lists.id')
             ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->where('pcf_no', $pcf_no)
             ->get();
 
             $machineBundles = PCFInclusion::select(
@@ -428,6 +429,7 @@ class PCFRequestController extends Controller
             )
             ->join('bundle_products', 'bundle_products.p_c_f_inclusion_id', 'p_c_f_inclusions.id')
             ->join('sources', 'sources.id', 'bundle_products.source_id')
+            ->where('pcf_no', $pcf_no)
             ->get();
             
             $pdf = PDF::loadView('PCF.pdf.index', compact('get_pcf_list', 'get_pcf_inclusions', 'pcf_no', 'approver', 'itemBundles', 'machineBundles'));
