@@ -12,6 +12,8 @@ class PCFListController extends Controller
 {
     public function store(StorePCFListRequest $request)
     {
+        dd($request->all());
+
         $this->authorize('pcf_request_store');
 
         DB::beginTransaction();
@@ -19,6 +21,7 @@ class PCFListController extends Controller
         try {
             $pcfList = PCFList::create($request->validated() + [
                 'p_c_f_request_id' => $request->p_c_f_request_id,
+                'rfq_no' => $request->rfq_no
             ]);
 
             $joins = DB::table('sources')

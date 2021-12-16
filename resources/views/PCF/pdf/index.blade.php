@@ -146,7 +146,7 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="5"><center>PROFITABILITY COMPUTATION FORM</center></th>
+                <th colspan="5" style="font-family: 'Tahoma';"><center>PROFITABILITY COMPUTATION FORM</center></th>
             </tr>
             <tr>
                 <th style="width: 30%;">DATE:</th>
@@ -238,8 +238,12 @@
                 </td>
             </tr>
             <tr>
-                <td style="width: 20%; font-weight: bold;">RFQ NO:</td>
-                <td></td>
+                <td style="width: 20%; font-weight: bold; background-color: #fff200">RFQ NO:</td>
+                <td style="width: 40%; background-color: #fff200">
+                    <center>
+                        {{ $pcf_no }}
+                    </center>
+                </td>
             </tr>
             <tr>
                 <td style="width: 20%; font-weight: bold;">INVOLVED:</td>

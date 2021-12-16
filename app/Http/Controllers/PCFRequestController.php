@@ -32,20 +32,31 @@ class PCFRequestController extends Controller
 
         //get max value of pcf number
         $pcfMaxVal = PCFRequest::max('pcf_no');
+        $rfqMaxVal = PCFRequest::max('rfq_no');
 
-        if(empty($pcfMaxVal)) {
+        if(empty($pcfMaxVal) && empty($rfqMaxVal)) {
             $this->pcf_no = '000001';
+            $this->rfq_no = '000001';
+        } else if(empty($pcfMaxVal) && !empty($rfqMaxVal)) {
+            $this->pcf_no = '000001';
+            $this->rfq_no = str_pad($rfqMaxVal + 1, 6, "0", STR_PAD_LEFT);
+        } else if(!empty($pcfMaxVal) && empty($rfqMaxVal)) {
+            $this->rfq_no = '000001';
+            $this->pcf_no = str_pad($pcfMaxVal + 1, 6, "0", STR_PAD_LEFT);
         } else {
             $this->pcf_no = str_pad($pcfMaxVal + 1, 6, "0", STR_PAD_LEFT);
+            $this->rfq_no = str_pad($rfqMaxVal + 1, 6, "0", STR_PAD_LEFT);
         }
 
         return view('PCF.sub.create_request', [
             'pcf_no' => $this->pcf_no,
+            'rfq_no' => $this->pcf_no,
         ]);
     }
 
     public function store(StorePCFRequestRequest $request)
     {
+        dd($request->all());
         $this->authorize('pcf_request_store');
 
         DB::beginTransaction();

@@ -16,6 +16,7 @@ class CreatePCFListsTable extends Migration
         Schema::create('p_c_f_lists', function (Blueprint $table) {
             $table->id();
             $table->string('pcf_no');
+            $table->string('rfq_no');
             $table->foreignId('source_id')
                 ->nullable()
                 ->constrained('sources')

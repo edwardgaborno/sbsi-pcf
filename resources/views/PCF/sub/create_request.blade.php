@@ -56,7 +56,7 @@
                                     @csrf
                                     <!-- Left Element -->
                                     <div class="row">
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
                                             <label for="pcf_no">PCF No.</label>
                                             <input type="text" class="form-control @error('pcf_no') is-invalid @enderror" name="pcf_no" id="pcf_no"
                                                 value="{{ old('pcf_no', $pcf_no) }}" required readonly>
@@ -67,7 +67,18 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
+                                            <label for="pcf_no">RFQ No.</label>
+                                            <input type="text" class="form-control @error('rfq_no') is-invalid @enderror" name="rfq_no" id="rfq_no"
+                                                value="{{ old('rfq_no', $rfq_no) }}" required readonly>
+
+                                            @error('rfq_no')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
                                             <label for="date">Date</label>
                                             <input type="date" class="form-control @error('date') is-invalid @enderror" name="date" id="date"
                                                 value="{{ \Carbon\Carbon::now()->toDateString() }}" required readonly>
@@ -419,6 +430,7 @@
             method:'POST',
             data: {
                 pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("pcf_no").value,
                 source_id: document.getElementById("source_item_code-i").value,
                 quantity: document.getElementById("quantity-i").value,
                 sales: document.getElementById("sales-i").value,
@@ -687,6 +699,7 @@
             method:'POST',
             data: {
                 pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("rfq_no").value,
                 source_id: document.getElementById("source_item_code-foc").value,
                 serial_no: document.getElementById("serial_no-foc").value,
                 type: document.getElementById("type-foc").value,

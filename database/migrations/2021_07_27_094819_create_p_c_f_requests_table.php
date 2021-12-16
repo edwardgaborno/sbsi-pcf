@@ -21,6 +21,7 @@ class CreatePCFRequestsTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->string('pcf_no');
+            $table->string('rfq_no');
             $table->date('date');
             $table->string('institution');
             $table->string('address');
