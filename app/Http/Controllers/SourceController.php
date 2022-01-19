@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\Source\StoreSourceRequest;
 use App\Http\Requests\Source\UpdateSourceRequest;
+use App\Http\Resources\SourceResource;
 
 class SourceController extends Controller
 {
@@ -43,6 +44,7 @@ class SourceController extends Controller
         }
         catch (\Throwable $th) {
             DB::rollBack();
+            Alert::error('Error', 'Something went wrong! please contact your system administrator.');
         }
 
         return redirect()->route('settings.source.index');
@@ -157,6 +159,12 @@ class SourceController extends Controller
             return Datatables::of($sources)
                 ->make(true);
         }
+    }
+
+    public function getSources()
+    {
+        $sources = Source::orderBy('id', 'DESC')->get();
+        return SourceResource::collection($sources);
     }
 
     public function sourceSearch(Request $request)

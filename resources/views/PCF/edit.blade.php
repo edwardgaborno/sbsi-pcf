@@ -108,57 +108,85 @@
                                                             <div class="form-group">
                                                                 <label for="specimen_type">PCF No.</label>
                                                                 <input type="text" class="form-control" name="pcf_no" id="edit_pcf_no"
-                                                                    value="{{ $p_c_f_request->pcf_no }}" readonly required>
+                                                                    value="{{ old('pcf_no', $p_c_f_request->pcf_no) }}" readonly required>
+
+                                                                @error('pcf_no')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="edit_date">Date</label>
-                                                                <input type="date" class="form-control" name="date" id="edit_date"
-                                                                    value="{{ $p_c_f_request->date }}" required>
-                                                            </div>
+                                                            <label for="pcf_no">RFQ No.</label>
+                                                            <input type="text" class="form-control @error('rfq_no') is-invalid @enderror" name="rfq_no" id="edit_rfq_no"
+                                                                value="{{ old('rfq_no', $p_c_f_request->rfq_no) }}" required readonly>
+                
+                                                            @error('rfq_no')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="edit_institution">Institution</label>
-                                                                <textarea class="form-control" name="institution" id="edit_institution" cols="5"
-                                                                    rows="3">{{ $p_c_f_request->institution }}</textarea>
-                                                            </div>
+                                                            <label for="institution">Institution</label>
+                                                            <select name="institution_id" id="edit_institution" class="form-control @error('institution') is-invalid @enderror select2" required>
+                                                                <option value="{{ old('institution_id', $p_c_f_request->institution_id) }}" selected>{{ $p_c_f_request->institution->institution }}</option>
+                                                            </select>
+                                    
+                                                            @error('institution')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror 
                                                         </div>
-
                                                         <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="edit_address">Address</label>
-                                                                <textarea class="form-control" name="address" id="edit_address" cols="5"
-                                                                    rows="3">{{ $p_c_f_request->address }}</textarea>
-                                                            </div>
+                                                            <label for="address">Address</label>
+                                                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="edit_address" cols="5"
+                                                                rows="3" disabled>{{ old('address', $p_c_f_request->institution->address) }}</textarea>
+                
+                                                            @error('address')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="edit_contact_person">Contact Person</label>
-                                                                <input type="text" class="form-control" name="contact_person" id="edit_contact_person"
-                                                                    value="{{ $p_c_f_request->contact_person }}" required>
-                                                            </div>
+                                                                <label for="contact_person">Contact Person</label>
+                                                                <input type="text" class="form-control @error('contact_person') is-invalid @enderror" name="contact_person" id="edit_contact_person"
+                                                                    value="{{ old('contact_person', $p_c_f_request->institution->contact_person) }}" required disabled>
+                
+                                                                @error('contact_person')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                         </div>
-
                                                         <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="edit_designation">Designation</label>
-                                                                <input type="text" class="form-control" name="designation" id="edit_designation"
-                                                                    value="{{ $p_c_f_request->designation }}" required>
-                                                            </div>
+                                                            <label for="designation">Designation</label>
+                                                            <input type="text" class="form-control @error('designation') is-invalid @enderror" name="designation" id="edit_designation"
+                                                                value="{{ old('designation', $p_c_f_request->institution->designation) }}" disabled>
+                
+                                                            @error('designation')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
-
                                                         <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="edit_thru_designation">Thru Designation</label>
-                                                                <input type="text" class="form-control" name="thru_designation" id="edit_thru_designation"
-                                                                    value="{{ $p_c_f_request->thru_designation }}" required>
-                                                            </div>
+                                                            <label for="thru_duration_contract">Thru Designation</label>
+                                                            <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="edit_thru_duration_contract"
+                                                                value="{{ old('thru_designation', $p_c_f_request->institution->thru_designation) }}" disabled>
+                
+                                                            @error('thru designation')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -166,7 +194,13 @@
                                                             <div class="form-group">
                                                                 <label for="edit_supplier">Supplier/Manufacturer</label>
                                                                 <input type="text" class="form-control" name="supplier" id="edit_supplier"
-                                                                    value="{{ $p_c_f_request->supplier }}" required>
+                                                                    value="{{ old('supplier', $p_c_f_request->supplier) }}" required>
+
+                                                                @error('supplier')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
 
@@ -174,7 +208,13 @@
                                                             <div class="form-group">
                                                                 <label for="edit_terms">Terms</label>
                                                                 <input type="text" class="form-control" name="terms" id="edit_terms"
-                                                                    value="{{ $p_c_f_request->terms }}" required>
+                                                                    value="{{ old('terms', $p_c_f_request->terms) }}" required>
+
+                                                                @error('terms')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
 
@@ -182,7 +222,13 @@
                                                             <div class="form-group">
                                                                 <label for="edit_validity">Validity</label>
                                                                 <input type="text" class="form-control" name="validity" id="edit_validity"
-                                                                    value="{{ $p_c_f_request->validity }}" required>
+                                                                    value="{{ old('validity', $p_c_f_request->validity) }}" required>
+
+                                                                @error('validity')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                     </div>
@@ -191,7 +237,13 @@
                                                             <div class="form-group">
                                                                 <label for="edit_delivery">Delivery</label>
                                                                 <input type="text" class="form-control" name="delivery" id="edit_delivery"
-                                                                    value="{{ $p_c_f_request->delivery }}" required>
+                                                                    value="{{ old('delivery', $p_c_f_request->delivery) }}" required>
+
+                                                                @error('delivery')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
 
@@ -199,7 +251,7 @@
                                                             <div class="form-group">
                                                                 <label for="edit_warranty">Warranty (For Machines Only)</label>
                                                                 <input type="text" class="form-control" name="warranty" id="edit_warranty"
-                                                                    value="{{ $p_c_f_request->warranty }}">
+                                                                    value="{{ old('warranty', $p_c_f_request->warranty) }}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -208,21 +260,35 @@
                                                             <div class="form-group">
                                                                 <label for="edit_contract_duration">Duration of Contract</label>
                                                                 <input type="number" class="form-control" name="contract_duration" id="edit_contract_duration" 
-                                                                    value="{{ $p_c_f_request->contract_duration }}" required>
+                                                                    value="{{ old('contract_duration', $p_c_f_request->contract_duration) }}" required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="edit_date_bidding">Date of Bidding</label>
-                                                                <input type="date" class="form-control" name="date_bidding" id="edit_date_bidding"
-                                                                    value="{{ $p_c_f_request->date_bidding }}">
+                                                            <label for="edit_date_bidding">Date of Bidding</label>
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text">
+                                                                        <input type="checkbox" id="edit_date_bidding_checkbox" aria-label="Checkbox for following date input" {{ (old('date_bidding', $p_c_f_request->date_bidding) == null ? "checked" : '') }}>
+                                                                        <label class="form-check-label" for="dateBiddingCheckBox">
+                                                                            N/A
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="{{ (old('date_bidding', $p_c_f_request->date_bidding) == null ? "text" : 'date') }}" class="form-control" name="date_bidding" id="edit_date_bidding"
+                                                                    value="{{ old('date_bidding', $p_c_f_request->date_bidding) }}" {{ (old('date_bidding', $p_c_f_request->date_bidding) == null ? "readonly" : '')}}>
+                                                                
+                                                                @error('date_bidding')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label for="specimen_type">Bid Docs Price</label>
                                                                 <input type="number" class="form-control" name="bid_docs_price" id="edit_bid_docs_price"
-                                                                    value="{{ $p_c_f_request->bid_docs_price }}">
+                                                                    value="{{ old('bid_docs_price', $p_c_f_request->bid_docs_price) }}" {{ (old('bid_docs_price', $p_c_f_request->bid_docs_price) == null ? "readonly" : '') }}>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -233,15 +299,23 @@
                                                             <div class="form-group">
                                                                 <label for="specimen_type">PSR</label>
                                                                 <input type="text" class="form-control" name="psr" id="edit_psr"
-                                                                    value="{{ $p_c_f_request->psr }}" readonly required>
+                                                                    value="{{ old('psr', $p_c_f_request->psr) }}" readonly required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="specimen_type">Manager</label>
-                                                                <input type="text" class="form-control" name="manager" id="edit_manager"
-                                                                    value="{{ $p_c_f_request->manager }}" readonly required>
-                                                            </div>
+                                                            <label for="manager">Manager</label>
+                                                            <select class="form-control @error('manager') is-invalid @enderror" name="manager" id="edit_manager" required>
+                                                                <option value="" {{ (old('manager', $p_c_f_request->manager) == null ? "selected disabled": "")}}>Select Manager</option>
+                                                                <option value="Rachelle Anne Carrera" {{ (old('manager', $p_c_f_request->manager) == "Rachelle Anne Carrera" ? "selected" : "")}}>Rachelle Anne Carrera</option>
+                                                                <option value="Gloria Cutang" {{ (old('manager', $p_c_f_request->manager) == "Gloria Cutang" ? "selected" : "")}}>Gloria Cutang</option>
+                                                                <option value="Gilbert Gravata" {{ (old('manager', $p_c_f_request->manager) == "Gilbert Gravata" ? "selected" : "")}}>Gilbert Gravata</option>
+                                                            </select>
+                
+                                                            @error('manager')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -249,14 +323,14 @@
                                                             <div class="form-group">
                                                                 <label for="specimen_type">Annual Profit</label>
                                                                 <input type="text" class="form-control" name="annual_profit" id="edit_annual_profit"
-                                                                    value="{{ $p_c_f_request->annual_profit}}" readonly required>
+                                                                    value="{{ old('annual_profit', $p_c_f_request->annual_profit) }}" readonly required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="specimen_type">Anual Profit Rate</label>
                                                                 <input type="text" class="form-control" name="annual_profit_rate" id="edit_annual_profit_rate"
-                                                                    value="{{ $p_c_f_request->annual_profit_rate }}" readonly required>
+                                                                    value="{{ old('annual_profit_rate', $p_c_f_request->annual_profit_rate) }}" readonly required>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -278,8 +352,11 @@
                                                     @csrf
                                                     <div class="form-row">
                                                         <div class="form-group col-md-2">                   
-                                                            <label for="edit_source_item_code-i">Item Code</label>
-                                                            <select name="source_id" id="source_item_code-i" class="form-control select2"></select>
+                                                            <label for="source_item_code-i">Item Code</label>
+                                                            <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $p_c_f_request->pcf_no }}"> <!-- pcf no -->                        
+                                                            <select name="source_id" id="source_item_code-i" class="form-control select2">
+                                                                <option value="" selected disabled></option>
+                                                            </select>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label for="description">Item Description</label>
@@ -288,6 +365,7 @@
 
                                                             <input type="hidden" name="pcf_request_id" id="pcf_request_id-i" class="form-control" value="{{ $p_c_f_request->id }}">
                                                             <input type="hidden" name="pcf_no" id="edit_pcf_no-i" class="form-control" value="{{ $p_c_f_request->pcf_no }}">
+                                                            <input type="hidden" name="rfq_no" id="edit_rfq_no-i" class="form-control" value="{{ $p_c_f_request->rfq_no }}">
                                                             <input type="hidden" class="form-control" name="currency_rate" id="currency_rate-i">
                                                             <input type="hidden" class="form-control" name="tp_php" id="tp_php-i">    
                                                             <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-i">
@@ -349,7 +427,9 @@
                                                         <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label for="source_item_code-foc">Item Code</label>
-                                                                <select name="source_id" id="source_item_code-foc" class="form-control select2"></select>
+                                                                <select name="source_id" id="source_item_code-foc" class="form-control select2">
+                                                                    <option value="" selected disabled></option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
@@ -360,6 +440,7 @@
                                                                 
                                                                 <input type="hidden" class="form-control" name="p_c_f_request_id" id="pcf_request_id-foc" value="{{ $p_c_f_request->id }}" placeholder="PCF Request Id">
                                                                 <input type="hidden" class="form-control" name="pcf_no" id="edit_pcf_no-foc" value="{{ $p_c_f_request->pcf_no }}" placeholder="PCF No.">
+                                                                <input type="hidden" class="form-control" name="rfq_no" id="edit_rfq_no-foc" value="{{ $p_c_f_request->rfq_no }}" placeholder="PCF No.">
                                                                 <input type="hidden" class="form-control" name="tp_php" id="tp_php-foc" placeholder="Total price (tp_php)">    
                                                                 <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals-foc" placeholder="Cost of peripherals">
                                                                 <input type="hidden" class="form-control" name="opex" id="opex-foc" placeholder="Opex">
@@ -484,16 +565,41 @@
             ],
         });
 
-        $('#source_item_code-i').select2({
-            width: "100%",
-            allowClear: true,
-            minimumInputLength: 3,
-            placeholder: 'Item code',
-            ajax: {
-                url: '{{ route("settings.source.source_search") }}',
-                dataType: 'json',
-            },
-        });
+        var data = [];
+
+        function getSources () {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/ajax/get-source-list',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    data = res.data;
+
+                    $("#source_item_code-i").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Item code',
+                    });
+
+                    $("#source_item_code-foc").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Item code',
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                });
+        }
+
+        getSources();
 
         $('#source_item_code-i').on('select2:select', function (e) {
             var data = e.params.data;
@@ -529,6 +635,59 @@
             }
         });
 
+        function getInstitutions() {
+        $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.institution/ajax/get-institutions-dropdown',
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                dataType: 'json',
+            }).done(function(res) {
+                data = res.data;
+                $("#edit_institution").select2({
+                    data: data,
+                    width: "100%",
+                    allowClear: true,
+                    placeholder: 'Institution',
+                });
+
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+        }
+
+        getInstitutions();
+
+        $('#edit_institution').on('select2:select', function (e) {
+            var data = e.params.data;
+            document.getElementById("edit_address").value = data.address;
+            document.getElementById("edit_contact_person").value = data.contact_person;    
+            document.getElementById("edit_designation").value = data.designation;    
+            document.getElementById("edit_thru_duration_contract").value = data.thru_designation;
+        });
+
+        var now = new Date(),
+        minDate = now.toISOString().substring(0,10);
+
+        $('#edit_date_bidding').prop('min', minDate);
+
+        $('#edit_date_bidding_checkbox').change(function() {
+            if($(this).is(":checked")) {
+                document.getElementById('edit_date_bidding').type = 'text';
+                document.getElementById("edit_date_bidding").readOnly = true;
+                document.getElementById("edit_bid_docs_price").readOnly = true;
+            }
+            else {
+                document.getElementById('edit_date_bidding').type = 'date';
+                document.getElementById("edit_date_bidding").readOnly = false;
+
+                document.getElementById("edit_bid_docs_price").readOnly = false;
+            }
+        })  
+
         $("#source_item_code-i").on('change', function(e) {
             document.getElementById("quantity-i").disabled = true;
             document.getElementById("sales-i").disabled = true;
@@ -540,7 +699,54 @@
         //on pcfList form submit; ajax
         $('#edit_pcfListForm').on('submit',function (e) {
             e.preventDefault();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('PCF.sub.check_if_item_exist') }}",
+                method:'GET',
+                data: {
+                    pcf_no: document.getElementById("edit_pcf_no-i").value,
+                    rfq_no: document.getElementById("edit_rfq_no-i").value,
+                    source_id: document.getElementById("source_item_code-i").value,
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.is_exist == true) {
+                        Swal.fire({
+                            title: 'Item already exist',
+                            text: "Do you want to proceed?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Confirm'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                saveItemList();
+                                clearItemInputs();
+                            }
+                        })
+                    } else {
+                        saveItemList();
+                        clearItemInputs();
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    clearItemInputs();
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                },
+            });
+        }); 
+
+        function saveItemList() {
             let pcf_no = $("#edit_pcf_no-i").val();
+            let rfq_no = $("#edit_rfq_no-i").val();
             let p_c_f_request_id = $("#pcf_request_id-i").val();
             let source_id = $("#source_item_code-i").val();
             let description = $("#description-i").val();
@@ -553,13 +759,13 @@
             let total_gross_profit = $("#total_gross_profit-i").val();
             let total_net_sales = $("#total_net_sales-i").val();
             let profit_rate = $("#profit_rate-i").val();
-
             $.ajax({
                 url: "{{ route('PCF.sub.store_items') }}",
                 method:'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
                     pcf_no:pcf_no,
+                    rfq_no:rfq_no,
                     p_c_f_request_id:p_c_f_request_id,
                     source_id:source_id,
                     description:description,
@@ -580,7 +786,7 @@
                     getGrandTotal(pcf_no);
                     Toast.fire({
                         icon: 'success',
-                        title: 'Removed',
+                        title: 'Added',
                         text: 'The product has been added to the current request.'
                     })
                 },
@@ -594,7 +800,7 @@
                     })
                 },
             });
-        }); 
+        }
 
         $('#edit_pcfItem_dataTable').on('click', '.pcfListCreateBundle', function (e) {
             e.preventDefault();
@@ -979,9 +1185,56 @@
         //foc on form submit; ajax function
         $('#edit_pcfFOCForm').on('submit',function(e){
             e.preventDefault();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('PCF.sub.check_if_inclusion_exist') }}",
+                method:'GET',
+                data: {
+                    pcf_no: document.getElementById("edit_pcf_no-foc").value,
+                    rfq_no: document.getElementById("edit_rfq_no-foc").value,
+                    source_id: document.getElementById("source_item_code-foc").value,
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.is_exist == true) {
+                        Swal.fire({
+                            title: 'Inclusion already exist',
+                            text: "Do you want to proceed?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Confirm'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                saveInclusionList();
+                                clearItemInputs();
+                            }
+                        })
+                    } else {
+                        saveInclusionList();
+                        clearItemInputs();
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    clearItemInputs();
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                },
+            });
+        });
+
+        function saveInclusionList() {
             let p_c_f_request_id = $("#pcf_request_id-foc").val();
             let source_id = $("#source_item_code-foc").val();
             let pcf_no = $("#edit_pcf_no-foc").val();
+            let rfq_no = $("#edit_rfq_no-foc").val();
             let quantity = $("#quantity-foc").val();
             let serial_no = $("#serial_no-foc").val();
             let type = $("#type-foc").val();
@@ -998,6 +1251,7 @@
                     p_c_f_request_id:p_c_f_request_id,
                     source_id:source_id,
                     pcf_no:pcf_no, 
+                    rfq_no:rfq_no, 
                     quantity:quantity,
                     serial_no:serial_no,
                     type:type,
@@ -1012,7 +1266,7 @@
                     getGrandTotal(pcf_no);
                     Toast.fire({
                         icon: 'success',
-                        title: 'Removed',
+                        title: 'Added',
                         text: 'The product has been added to the current request.'
                     })
                     $("#source_item_code-foc").val('').trigger('change')
@@ -1026,7 +1280,7 @@
                     })
                 },
             });
-        });
+        }
 
         //delete machines and inclusions items;
         $('#edit_pcfFOC_dataTable').on('click', '.pcfInclusionDelete', function (e) {

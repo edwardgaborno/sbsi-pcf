@@ -35,6 +35,16 @@ class PCFRequest extends Model implements HasMedia
         return $this->belongsTo(Status::class);
     }
 
+    public function institution()
+    {
+        return $this->belongsTo(PCFInstitution::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'updated_by', 'id');
+    }
+
     public function countDistinct($value)
     {
         $counts = DB::table('p_c_f_lists')

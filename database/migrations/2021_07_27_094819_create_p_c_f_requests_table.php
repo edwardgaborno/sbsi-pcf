@@ -22,12 +22,11 @@ class CreatePCFRequestsTable extends Migration
                 ->onDelete('cascade');
             $table->string('pcf_no');
             $table->string('rfq_no');
-            $table->date('date');
-            $table->string('institution');
-            $table->string('address');
-            $table->string('contact_person');
-            $table->string('designation');
-            $table->string('thru_designation'); 
+            $table->foreignId('institution_id') // institution_id
+                ->nullable()
+                ->constrained('p_c_f_institutions')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string('supplier');
             $table->string('terms');
             $table->string('validity');
@@ -47,6 +46,11 @@ class CreatePCFRequestsTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->foreignId('approved_by') // user_id
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('updated_by') // user_id
                 ->nullable()
                 ->constrained('users')
                 ->onUpdate('cascade')

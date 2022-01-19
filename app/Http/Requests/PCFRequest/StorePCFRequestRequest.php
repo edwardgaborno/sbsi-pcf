@@ -25,12 +25,7 @@ class StorePCFRequestRequest extends FormRequest
     {
         return [
             'pcf_no' => 'required|string',
-            'date' => 'required|date',
-            'institution' => 'required|string',
-            'address' => 'nullable|string',
-            'contact_person' => 'required|string',
-            'designation' => 'nullable|string',
-            'thru_designation' => 'nullable|string',
+            'rfq_no' => 'required|string',
             'supplier' => 'required|string',
             'terms' => 'required|string',
             'validity' => 'required|string',
@@ -49,9 +44,7 @@ class StorePCFRequestRequest extends FormRequest
     {
         return [
             'pcf_no.required' => 'This is a required field.',
-            'date.required' => 'This is a required field.',
-            'contact_person.required' => 'This is a required field.',
-            'institution.required' => 'This is a required field.',
+            'rfq-no.required' => 'This is a required field.',
             'supplier.required' => 'This is a required field.',
             'terms.required' => 'This is a required field.',
             'validity.required' => 'This is a required field.',

@@ -56,19 +56,17 @@ class PCFRequestController extends Controller
 
     public function store(StorePCFRequestRequest $request)
     {
-        dd($request->all());
         $this->authorize('pcf_request_store');
 
         DB::beginTransaction();
-
         try {
 
             $pcfRequest = PCFRequest::create($request->validated() + [
                 'status_id' => 1,
+                'institution_id' => $request->institution_id,
                 'psr' => auth()->user()->name,
                 'created_by' => auth()->user()->id,
             ]);
-
             $pcfList = PCFList::where('pcf_no', $pcfRequest->pcf_no)->update(['p_c_f_request_id' => $pcfRequest->id]);
             PCFInclusion::where('pcf_no', $pcfRequest->pcf_no)->update(['p_c_f_request_id' => $pcfRequest->id]);
 
@@ -99,7 +97,10 @@ class PCFRequestController extends Controller
         DB::beginTransaction();
 
         try {
-            $p_c_f_request->update($request->validated());
+            $p_c_f_request->update($request->validated() + [
+                'institution_id' => $request->institution_id,
+                'updated_by' => auth()->user()->id,
+            ]);
 
             DB::commit();
             alert()->success('Success','PCF Request has been updated');
@@ -116,12 +117,30 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_access');
         
-        if ($request->ajax()) {
-            $pcfRequest = PCFRequest::with('status', 'media')
+        // if ($request->ajax()) {
+            
+        // }
+        $pcfRequest = PCFRequest::with('status', 'media')
                         ->select('p_c_f_requests.*')
                         ->get();
 
             return Datatables::of($pcfRequest)
+                ->addColumn('institution', function ($data) {
+                    return $data->institution->institution;
+                })
+                ->addColumn('date_requested', function ($data) {
+                    return $data->created_at->isoFormat('MMMM DD, YYYY');
+                })
+                ->addColumn('annual_profit', function ($data) {
+                    return number_format($data->annual_profit, 2);
+                })
+                ->addColumn('updated_by', function ($data) {
+                    if ($data->updated_by !== null) {
+                        return $data->user->name. ' - ' .$data->updated_at->isoFormat('MMM DD, YYYY h:m A');
+                    }
+
+                    return '';
+                })
                 ->addColumn('status', function ($data) {
                     if (auth()->user()->can('psr_view_pcf') && in_array($data->status_id, [1, 2, 3, 4, 5])) {
                         return '<span class="badge badge-light">' . $data->status->find(1)->name . '</span>';
@@ -282,7 +301,6 @@ class PCFRequestController extends Controller
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);
-        }
     }
 
     public function pcfRequestDetails($pcfRequestId)
@@ -378,13 +396,19 @@ class PCFRequestController extends Controller
                 'sources.item_code as item_code',
                 'sources.description as description',
 
-                'p_c_f_requests.date AS date',
-                'p_c_f_requests.institution AS institution',
-                'p_c_f_requests.contract_duration AS duration',
-                'p_c_f_requests.address AS address',
-                'p_c_f_requests.contact_person AS contact_person',
-                'p_c_f_requests.designation AS designation',
-                'p_c_f_requests.thru_designation AS thru_designation',
+                'p_c_f_institutions.institution as institution',
+                'p_c_f_institutions.address as address',
+                'p_c_f_institutions.contact_person as contact_person',
+                'p_c_f_institutions.designation as designation',
+                'p_c_f_institutions.thru_designation as thru_designation',
+
+                // 'p_c_f_requests.date AS date',
+                // 'p_c_f_requests.institution AS institution',
+                // 'p_c_f_requests.contract_duration AS duration',
+                // 'p_c_f_requests.address AS address',
+                // 'p_c_f_requests.contact_person AS contact_person',
+                // 'p_c_f_requests.designation AS designation',
+                // 'p_c_f_requests.thru_designation AS thru_designation',
                 'p_c_f_requests.supplier AS supplier',
                 'p_c_f_requests.terms AS terms',
                 'p_c_f_requests.validity AS validity',
@@ -398,6 +422,7 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
             )
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
+            ->leftJoin('p_c_f_institutions', 'p_c_f_institutions.id', 'p_c_f_requests.institution_id')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
             ->orderBy('p_c_f_lists.id', 'ASC')

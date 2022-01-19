@@ -60,8 +60,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="edit_unit_price">Unit Price</label>
-                                <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price" id="edit_unit_price"
-                                    step=".01" value="{{ old('unit_price') }}" required>
+                                <input type="text" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price" id="edit_unit_price"
+                                    value="{{ old('unit_price') }}" required>
 
                                 @error('unit_price')
                                     <span class="invalid-feedback" role="alert">
@@ -73,8 +73,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="edit_currency_rate">Currency Rate</label>
-                                <input type="number" class="form-control @error('currency_rate') is-invalid @enderror" name="currency_rate" id="edit_currency_rate"
-                                    step=".01" value="{{ old('currency_rate') }}" required>
+                                <input type="text" class="form-control @error('currency_rate') is-invalid @enderror" name="currency_rate" id="edit_currency_rate"
+                                    value="{{ old('currency_rate') }}" required>
 
                                 @error('currency_rate')
                                     <span class="invalid-feedback" role="alert">
@@ -86,8 +86,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="edit_tp_php">Total Price (Php)</label>
-                                <input type="number" class="form-control @error('tp_php') is-invalid @enderror" name="tp_php" id="edit_tp_php"
-                                    step=".01" value="{{ old('tp_php') }}" required readonly>
+                                <input type="text" class="form-control @error('tp_php') is-invalid @enderror" name="tp_php" id="edit_tp_php"
+                                    value="{{ old('tp_php') }}" required readonly>
 
                                 @error('tp_php')
                                     <span class="invalid-feedback" role="alert">
@@ -116,9 +116,16 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_uom">UOM</label>
-                                <input type="text" class="form-control @error('uom') is-invalid @enderror" name="uom" id="edit_uom"
-                                    value="{{ old('uom') }}">
-
+                                <select class="form-control @error('uom') is-invalid @enderror" name="uom" id="edit_uom">
+                                    <option value="" selected disabled>Select UOM</option>
+                                    <option value="SET" {{ (old("uom") == "SET" ? "selected" : "")}}>SET</option>
+                                    <option value="UN" {{ (old("uom") == "UN" ? "selected" : "")}}>UN</option>
+                                    <option value="PK" {{ (old("uom") == "PK" ? "selected" : "")}}>PK</option>
+                                    <option value="PACK" {{ (old("uom") == "PACK" ? "selected" : "")}}>PACK</option>
+                                    <option value="PC" {{ (old("uom") == "PC" ? "selected" : "")}}>PC</option>
+                                    <option value="KIT" {{ (old("uom") == "KIT" ? "selected" : "")}}>KIT</option>
+                                    <option value="UNIT" {{ (old("uom") == "UNIT" ? "selected" : "")}}>UNIT</option>
+                                </select>
                                 @error('uom')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -161,18 +168,18 @@
                                 <label for="edit_segment">Segment</label>
                                 <select class="form-control @error('segment') is-invalid @enderror" name="segment" id="edit_segment">
                                     <option value="" selected disabled>Select Segment</option>
-                                    <option value="CHEM">CHEM</option>
-                                    <option value="COAG">COAG</option>
-                                    <option value="HEMA">HEMA</option>
-                                    <option value="HEMA & CHEM">HEMA and CHEM</option>
-                                    <option value="IMMUNO">IMMUNO</option>
-                                    <option value="INDUSTRIAL MICRO">INDUSTRIAL MICRO</option>
-                                    <option value="MOLECULAR">MOLECULAR</option>
-                                    <option value="SPECIAL LINES">SPECIAL LINES</option>
+                                    <option value="CHEM" {{ (old("segment") == "CHEM" ? "selected" : "")}}>CHEM</option>
+                                    <option value="COAG" {{ (old("segment") == "COAG" ? "selected" : "")}}>COAG</option>
+                                    <option value="HEMA" {{ (old("segment") == "HEMA" ? "selected" : "")}}>HEMA</option>
+                                    <option value="HEMA & CHEM" {{ (old("segment") == "HEMA & CHEM" ? "selected" : "")}}>HEMA and CHEM</option>
+                                    <option value="IMMUNO" {{ (old("segment") == "IMMUNO" ? "selected" : "")}}>IMMUNO</option>
+                                    <option value="INDUSTRIAL MICRO" {{ (old("segment") == "INDUSTRIAL MICRO" ? "selected" : "")}}>INDUSTRIAL MICRO</option>
+                                    <option value="MOLECULAR" {{ (old("segment") == "MOLECULAR" ? "selected" : "")}}>MOLECULAR</option>
+                                    <option value="SPECIAL LINES" {{ (old("segment") == "SPECIAL LINES" ? "selected" : "")}}>SPECIAL LINES</option>
                                     <option value=NULL>NONE</option>
                                 </select>
 
-                                @error('segment')
+                                @error('sgement')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -182,14 +189,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_item_category">Item Category</label>
-                                <select class="form-control @error('item_category') is-invalid @enderror" name="item_category" id="edit_item_category" required>
+                                <select class="form-control @error('item_category') is-invalid @enderror" name="item_category" id="edit_item_category">
                                     <option value="" selected disabled>Select Item Category</option>
-                                    <option value="ACCESSORIES">ACCESSORIES</option>
-                                    <option value="CONSUMABLES">CONSUMABLES</option>
-                                    <option value="MACHINE">MACHINE</option>
-                                    <option value="PIPETORS">PIPETORS</option>
-                                    <option value="SPAREPARTS">SPAREPARTS</option>
-                                    <option value="REAGENTS">REAGENTS</option>
+                                    <option value="ACCESSORIES" {{ (old("item_category") == "ACCESSORIES" ? "selected" : "")}}>ACCESSORIES</option>
+                                    <option value="CONSUMABLES" {{ (old("item_category") == "CONSUMABLES" ? "selected" : "")}}>CONSUMABLES</option>
+                                    <option value="MACHINE" {{ (old("item_category") == "MACHINE" ? "selected" : "")}}>MACHINE</option>
+                                    <option value="PIPETORS" {{ (old("item_category") == "PIPETORS" ? "selected" : "")}}>PIPETORS</option>
+                                    <option value="SPAREPARTS" {{ (old("item_category") == "SPAREPARTS" ? "selected" : "")}}>SPAREPARTS</option>
+                                    <option value="REAGENTS" {{ (old("item_category") == "REAGENTS" ? "selected" : "")}}>REAGENTS</option>
                                     <option value="OTHERS">OTHERS</option>
                                 </select>
 
@@ -206,7 +213,7 @@
                             <div class="form-group">
                                 <label for="edit_standard_price">Standard Price</label>
                                 <input type="text" class="form-control @error('standard_price') is-invalid @enderror" name="standard_price" id="edit_standard_price" required
-                                    value="{{ old('standard_price') }}" >
+                                    value="{{ old('standard_price') }}" readonly>
 
                                 @error('standard_price')
                                     <span class="invalid-feedback" role="alert">

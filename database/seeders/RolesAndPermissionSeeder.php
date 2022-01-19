@@ -89,6 +89,13 @@ class RolesAndPermissionSeeder extends Seeder
             'cfo_reject_pcf',
             'cfo_approve_quotation',
             'cfo_reject_quotation',
+
+            'institution_access',
+            'institution_create',
+            'institution_store',
+            'institution_edit',
+            'institution_update',
+            'institution_show',
         ];
 
         foreach ($permissions as $permission) {
@@ -102,6 +109,7 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_create',
             'pcf_request_delete',
             'pcf_request_store',
+            'pcf_request_edit',
             'pcf_request_show',
             'pcf_request_access',
             'pcf_source_access',
@@ -212,6 +220,12 @@ class RolesAndPermissionSeeder extends Seeder
             'source_show',
             'source_delete',
             'source_access',
+            'institution_access',
+            'institution_create',
+            'institution_store',
+            'institution_edit',
+            'institution_update',
+            'institution_show',
         ]);
 
         Role::create(['name' => 'Super Administrator']);

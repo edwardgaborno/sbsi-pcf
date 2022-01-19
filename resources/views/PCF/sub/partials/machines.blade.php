@@ -15,7 +15,9 @@
                         <label for="source_item_code-foc">Item Code</label>
                         <input type="hidden" class="form-control" name="pcf_no" id="pcf_no_add_item_foc" value="{{ $pcf_no }}"> <!-- pcf no -->  
                         
-                        <select name="source_id" id="source_item_code-foc" class="form-control @error('source_id') is-invalid @enderror select2" required></select>
+                        <select name="source_id" id="source_item_code-foc" class="form-control @error('source_id') is-invalid @enderror select2" required>
+                            <option value="" selected disabled></option>
+                        </select>
 
                         @error('source_id')
                             <span class="invalid-feedback" role="alert">

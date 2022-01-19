@@ -47,11 +47,13 @@
                                         <thead>
                                             <tr class="thead-dark">
                                                 <th>PCF No.</th>
+                                                <th>RFQ No.</th>
                                                 <th>Date</th>
                                                 <th>Institution</th>
                                                 <th>PSR</th>
                                                 <th>Annual Profit</th>
                                                 <th>Annual Profit Rate</th>
+                                                <th>Updated By:</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr> 
@@ -97,11 +99,13 @@
                 },
                 columns: [
                     { data: 'pcf_no' },
-                    { data: 'date' },
+                    { data: 'rfq_no' },
+                    { data: 'date_requested' },
                     { data: 'institution' },
                     { data: 'psr' },
                     { data: 'annual_profit' },
                     { data: 'annual_profit_rate' },
+                    { data: 'updated_by', orderable: false, searchable: false },
                     { data: 'status', orderable: false },
                     { data: 'actions', orderable: false, searchable: false }
                 ],

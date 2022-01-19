@@ -86,8 +86,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Unit Price</label>
-                                                    <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price" id="unit_price"
-                                                        step=".01" value="{{ old('unit_price') }}" required>
+                                                    <input type="text" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price" id="unit_price"
+                                                        value="{{ old('unit_price') }}" required>
 
                                                     @error('unit_price')
                                                         <span class="invalid-feedback" role="alert">
@@ -99,8 +99,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Currency Rate</label>
-                                                    <input type="number" class="form-control @error('currency_rate') is-invalid @enderror" name="currency_rate" id="currency_rate"
-                                                        step=".01" min="1" value="{{ old('currency_rate') }}" required>
+                                                    <input type="text" class="form-control @error('currency_rate') is-invalid @enderror" name="currency_rate" id="currency_rate"
+                                                        value="{{ old('currency_rate') }}" required>
 
                                                     @error('currency_rate')
                                                         <span class="invalid-feedback" role="alert">
@@ -112,8 +112,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Total Price (Php)</label>
-                                                    <input type="number" class="form-control @error('tp_php') is-invalid @enderror" name="tp_php" id="tp_php"
-                                                        step=".01" value="{{ old('tp_php') }}" required readonly>
+                                                    <input type="text" class="form-control @error('tp_php') is-invalid @enderror" name="tp_php" id="tp_php"
+                                                        value="{{ old('tp_php') }}" required readonly>
 
                                                     @error('tp_php')
                                                         <span class="invalid-feedback" role="alert">
@@ -141,10 +141,17 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">UOM</label>
-                                                    <input type="text" class="form-control @error('uom') is-invalid @enderror" name="uom" id="uom"
-                                                        value="{{ old('uom') }}">
-
+                                                    <label for="uom">UOM</label>
+                                                    <select class="form-control @error('uom') is-invalid @enderror" name="uom" id="uom">
+                                                        <option value="" selected disabled>Select UOM</option>
+                                                        <option value="SET" {{ (old("uom") == "SET" ? "selected" : "")}}>SET</option>
+                                                        <option value="UN" {{ (old("uom") == "UN" ? "selected" : "")}}>UN</option>
+                                                        <option value="PK" {{ (old("uom") == "PK" ? "selected" : "")}}>PK</option>
+                                                        <option value="PACK" {{ (old("uom") == "PACK" ? "selected" : "")}}>PACK</option>
+                                                        <option value="PC" {{ (old("uom") == "PC" ? "selected" : "")}}>PC</option>
+                                                        <option value="KIT" {{ (old("uom") == "KIT" ? "selected" : "")}}>KIT</option>
+                                                        <option value="UNIT" {{ (old("uom") == "UNIT" ? "selected" : "")}}>UNIT</option>
+                                                    </select>
                                                     @error('uom')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
@@ -170,7 +177,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Cost of Peripherals</label>
-                                                    <input type="number" class="form-control @error('cost_of_peripherals') is-invalid @enderror" name="cost_of_peripherals" id="cost_of_peripherals"
+                                                    <input type="text" class="form-control @error('cost_of_peripherals') is-invalid @enderror" name="cost_of_peripherals" id="cost_of_peripherals"
                                                         value="{{ old('cost_of_peripherals') }}">
 
                                                     @error('cost_of_peripherals')
@@ -187,14 +194,14 @@
                                                     <label for="segment">Segment</label>
                                                     <select class="form-control @error('segment') is-invalid @enderror" name="segment" id="segment">
                                                         <option value="" selected disabled>Select Segment</option>
-                                                        <option value="CHEM">CHEM</option>
-                                                        <option value="COAG">COAG</option>
-                                                        <option value="HEMA">HEMA</option>
-                                                        <option value="HEMA & CHEM">HEMA and CHEM</option>
-                                                        <option value="IMMUNO">IMMUNO</option>
-                                                        <option value="INDUSTRIAL MICRO">INDUSTRIAL MICRO</option>
-                                                        <option value="MOLECULAR">MOLECULAR</option>
-                                                        <option value="SPECIAL LINES">SPECIAL LINES</option>
+                                                        <option value="CHEM" {{ (old("segment") == "CHEM" ? "selected" : "")}}>CHEM</option>
+                                                        <option value="COAG" {{ (old("segment") == "COAG" ? "selected" : "")}}>COAG</option>
+                                                        <option value="HEMA" {{ (old("segment") == "HEMA" ? "selected" : "")}}>HEMA</option>
+                                                        <option value="HEMA & CHEM" {{ (old("segment") == "HEMA & CHEM" ? "selected" : "")}}>HEMA and CHEM</option>
+                                                        <option value="IMMUNO" {{ (old("segment") == "IMMUNO" ? "selected" : "")}}>IMMUNO</option>
+                                                        <option value="INDUSTRIAL MICRO" {{ (old("segment") == "INDUSTRIAL MICRO" ? "selected" : "")}}>INDUSTRIAL MICRO</option>
+                                                        <option value="MOLECULAR" {{ (old("segment") == "MOLECULAR" ? "selected" : "")}}>MOLECULAR</option>
+                                                        <option value="SPECIAL LINES" {{ (old("segment") == "SPECIAL LINES" ? "selected" : "")}}>SPECIAL LINES</option>
                                                         <option value=NULL>NONE</option>
                                                     </select>
 
@@ -210,12 +217,12 @@
                                                     <label for="item_category">Item Category</label>
                                                     <select class="form-control @error('item_category') is-invalid @enderror" name="item_category" id="item_category">
                                                         <option value="" selected disabled>Select Item Category</option>
-                                                        <option value="ACCESSORIES">ACCESSORIES</option>
-                                                        <option value="CONSUMABLES">CONSUMABLES</option>
-                                                        <option value="MACHINE">MACHINE</option>
-                                                        <option value="PIPETORS">PIPETORS</option>
-                                                        <option value="SPAREPARTS">SPAREPARTS</option>
-                                                        <option value="REAGENTS">REAGENTS</option>
+                                                        <option value="ACCESSORIES" {{ (old("item_category") == "ACCESSORIES" ? "selected" : "")}}>ACCESSORIES</option>
+                                                        <option value="CONSUMABLES" {{ (old("item_category") == "CONSUMABLES" ? "selected" : "")}}>CONSUMABLES</option>
+                                                        <option value="MACHINE" {{ (old("item_category") == "MACHINE" ? "selected" : "")}}>MACHINE</option>
+                                                        <option value="PIPETORS" {{ (old("item_category") == "PIPETORS" ? "selected" : "")}}>PIPETORS</option>
+                                                        <option value="SPAREPARTS" {{ (old("item_category") == "SPAREPARTS" ? "selected" : "")}}>SPAREPARTS</option>
+                                                        <option value="REAGENTS" {{ (old("item_category") == "REAGENTS" ? "selected" : "")}}>REAGENTS</option>
                                                         <option value="OTHERS">OTHERS</option>
                                                     </select>
 
@@ -231,7 +238,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="standard_price">Standard Price</label>
-                                                    <input type="number" class="form-control @error('standard_price') is-invalid @enderror" name="standard_price" id="standard_price"
+                                                    <input type="text" class="form-control @error('standard_price') is-invalid @enderror" name="standard_price" id="standard_price"
                                                         value="{{ old('standard_price') }}" required readonly>
 
                                                     @error('standard_price')
@@ -296,51 +303,94 @@
 
         function calculateTP()
         {
-            const unit_price = parseFloat(document.getElementById("unit_price").value);
-            const currency_rate = parseFloat(document.getElementById("currency_rate").value);
+            const unit_price = parseFloat(document.getElementById("unit_price").value.replace(/,/g, ''));
+            const currency_rate = parseFloat(document.getElementById("currency_rate").value.replace(/,/g, ''));
 
-            (!isNaN(unit_price) && !isNaN(currency_rate))
-                ? document.getElementById("tp_php").value = (unit_price * currency_rate).toFixed(2)
-                : document.getElementById("tp_php").value = ''
+            if (!isNaN(unit_price) && !isNaN(currency_rate)) {
+                document.getElementById("tp_php").value = (unit_price * currency_rate).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            } else {
+                document.getElementById("tp_php").value = '';
+            }
         }
 
         function calculateStandardPrice()
         {
-            const currency_rate = parseFloat(document.getElementById("currency_rate").value);
-            const tp_php = document.getElementById("tp_php").value;
-            const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value);
+            const currency_rate = parseFloat(document.getElementById("currency_rate").value.replace(/,/g, ''));
+            const tp_php = parseFloat(document.getElementById("tp_php").value.replace(/,/g, ''));
+            const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value.replace(/,/g, ''));
             const item_category = document.getElementById("item_category").value;
-
             const standard_price = document.getElementById("standard_price");
 
             if (currency_rate === 1) {
                 if (!isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
             }
             else {
                 if (!isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
                 else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2)
+                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
                 }
             }
         }
+
+        $('#unit_price').keyup(function(event) {
+
+            // skip for arrow keys
+            if(event.which >= 37 && event.which <= 40) return;
+
+            // format number
+            $(this).val(function(index, value) {
+                return value
+                .replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                ;
+            });
+        });
+
+        $('#currency_rate').keyup(function(event) {
+
+            // skip for arrow keys
+            if(event.which >= 37 && event.which <= 40) return;
+
+            // format number
+            $(this).val(function(index, value) {
+                return value
+                .replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                ;
+            });
+        });
+        
+        $('#cost_of_peripherals').keyup(function(event) {
+
+            // skip for arrow keys
+            if(event.which >= 37 && event.which <= 40) return;
+
+            // format number
+            $(this).val(function(index, value) {
+                return value
+                .replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                ;
+            });
+        });
     </script>
 @endsection

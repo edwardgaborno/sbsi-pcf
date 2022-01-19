@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Source;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class StoreSourceRequest extends FormRequest
 {
@@ -14,6 +15,22 @@ class StoreSourceRequest extends FormRequest
     public function authorize()
     {
         return auth()->check();
+    }
+
+    /**
+     * Prepare the data for validation.
+     * remove commas on numbers to prevent error when saving
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'unit_price' =>  Str::replace(',', '', $this->unit_price),
+            'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+            'tp_php' =>  Str::replace(',', '', $this->tp_php),
+            'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
+            'standard_price' =>  Str::replace(',', '', $this->standard_price),
+        ]);
     }
 
     /**
