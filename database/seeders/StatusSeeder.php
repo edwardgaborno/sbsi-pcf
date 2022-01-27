@@ -37,9 +37,5 @@ class StatusSeeder extends Seeder
                 'name' => 'For revision',
             ],
         ];
-
-        foreach ($statuses as $status) {
-            Status::create($status);
-        }
     }
 }

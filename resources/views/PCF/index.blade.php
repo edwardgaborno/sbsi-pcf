@@ -75,6 +75,9 @@
         <!-- Modal Component -->
         @include('PCF.sub.partials.items_bundle_options')
         @include('PCF.sub.partials.machines_bundle_options')
+        @include('modals.approvals.index')
+        @include('modals.approvals.approve_pcf')
+        @include('modals.approvals.disapprove_pcf')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -127,83 +130,125 @@
             }
         })
         
-        //Approve PCF Request;
+        //Approve PCF Request
         $('#pcf_dataTable').on('click', '.approvePcfRequest', function (e) {
             e.preventDefault();
-            pcfRequest_id = $(this).data('id');
-            Swal.fire({
-                title: 'Approve Request',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        method: 'GET',
-                        headers: {
+            var pcf_request_id = $(this).data('id');
+            $("#approve_pcf_modal").modal('show');
+            document.getElementById("approve_pcf_request_id").value = pcf_request_id;
+        });
+
+        //Disapprove PCF Request
+        $('#pcf_dataTable').on('click', '.disapprovePcfRequest', function (e) {
+            e.preventDefault();
+            var pcf_request_id = $(this).data('id');
+            $("#disapprove_pcf_modal").modal('show');
+            document.getElementById("disapprove_pcf_request_id").value = pcf_request_id;
+        });
+
+        //view approval details
+        $("#pcf_dataTable").on('click', '.view-approval-details', function (e) {
+            e.preventDefault();
+            var pcf_request_id = $(this).data('pcf_request_id');
+            $('#pcf_approval_datatable').DataTable().clear().destroy();
+            $('#pcf_approval_datatable').DataTable({
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ordering: true,
+                ajax: {
+                    headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '/PCF/ajax/approve-request/' + pcfRequest_id,
-                        contentType: "application/json; charset=utf-8",
-                        cache: false,
-                        dataType: 'json',
-                    }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload();
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Your approval has been recorded.'
-                        })
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        })
-                    });
-                }
+                    },
+                    url: '/PCF/ajax/view-pcf-approvals/' + pcf_request_id,
+                },
+                columns: [
+                    { data: 'approval_status' },
+                    { data: 'done_by' },
+                    { data: 'remarks' },
+                    { data: 'date' },
+                ],
             });
         });
 
-        //Disapprove PCF Request;
-        $('#pcf_dataTable').on('click', '.disapprovePcfRequest', function (e) {
+        $('#approvePcfRequest').on('submit', function(e) {
             e.preventDefault();
-            pcfRequest_id = $(this).data('id');
-            Swal.fire({
-                title: 'Disapprove Request',
-                text: "Are you sure?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        method: 'GET',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '/PCF/ajax/disapprove-request/' + pcfRequest_id,
-                        contentType: "application/json; charset=utf-8",
-                        cache: false,
-                        dataType: 'json',
-                    }).done(function(data) {
-                        $('#pcf_dataTable').DataTable().ajax.reload();
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Your disapproval has been recorded.'
-                        })
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        })
-                    });
-                }
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('PCF.approve_pcf_request') }}",
+                method:'POST',
+                data: {
+                    p_c_f_request_id: document.getElementById("approve_pcf_request_id").value,
+                    remarks: document.getElementById("approve_remarks").value,
+                },
+                success: function(response) {
+
+                    document.getElementById("approve_pcf_request_id").value = "";
+                    document.getElementById("approve_remarks").value = "";
+                    $("#approve_pcf_modal").modal('hide');
+                    $('#pcf_dataTable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Approved',
+                        text: 'PCF request has been approved!'
+                    })
+                },
+                error: function (response) {
+                    console.log(response);
+                    document.getElementById("approve_pcf_request_id").value = "";
+                    document.getElementById("approve_remarks").value = "";
+                    $("#approve_pcf_modal").modal('hide');
+                    $('#pcf_dataTable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                },
+            });
+        });
+
+        $('#disapprovePcfRequest').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('PCF.disapprove_pcf_request') }}",
+                method:'POST',
+                data: {
+                    p_c_f_request_id: document.getElementById("disapprove_pcf_request_id").value,
+                    remarks: document.getElementById("disapprove_remarks").value,
+                },
+                success: function(response) {
+                    document.getElementById("disapprove_pcf_request_id").value = "";
+                    document.getElementById("disapprove_remarks").value = "";
+                    $("#disapprove_pcf_modal").modal('hide');
+                    $('#pcf_dataTable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Disapproved',
+                        text: 'PCF request has been Disapproved!'
+                    })
+                },
+                error: function (response) {
+                    document.getElementById("disapprove_pcf_request_id").value = "";
+                    document.getElementById("disapprove_remarks").value = "";
+                    $("#disapprove_pcf_modal").modal('hide');
+                    $('#pcf_dataTable').DataTable().ajax.reload();
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                },
             });
         });
     </script>

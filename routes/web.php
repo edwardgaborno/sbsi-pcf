@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
 use App\Http\Controllers\BundleProductController;
+use App\Http\Controllers\PCFApproverController;
 use App\Http\Controllers\PCFInstitutionController;
 use App\Models\PCFInstitution;
 use Illuminate\Support\Facades\Route;
@@ -58,9 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/view-quotation/{pcf_no}', [PCFRequestController::class, 'viewQuotation'])->name('.view_quotation');
 
             Route::put('/{p_c_f_request}/upload', [PCFRequestController::class, 'storePCFPdfFile'])->name('.putFile');
-
-            Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
-            Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
+            
+            Route::post('/ajax/approve-pcf-request', [PCFRequestController::class, 'approvePcfRequest'])->name('.approve_pcf_request');
+            Route::post('/ajax/disapprove-pcf-request', [PCFRequestController::class, 'disapprovePcfRequest'])->name('.disapprove_pcf_request');
+            Route::get('/ajax/view-pcf-approvals/{id}', [PCFApproverController::class, 'index'])->name('.view_pcf_approvals');
         });
     });
 

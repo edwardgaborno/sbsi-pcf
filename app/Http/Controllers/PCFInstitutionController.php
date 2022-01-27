@@ -97,13 +97,13 @@ class PCFInstitutionController extends Controller
                             return '<a href="javascript:void(0);" class="badge badge-info edit-institution-modal" data-toggle="modal"
                                         data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>
                                     <a href="javascript:void(0);" class="badge badge-danger disable-institution"
-                                        data-id="'. $data->id .'"><i class="far fa-edit"></i> Disable</a>';
+                                        data-id="'. $data->id .'"><i class="fas fa-ban"></i> Disable</a>';
                         }
 
                         return '<a href="javascript:void(0);" class="badge badge-info edit-institution-modal" data-toggle="modal"
                                         data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>
                                     <a href="javascript:void(0);" class="badge badge-success enable-institution"
-                                        data-id="'. $data->id .'"><i class="far fa-edit"></i> Enable</a>';
+                                        data-id="'. $data->id .'"><i class="far fa-check-circle"></i> Enable</a>';
                     }
                 })
                 ->rawColumns(['status','actions'])

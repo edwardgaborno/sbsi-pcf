@@ -344,6 +344,7 @@
                 { data: 'source.item_code' },
                 { data: 'source.description' },
                 { data: 'quantity' },
+                { data: 'bundled_product' },
                 { data: 'sales' },
                 { data: 'total_sales' },
                 { data: 'actions' },
@@ -1044,6 +1045,7 @@
                         document.getElementById("quantity_bundle").value = "";
 
                         $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                        $('#pcfItem_datatable').DataTable().ajax.reload();
 
                         Toast.fire({
                             icon: 'success',
@@ -1057,6 +1059,7 @@
                         document.getElementById("quantity_bundle").value = "";
 
                         $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                        $('#pcfItem_datatable').DataTable().ajax.reload();
 
                         Toast.fire({
                             icon: 'error',
@@ -1132,6 +1135,7 @@
                             url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
                         }).done(function(response) {
                             $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                            $('#pcfItem_datatable').DataTable().ajax.reload();
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Removed',
@@ -1201,7 +1205,7 @@
                         document.getElementById("machine_quantity_bundle").value = "";
 
                         $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
-
+                        $('#pcfFOC_dataTable').DataTable().ajax.reload();
                         Toast.fire({
                             icon: 'success',
                             title: 'Added',
@@ -1289,6 +1293,7 @@
                             url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
                         }).done(function(response) {
                             $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+                            $('#pcfFOC_dataTable').DataTable().ajax.reload();
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Removed',

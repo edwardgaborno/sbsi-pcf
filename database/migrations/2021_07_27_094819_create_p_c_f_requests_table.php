@@ -15,18 +15,12 @@ class CreatePCFRequestsTable extends Migration
     {
         Schema::create('p_c_f_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('status_id') // status_id
-                ->nullable()
-                ->constrained('statuses')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
             $table->string('pcf_no');
             $table->string('rfq_no');
             $table->foreignId('institution_id') // institution_id
                 ->nullable()
                 ->constrained('p_c_f_institutions')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->string('supplier');
             $table->string('terms');
             $table->string('validity');
@@ -35,7 +29,11 @@ class CreatePCFRequestsTable extends Migration
             $table->string('contract_duration');
             $table->date('date_bidding')->nullable();
             $table->decimal('bid_docs_price')->nullable();
-            $table->string('psr'); // we can get the name of the PSR by using the column created by;
+            $table->boolean('is_psr_manager_approved')->nullable();
+            $table->boolean('is_marketing_approved')->nullable();
+            $table->boolean('is_accounting_approved')->nullable();
+            $table->boolean('is_nsm_approved')->nullable();
+            $table->boolean('is_cfo_approved')->nullable();
             $table->string('manager');
             $table->decimal('annual_profit', 12, 2)->default(0.00);
             $table->decimal('annual_profit_rate');
@@ -43,18 +41,11 @@ class CreatePCFRequestsTable extends Migration
             $table->foreignId('created_by') // user_id
                 ->nullable()
                 ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreignId('approved_by') // user_id
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->foreignId('updated_by') // user_id
                 ->nullable()
                 ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->timestamps();
         });
     }

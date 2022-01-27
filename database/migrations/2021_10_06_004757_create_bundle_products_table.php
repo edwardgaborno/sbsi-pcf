@@ -28,8 +28,7 @@ class CreateBundleProductsTable extends Migration
             $table->foreignId('source_id')
                 ->nullable()
                 ->constrained('sources')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->integer('quantity')->nullable();
             $table->integer('unit_price')->nullable()->default(0);
             $table->timestamps();

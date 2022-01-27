@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\PCFRequestService;
 use App\Http\Requests\PCFRequest\StorePCFRequestRequest;
 use App\Http\Requests\PCFRequest\UpdatePCFRequestRequest;
+use App\Models\PCFApprover;
 
 class PCFRequestController extends Controller
 {
@@ -62,9 +63,7 @@ class PCFRequestController extends Controller
         try {
 
             $pcfRequest = PCFRequest::create($request->validated() + [
-                'status_id' => 1,
                 'institution_id' => $request->institution_id,
-                'psr' => auth()->user()->name,
                 'created_by' => auth()->user()->id,
             ]);
             $pcfList = PCFList::where('pcf_no', $pcfRequest->pcf_no)->update(['p_c_f_request_id' => $pcfRequest->id]);
@@ -117,16 +116,16 @@ class PCFRequestController extends Controller
     {
         $this->authorize('pcf_request_access');
         
-        // if ($request->ajax()) {
-            
-        // }
-        $pcfRequest = PCFRequest::with('status', 'media')
+        if ($request->ajax()) {
+            $pcfRequest = PCFRequest::with('pcfApprover', 'media')
                         ->select('p_c_f_requests.*')
-                        ->get();
-
+                        ->get();            
             return Datatables::of($pcfRequest)
                 ->addColumn('institution', function ($data) {
                     return $data->institution->institution;
+                })
+                ->addColumn('psr', function ($data) {
+                    return $data->user->name;
                 })
                 ->addColumn('date_requested', function ($data) {
                     return $data->created_at->isoFormat('MMMM DD, YYYY');
@@ -142,13 +141,17 @@ class PCFRequestController extends Controller
                     return '';
                 })
                 ->addColumn('status', function ($data) {
-                    if (auth()->user()->can('psr_view_pcf') && in_array($data->status_id, [1, 2, 3, 4, 5])) {
-                        return '<span class="badge badge-light">' . $data->status->find(1)->name . '</span>';
-                    } elseif (auth()->user()->can('psr_view_pcf') && $data->status_id == 7) {
-                        return '<span class="badge badge-light">' . $data->status->name . '</span>';
-                    } else {
-                        return '<span class="badge badge-light">' . $data->status->name . '</span>';
+                    $getTotalApprove = PCFApprover::where('p_c_f_request_id', $data->id)->where('approval_status', 1)->count();
+                    $getTotalDisapprove = PCFApprover::where('p_c_f_request_id', $data->id)->where('approval_status', 0)->count();
+
+                    if ($data->is_psr_manager_approved && $data->is_marketing_approved && $data->is_nsm_approved && $data->is_cfo_approved && $data->is_accounting_approved) {
+                        return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">Completed</span> View Approval</a>';
+                    } else if ($getTotalApprove == 0 && $getTotalDisapprove == 0) {
+                        return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-warning">Processing </span> View Approval</a>';
+                    } else if($getTotalApprove > 0 && $getTotalDisapprove == 0) {
+                        return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">' . $getTotalApprove . ' Approved </span> View Approval</a>';
                     }
+                    return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">' . $getTotalApprove . ' Approved </span> View Approval</a>';
                 })
                 ->addColumn('actions', function ($data) {
 
@@ -247,52 +250,62 @@ class PCFRequestController extends Controller
                             <a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" 
                                 rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
 
+                    //for psr actions if cfo disapproved the request 
+                    if (auth()->user()->can('pcf_request_edit') && \Auth::user()->roles->pluck('name')->first() == 'PSR') {
+                        if (!empty($data->pcf_document)) {
+                            if (($data->is_cfo_approved !== null && $data->is_cfo_approved == false) || ($data->is_accounting_approved !== null && $data->is_accounting_approved == false)) {
+                                return $uploadPcf;
+                            } 
+        
+                            if ($data->is_cfo_approved == null || $data->is_accounting_approved == null) {
+                                return $uploadedPcfView;
+                            }
+                        }
+                    }
 
                     if (auth()->user()->can('pcf_request_edit')) {
                         if (!empty($data->pcf_document)) {
-                            if ((auth()->user()->can('psr_mgr_approve_pcf') || auth()->user()->can('mktg_approve_pcf')) && 
-                                ($data->status_id == 1)) {
+                            if (auth()->user()->can('psr_mgr_approve_pcf') || auth()->user()->can('mktg_approve_pcf')) {
                                 return $uploadedPcfEditApproval;
-                            } else if (auth()->user()->can('nsm_approve_pcf') && (in_array($data->status_id, [2, 3]))) {
+                            } else if (auth()->user()->can('nsm_approve_pcf')) {
                                 return $uploadedPcfWQuotationApproval;
-                            } else if (auth()->user()->can('view_approved_pcf') && in_array($data->status_id, [4, 5, 6])) {
+                            } else if (auth()->user()->can('view_approved_pcf')) {
                                 return $uploadedPcfwQuotationView;
                             }
                         } else {
-                            if ((auth()->user()->can('psr_mgr_approve_pcf') || auth()->user()->can('mktg_approve_pcf')) && 
-                                ($data->status_id == 1)) {
+                            if (auth()->user()->can('psr_mgr_approve_pcf') || auth()->user()->can('mktg_approve_pcf')) {
                                     return $wEditApproval;
-                            } else if (auth()->user()->can('nsm_approve_pcf') && (in_array($data->status_id, [2, 3]))) {
+                            } else if (auth()->user()->can('nsm_approve_pcf')) {
                                 return $wEditQuotation;
-                            } else if (auth()->user()->can('view_approved_pcf') && in_array($data->status_id, [4, 5, 6])) {
+                            } else if (auth()->user()->can('view_approved_pcf')) {
                                 return $wViewQuotation;
                             }
                         }
                     }
                     else {
                         if (!empty($data->pcf_document)) {
-                            if (auth()->user()->can('psr_view_pcf') && ($data->status_id == 7)) {
+                            if (auth()->user()->can('psr_view_pcf')) {
                                 return $uploadedPcfwEditView;
                             } elseif (auth()->user()->can('psr_view_pcf')) {
                                 return $uploadedPcfView;
-                            } else if (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 4)) {
+                            } else if (auth()->user()->can('acct_approve_pcf')) {
                                 return $uploadedPcfApproval;
-                            } else if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) {
+                            } else if (auth()->user()->can('cfo_approve_pcf')) {
                                 return $uploadedPcfWOEditApproval;
-                            } else if (auth()->user()->can('view_approved_pcf') && in_array($data->status_id, [4, 5, 6])) {
+                            } else if (auth()->user()->can('view_approved_pcf')) {
                                 return $uploadedPcfwQuotationView;
                             }
                         } else {
-                            if (auth()->user()->can('psr_view_pcf') && ($data->status_id == 7)) {
+                            if (auth()->user()->can('psr_view_pcf')) {
                                 return $uploadPcf;
                             } elseif (auth()->user()->can('psr_view_pcf')) {
                                 return '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                         rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
-                            } else if (auth()->user()->can('acct_approve_pcf') && ($data->status_id == 4)) {
+                            } else if (auth()->user()->can('acct_approve_pcf')) {
                                 return $approval;
-                            } else if (auth()->user()->can('cfo_approve_pcf') && ($data->status_id == 5)) {
+                            } else if (auth()->user()->can('cfo_approve_pcf')) {
                                 return $wQuotation;
-                            } else if (auth()->user()->can('view_approved_pcf') && in_array($data->status_id, [4, 5, 6])) {
+                            } else if (auth()->user()->can('view_approved_pcf')) {
                                 return $wViewQuotation;
                             }
                         }
@@ -301,6 +314,7 @@ class PCFRequestController extends Controller
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);
+        }
     }
 
     public function pcfRequestDetails($pcfRequestId)
@@ -312,6 +326,33 @@ class PCFRequestController extends Controller
         return response()->json($pcf_request);
     }
 
+    public function approvePcfRequest(Request $request)
+    {
+        if($request->ajax()) {
+            $approvePcfRequest = new PCFApprover;
+            $approvePcfRequest->p_c_f_request_id = $request->p_c_f_request_id;
+            $approvePcfRequest->approval_status = 1;
+            $approvePcfRequest->done_by = auth()->user()->id;
+            $approvePcfRequest->remarks = ($request->remarks ? $request->remarks : '');
+            $approvePcfRequest->save();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+    }
+
+    public function disapprovePcfRequest(Request $request)
+    {
+        if($request->ajax()) {
+            $approvePcfRequest = new PCFApprover;
+            $approvePcfRequest->p_c_f_request_id = $request->p_c_f_request_id;
+            $approvePcfRequest->approval_status = 0;
+            $approvePcfRequest->done_by = auth()->user()->id;
+            $approvePcfRequest->remarks = ($request->remarks ? $request->remarks : '');
+            $approvePcfRequest->save();
+
+            return response()->json(['success' => 'success'], 200);
+        }
+    }
 
     public function approveRequest($pcfRequest_id, PCFRequestService $service)
     {
@@ -340,8 +381,7 @@ class PCFRequestController extends Controller
             if ($temporaryFile) {
 
                 $p_c_f_request->update([
-                    'pcf_document' => $temporaryFile->file_name,
-                    'status_id' => 1,
+                    'pcf_document' => $temporaryFile->file_name
                 ]);
 
                 $p_c_f_request->addMedia(storage_path('app/pcf_rfq/tmp/' . $request->pcf_rfq . '/' . $temporaryFile->file_name))
@@ -402,13 +442,6 @@ class PCFRequestController extends Controller
                 'p_c_f_institutions.designation as designation',
                 'p_c_f_institutions.thru_designation as thru_designation',
 
-                // 'p_c_f_requests.date AS date',
-                // 'p_c_f_requests.institution AS institution',
-                // 'p_c_f_requests.contract_duration AS duration',
-                // 'p_c_f_requests.address AS address',
-                // 'p_c_f_requests.contact_person AS contact_person',
-                // 'p_c_f_requests.designation AS designation',
-                // 'p_c_f_requests.thru_designation AS thru_designation',
                 'p_c_f_requests.supplier AS supplier',
                 'p_c_f_requests.terms AS terms',
                 'p_c_f_requests.validity AS validity',
@@ -416,13 +449,14 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.warranty AS warranty',
                 'p_c_f_requests.date_bidding AS date_bidding',
                 'p_c_f_requests.bid_docs_price AS bid_docs_price',
-                'p_c_f_requests.psr AS psr',
+                'users.name AS psr',
                 'p_c_f_requests.manager AS manager',
                 'p_c_f_requests.annual_profit AS annual_profit',
                 'p_c_f_requests.annual_profit_rate AS annual_profit_rate',
             )
             ->leftJoin('p_c_f_requests','p_c_f_requests.pcf_no','p_c_f_lists.pcf_no')
             ->leftJoin('p_c_f_institutions', 'p_c_f_institutions.id', 'p_c_f_requests.institution_id')
+            ->leftJoin('users','users.id','p_c_f_request.created_by')
             ->join('sources', 'sources.id', 'p_c_f_lists.source_id')
             ->where('p_c_f_lists.pcf_no', $pcf_no)
             ->orderBy('p_c_f_lists.id', 'ASC')
@@ -495,7 +529,6 @@ class PCFRequestController extends Controller
                 'p_c_f_requests.validity AS validity',
                 'p_c_f_requests.delivery AS delivery',
                 'p_c_f_requests.warranty AS warranty',
-                'p_c_f_requests.status_id AS status',
 
                 'sources.item_code as item_code',
                 'sources.description as description',

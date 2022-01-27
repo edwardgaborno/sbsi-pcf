@@ -87,6 +87,14 @@ class PCFListController extends Controller
                         ->get();
 
             return Datatables::of($PCFList)
+                ->addColumn('bundled_product', function($data) {
+                    if ($data->is_bundled) {
+                        return '<span class="badge badge-primary">Yes</span>';
+                    }
+
+                    return '<span class="badge badge-info">No</span>';
+                    
+                }) 
                 ->addColumn('sales', function ($data) {
                     return number_format($data->sales, 2, '.', ',');
                 })
@@ -102,7 +110,7 @@ class PCFListController extends Controller
                                 <i class="fas fa-trash-alt text-danger"></i></a>';
                     }
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['bundled_product','actions'])
                 ->make(true);
         }
     }

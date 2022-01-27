@@ -91,6 +91,7 @@
                             <th>Item Code</th>
                             <th>Item Description</th>
                             <th>Quantity (Per Year)</th>
+                            <th>Bundled Product</th>
                             <th>Selling Price</th>
                             <th>Total Sales</th>
                             <th>Actions</th>

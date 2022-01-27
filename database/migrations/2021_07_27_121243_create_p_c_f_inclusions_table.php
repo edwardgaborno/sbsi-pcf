@@ -20,8 +20,7 @@ class CreatePCFInclusionsTable extends Migration
             $table->foreignId('source_id')
                 ->nullable()
                 ->constrained('sources')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->foreignId('p_c_f_request_id')
                 ->nullable()
                 ->constrained('p_c_f_requests')

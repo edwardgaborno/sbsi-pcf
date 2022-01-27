@@ -109,7 +109,6 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_create',
             'pcf_request_delete',
             'pcf_request_store',
-            'pcf_request_edit',
             'pcf_request_show',
             'pcf_request_access',
             'pcf_source_access',

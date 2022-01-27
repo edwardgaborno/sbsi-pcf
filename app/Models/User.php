@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -46,5 +47,10 @@ class User extends Authenticatable
     public function pcfRequests()
     {
         $this->hasMany(PCFRequest::class);
+    }
+
+    public function approvers()
+    {
+        $this->hasMany(PCFApprover::class);
     }
 }
