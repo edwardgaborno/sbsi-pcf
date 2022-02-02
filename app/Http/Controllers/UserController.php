@@ -116,6 +116,9 @@ class UserController extends Controller
                 ->addColumn('role', function ($data) {
                     return '<span class="badge badge-light">' . $data->getRoleNames() . '</span>';
                 })
+                ->addColumn('department', function ($data) {
+                    return $data->department;
+                })
                 ->addColumn('status', function ($data) {
 
                     if ($data->status == 1 && $data->is_approved == 1) {

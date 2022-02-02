@@ -12,7 +12,7 @@
                 @csrf
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label for="source_item_code-i">Item Code</label>
+                        <label for="source_item_code-i">Item Name</label>
                         <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $pcf_no }}"> <!-- pcf no -->                        
                         <select name="source_id" id="source_item_code-i" class="form-control @error('source_id') is-invalid @enderror select2" required>
                             <option value="" selected disabled></option>

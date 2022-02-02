@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Admin',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -37,6 +38,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Admin',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -49,6 +51,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Sales',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -61,6 +64,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Sales',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -68,11 +72,24 @@ class UserSeeder extends Seeder
 
         //for testing purposes accts;
         $mktg = User::create([
-            'name' => 'Marketing',
-            'email' => 'marketing@email.com',
+            'name' => 'Marketing1',
+            'email' => 'marketing1@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Marketing',
+            'email_verified_at' => Carbon::now()
+        ]);
+
+        $mktg->assignRole('Marketing');
+
+        $mktg = User::create([
+            'name' => 'Marketing2',
+            'email' => 'marketing2@email.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'department' => 'Marketing',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -80,11 +97,24 @@ class UserSeeder extends Seeder
 
         //for testing purposes accts;
         $acct = User::create([
-            'name' => 'Accounting',
-            'email' => 'accounting@email.com',
+            'name' => 'Accounting1',
+            'email' => 'accounting1@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Accounting',
+            'email_verified_at' => Carbon::now()
+        ]);
+
+        $acct->assignRole('Accounting');
+
+        $acct = User::create([
+            'name' => 'Accounting2',
+            'email' => 'accounting2@email.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'department' => 'Accounting',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -97,6 +127,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Sales',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -109,6 +140,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Finance',
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -121,6 +153,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
+            'department' => 'Sales',
             'email_verified_at' => Carbon::now()
         ]);
 

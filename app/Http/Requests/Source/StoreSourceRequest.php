@@ -24,13 +24,22 @@ class StoreSourceRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        $this->merge([
-            'unit_price' =>  Str::replace(',', '', $this->unit_price),
-            'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
-            'tp_php' =>  Str::replace(',', '', $this->tp_php),
-            'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
-            'standard_price' =>  Str::replace(',', '', $this->standard_price),
-        ]);
+        if (empty($this->cost_of_peripherals)) {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        } else {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        }
     }
 
     /**
@@ -42,6 +51,7 @@ class StoreSourceRequest extends FormRequest
     {
         return [
             'supplier' => 'required|string',
+            'item_name' => 'required|string',
             'item_code' => 'required|string|unique:sources,item_code',
             'description' => 'required|string',
             'unit_price' => 'required|numeric',
@@ -62,6 +72,7 @@ class StoreSourceRequest extends FormRequest
     {
         return [
             'supplier.required' => 'This is a required field.',
+            'item_name.required' => 'This is a required field.',
             'item_code.required' => 'This is a required field.',
             'description.required' => 'This is a required field.',
             'unit_price.required' => 'This is a required field.',

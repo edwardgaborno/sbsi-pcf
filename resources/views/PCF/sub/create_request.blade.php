@@ -201,7 +201,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="contract_duration">Duration of Contract</label>
                                             <input type="number" class="form-control @error('contract_duration') is-invalid @enderror" name="contract_duration" id="contract_duration"
-                                                value="{{ old('contract_duration') }}" required>
+                                                value="{{ old('contract_duration') }}">
 
                                             @error('contract_duration')
                                                 <span class="invalid-feedback" role="alert">
@@ -372,14 +372,14 @@
                     data: data,
                     width: "100%",
                     allowClear: true,
-                    placeholder: 'Item code',
+                    placeholder: 'Item name',
                 });
 
                 $("#source_item_code-foc").select2({
                     data: data,
                     width: "100%",
                     allowClear: true,
-                    placeholder: 'Item code',
+                    placeholder: 'Item name',
                 });
 
             }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -599,15 +599,14 @@
             var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
         } 
         else if (parseInt(currency_rate) == 1 && cost_of_peripherals == '') {
-            var opex = transfer_price * 1.13 + 0;
+            var opex = transfer_price * 1.15 + 0;
         }
         else if (parseInt(currency_rate) !== 1 && cost_of_peripherals !== '') {
-            var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
-        } 
-        else {
+            var opex = transfer_price * 1.3 + parseFloat(cost_of_peripherals);
+        }
+        else if (parseInt(currency_rate) !== 1 && cost_of_peripherals == '') {
             var opex = transfer_price * 1.3 + 0;
         }
-
         $("#opex-i").val(opex.toFixed(2));
     }
 

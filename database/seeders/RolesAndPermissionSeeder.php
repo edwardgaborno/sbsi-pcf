@@ -187,8 +187,8 @@ class RolesAndPermissionSeeder extends Seeder
             'view_approved_quotation',
         ]);
 
-        $cfoRole = Role::create(['name' => 'Sales Assistant']);
-        $cfoRole->givePermissionTo([
+        $salesAssistRole = Role::create(['name' => 'Sales Assistant']);
+        $salesAssistRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
             'download_pcf',

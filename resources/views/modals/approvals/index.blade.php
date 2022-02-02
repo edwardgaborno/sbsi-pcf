@@ -16,6 +16,8 @@
                                     <tr>
                                         <th>Approval Status</th>
                                         <th>Done By</th>
+                                        <th>Position</th>
+                                        <th>Department</th>
                                         <th>Remarks</th>
                                         <th>Date</th>
                                     </tr> 

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','SBSI Web LIS - Dashboard')
+@section('title','SBSI Profitability Monitoring System | Dashboard')
 
 @section('content')
 <div id="wrapper">

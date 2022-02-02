@@ -260,7 +260,7 @@
                                                             <div class="form-group">
                                                                 <label for="edit_contract_duration">Duration of Contract</label>
                                                                 <input type="number" class="form-control" name="contract_duration" id="edit_contract_duration" 
-                                                                    value="{{ old('contract_duration', $p_c_f_request->contract_duration) }}" required>
+                                                                    value="{{ old('contract_duration', $p_c_f_request->contract_duration) }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">

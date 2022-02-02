@@ -49,6 +49,7 @@
                                                 <tr class="thead-dark">
                                                     <th>ID</th>
                                                     <th>Supplier</th>
+                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                     <th>Unit Price</th>
@@ -79,6 +80,7 @@
                                             <thead>
                                                 <tr class="thead-dark">
                                                     <th>Supplier</th>
+                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                 </tr>
@@ -140,6 +142,7 @@
                 },
                 columns: [
                     { data: 'supplier' },
+                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                 ],
@@ -163,6 +166,7 @@
                 columns: [
                     { data: 'id' },
                     { data: 'supplier' },
+                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                     { data: 'unit_price' },
@@ -204,6 +208,7 @@
                     $('#editSourceModal').modal('show');
                     $('#edit_source_id').val(data.id);
                     $('#edit_supplier').val(data.supplier);
+                    $('#edit_item_name').val(data.item_name);
                     $('#edit_item_code').val(data.item_code);
                     $('#edit_description').val(data.description);
                     $('#edit_unit_price').val(unit_price);

@@ -39,6 +39,7 @@ class StoreUserRequest extends FormRequest
                         ->uncompromised(3)
             ],
             'role' => 'required',
+            'department' => 'string|required',
         ];
     }
 
@@ -49,6 +50,7 @@ class StoreUserRequest extends FormRequest
             'email.required' => 'This is a required field.',
             'password.required' => 'This is a required field.',
             'role.required' => 'This is a required field.',
+            'department.required' => 'This is a required field.', 
         ];
     }
 }

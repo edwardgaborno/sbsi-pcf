@@ -31,7 +31,6 @@ class SourceController extends Controller
     public function store(StoreSourceRequest $request)
     {
         $this->authorize('source_store');
-
         DB::beginTransaction();
 
         try {
@@ -92,7 +91,7 @@ class SourceController extends Controller
 
         if ($request->ajax()) {
             $sources = Source::latest()
-                ->select('id', 'supplier', 'item_code', 'description', 'unit_price', 'currency_rate', 'tp_php', 'item_group', 'uom',
+                ->select('id', 'supplier', 'item_name', 'item_code', 'description', 'unit_price', 'currency_rate', 'tp_php', 'item_group', 'uom',
                         'mandatory_peripherals', 'cost_of_peripherals', 'segment', 'item_category', 'standard_price', 'profitability')
                 ->get();
 
@@ -154,7 +153,7 @@ class SourceController extends Controller
         $this->authorize('source_access');
 
         if ($request->ajax()) {
-            $sources = Source::select('supplier', 'item_code', 'description')->latest()->get();
+            $sources = Source::select('supplier', 'item_name', 'item_code', 'description')->latest()->get();
 
             return Datatables::of($sources)
                 ->make(true);

@@ -8,7 +8,7 @@
         <meta name="MobileOptimized" content="width">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title>@yield('title')</title>
-        <meta name="description" content="Scientific Biotech Specialties Web Laboratory Information System" />
+        <meta name="description" content="Scientific Biotech Specialties Profitability Monitoring System" />
         <link rel="icon" href="{{ asset('img/sbsi-favicon.ico') }}">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -26,7 +26,7 @@ class CreatePCFRequestsTable extends Migration
             $table->string('validity');
             $table->string('delivery');
             $table->string('warranty')->nullable();
-            $table->string('contract_duration');
+            $table->string('contract_duration')->nullable();
             $table->date('date_bidding')->nullable();
             $table->decimal('bid_docs_price')->nullable();
             $table->boolean('is_psr_manager_approved')->nullable();
@@ -38,6 +38,7 @@ class CreatePCFRequestsTable extends Migration
             $table->decimal('annual_profit', 12, 2)->default(0.00);
             $table->decimal('annual_profit_rate');
             $table->string('pcf_document')->nullable();
+            $table->boolean('is_cancelled')->default(0);
             $table->foreignId('created_by') // user_id
                 ->nullable()
                 ->constrained('users')

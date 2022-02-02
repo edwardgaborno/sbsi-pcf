@@ -335,9 +335,9 @@
         <tbody>
             <tr>
                 <td style="text-align: left; font-weight: bold;">Approved by:</td>
-            @if(!empty($approver[0]->name))
+            @if(!empty($approver->name))
                 <td style="text-decoration: underline; text-align: center;">
-                    {{ $approver[0]->name }}
+                    {{ $approver->name }}
                 </td>
             @else
                 <td style="text-decoration: underline; text-align: center;"></td>
@@ -364,7 +364,7 @@
         </tbody>
     </table>
 
-    @if(!empty($approver[0]->name))
+    @if(!empty($approver->name))
     <div class="signed-note">
         <span>NOTE: THIS DOCUMENT HAS BEEN ELECTRONICALLY SIGNED BY THE APPROVER.</span>
     </div>

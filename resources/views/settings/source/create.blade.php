@@ -40,7 +40,7 @@
                                         @csrf
                                         <!-- Left Element -->
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Supplier</label>
                                                     <input type="text" class="form-control @error('supplier') is-invalid @enderror" name="supplier" id="supplier"
@@ -53,7 +53,20 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="item_name">Item Name</label>
+                                                    <input type="text" class="form-control @error('item_name') is-invalid @enderror" name="item_name" id="item_name"
+                                                        value="{{ old('item_name') }}" required>
+
+                                                    @error('item_name')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Item Code</label>
                                                     <input type="text" class="form-control @error('item_code') is-invalid @enderror" name="item_code" id="item_code"
@@ -359,7 +372,8 @@
             // format number
             $(this).val(function(index, value) {
                 return value
-                .replace(/\D/g, "")
+                // .replace(/\D/g, "")
+                .replace(/[^0-9.]/g, '')
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 ;
             });

@@ -29,6 +29,12 @@ class PCFApproverController extends Controller
                 ->addColumn('done_by', function ($data) {
                     return $data->users->name;
                 })
+                ->addColumn('position', function ($data) {
+                    return $data->users->roles->pluck('name')->first();
+                })
+                ->addColumn('department', function ($data) {
+                    return $data->users->department;
+                })
                 ->addColumn('remarks', function ($data) {
                     return $data->remarks;
                 })

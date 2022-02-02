@@ -50,6 +50,7 @@
                                                     <th>Name</th>
                                                     <th>Email</th>
                                                     <th>User Type</th>
+                                                    <th>Department</th>
                                                     <th>Status</th>
                                                     <th style="text-align: center; vertical-align: middle">Actions</th>
                                                 </tr>
@@ -100,6 +101,7 @@
                     { data: 'name' },
                     { data: 'email' },
                     { data: 'role' },
+                    { data: 'department' },
                     { data: 'status', orderable: false, searchable: false },
                     { data: 'actions', orderable: false, searchable: false }
                 ],

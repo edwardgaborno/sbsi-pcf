@@ -97,6 +97,7 @@
                 serverSide: true,
                 responsive: true,
                 ordering: true,
+                order: [1, 'DESC'],
                 ajax: {
                     url: "{{ route('PCF.list') }}",
                 },
@@ -166,6 +167,8 @@
                 columns: [
                     { data: 'approval_status' },
                     { data: 'done_by' },
+                    { data: 'position' },
+                    { data: 'department' },
                     { data: 'remarks' },
                     { data: 'date' },
                 ],
@@ -251,5 +254,44 @@
                 },
             });
         });
+
+        let pcf_request_id;
+        $('#pcf_dataTable').on('click', '.cancelPcfRequest', function (e) {
+            e.preventDefault();
+            pcf_request_id = $(this).data('id');
+            Swal.fire({
+                title: 'Cancel this PCF request?',
+                text: "This request will be removed permanently",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'GET',
+                        url: '/PCF/ajax/cancel-pcf-request/' + pcf_request_id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    }).done(function(response) {
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Cancelled',
+                            text: 'PCF request has been cancelled successfully.'
+                        })
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
+                    });
+                }
+            })
+        })
     </script>
 @endsection
