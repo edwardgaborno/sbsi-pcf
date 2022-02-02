@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
 use App\Http\Controllers\BundleProductController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\PCFApproverController;
 use App\Http\Controllers\PCFInstitutionController;
 use App\Models\PCFInstitution;
@@ -138,6 +139,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/ajax/enable-institution/{id}', [PCFInstitutionController::class, 'enableInstitution'])->name('.enable_institution');
             Route::get('/ajax/disable-institution/{id}', [PCFInstitutionController::class, 'disableInstitution'])->name('.disable_institution');
         });
+    });
+
+    //settings department
+    Route::prefix('settings/department')->name('settings.department.')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index'])->name('index');
+        Route::post('/', [DepartmentController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
     });
 
 });
