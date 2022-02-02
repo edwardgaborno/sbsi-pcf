@@ -56,7 +56,7 @@ class DepartmentController extends Controller
 
     public function show($id)
     {
-        $department = Department::findOrFail($id, fn () => new JsonResponse(['message' => 'Department not found.'], Response::HTTP_UNPROCESSABLE_ENTITY));
+        $department = Department::where('id', $id)->firstOr(['department'], fn () => new JsonResponse(['message' => 'Department not found.'], Response::HTTP_UNPROCESSABLE_ENTITY));
         return new JsonResponse(['department' => $department->department, 'id' => $department->id], Response::HTTP_OK);
     }
 }
