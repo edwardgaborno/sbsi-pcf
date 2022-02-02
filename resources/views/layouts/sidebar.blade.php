@@ -65,6 +65,11 @@
                         <a class="collapse-item" href="{{ route('settings.institution.index') }}">Institutions</a>
                     </div>
                 @endcan
+
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('settings.department.index') }}">Departments</a>
+                </div>
+                
             </div>
         </li>
     @endcan
