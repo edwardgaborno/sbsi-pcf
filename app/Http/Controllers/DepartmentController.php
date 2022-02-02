@@ -43,10 +43,19 @@ class DepartmentController extends Controller
 
        if ($validator->fails()) return new JsonResponse(['message' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY); 
 
-        $department = Department::create([
-            'department' => $request->department
-        ]);
+        $department = $request->id
+            ? Department::find($request->id)
+            : new Department();
+
+        $department->department = $request->department;
+        $department->save();
 
         return new JsonResponse(['message' => 'Added department successfully.', 'data' => $department], Response::HTTP_CREATED);
+    }
+
+    public function show($id)
+    {
+        $department = Department::find($id);
+        return new JsonResponse(['department' => $department->department, 'id' => $department->id], Response::HTTP_OK);
     }
 }

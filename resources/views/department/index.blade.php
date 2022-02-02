@@ -85,107 +85,119 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('settings.institution.store') }}" method="post">
-                    @csrf
-                    <div class="modal-body">
+                <div class="modal-body">
+                    <div class="row mb-4">
 
-                        <div class="row mb-4">
-
-                            <div class="col-12">
-                                <label>Department</label>
-                                <input type="text" class="form-control" id="department">
-                            </div>
-
+                        <div class="col-12">
+                            <label>Department</label>
+                            <input type="hidden" id="department_id">
+                            <input type="text" class="form-control" id="department">
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="saveDepartment()">Save</button>
-                        </div>
-                </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="saveDepartment()">Save</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-@endpush
+    @endpush
 
-@section('scripts')
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        const callApi = async (method, url, data) => {
-            return axios({
-                method,
-                url,
-                data
-            })
-        }
-
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        })
-
-        const displayMessage = ($type, $message) => {
-            Toast.fire({
-                icon: $type,
-                html: $message
-            })
-        }
-
-
-        const destroyDepartmentTable = () => {
-            $('#department_table').DataTable().clear().destroy()
-        }
-
-        const initDepartmentTable = () => {
-            $('#department_table').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                ajax: {
-                    url: "{!! route('settings.department.index') !!}",
-                },
-                columns: @json($columns)
-            });
-        }
-
-        const saveDepartment = async () => {
-            const department = $('#department').val()
-            const res = await callApi('post', "{!! route('settings.department.store') !!}", {
-                department
-            }).catch(err => {
-                console.error(err.response)
-                const errors = err.response.data.message
-                let errorMessage = '';
-                Object.keys(errors).forEach((key) =>  errorMessage += '<li>' + errors[key] + '</li>')
-
-                return displayMessage('error', errorMessage)
-            })
-
-            if (res.status === 201) {
-                destroyDepartmentTable()
-                initDepartmentTable()
-                $("#add_department_modal").modal('toggle')
-                return displayMessage('success', res.data.message)
+    @section('scripts')
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            const callApi = async (method, url, data) => {
+                return axios({
+                    method,
+                    url,
+                    data
+                })
             }
 
-        }
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
 
-        const addNewDepartment = () => {
-            $('#add_department_modal').modal('show')
-        }
+            const displayMessage = ($type, $message) => {
+                Toast.fire({
+                    icon: $type,
+                    html: $message
+                })
+            }
 
-        const editDepartment = (id) => {
-            alert(id)
-        }
-        initDepartmentTable()
-    </script>
-@endsection
+
+            const destroyDepartmentTable = () => {
+                $('#department_table').DataTable().destroy()
+            }
+
+            const initDepartmentTable = () => {
+                $('#department_table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    ajax: {
+                        url: "{!! route('settings.department.index') !!}",
+                    },
+                    deferRender: true,
+                    columns: @json($columns)
+                });
+            }
+
+            const saveDepartment = async () => {
+                const department = $('#department').val()
+                const id = $('#department_id').val()
+                const res = await callApi('post', "{!! route('settings.department.store') !!}", {
+                    department,
+                    id
+                }).catch(err => {
+                    console.error(err.response)
+                    const errors = err.response.data.message
+                    let errorMessage = '';
+                    Object.keys(errors).forEach((key) => errorMessage += '<li>' + errors[key] + '</li>')
+
+                    return displayMessage('error', errorMessage)
+                })
+
+                if (res.status === 201) {
+                    console.log(res)
+                    destroyDepartmentTable()
+                    initDepartmentTable()
+                    $("#add_department_modal").modal('toggle')
+                    $('#department').val('')
+                    return displayMessage('success', res.data.message)
+                }
+
+            }
+
+            const addNewDepartment = () => {
+                $('#department_id').val('')
+                $('#add_department_modal').modal('show')
+            }
+
+            const editDepartment = async (id) => {
+                const res = await callApi('get', `{!! route('settings.department.index') !!}/show/${id}`).catch(err => {
+                    console.error(err)
+                    return displayMessage('error', 'Whoops, something went wrong')
+                })
+                console.log(res)
+                if (res.status === 200) {
+                    $('#department').val(res.data.department)
+                    $('#department_id').val(res.data.id)
+                    $('#add_department_modal').modal('show')
+                }
+            }
+            initDepartmentTable()
+        </script>
+    @endsection
