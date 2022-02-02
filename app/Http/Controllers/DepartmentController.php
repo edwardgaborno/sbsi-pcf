@@ -11,10 +11,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DepartmentController extends Controller
 {
+    protected $dataTableColumns = [
+        ['data' => 'id'],
+        ['data' => 'department'],
+        ['data' => 'actions'],
+    ];
+
     public function index(Request $request)
     {
-        if ($request->ajax()) {
+        $columns = $this->dataTableColumns;
 
+        if ($request->ajax()) {
             $departments = Department::all();
             return DataTables::of($departments)
                 ->addColumn('actions', function ($data) {
@@ -23,12 +30,6 @@ class DepartmentController extends Controller
                 ->rawColumns(['actions'])
                 ->make(true);
         }
-
-        $columns = [
-            ['data' => 'id'],
-            ['data' => 'department'],
-            ['data' => 'actions'],
-        ];
 
         return view('department.index', [
             'columns' => $columns
