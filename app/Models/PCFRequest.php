@@ -30,9 +30,18 @@ class PCFRequest extends Model implements HasMedia
         return $this->belongsTo(PCFInclusion::class);
     }
 
-    public function status()
+    public function pcfApprover() {
+        return $this->hasMany(PCFApprover::class, 'p_c_f_request_id', 'id');
+    }
+
+    public function institution()
     {
-        return $this->belongsTo(Status::class);
+        return $this->belongsTo(PCFInstitution::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
     public function countDistinct($value)

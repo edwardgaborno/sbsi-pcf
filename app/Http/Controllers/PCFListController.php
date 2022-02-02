@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\PCFList\StorePCFListRequest;
+use App\Models\PCFRequest;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PCFListController extends Controller
 {
@@ -14,12 +16,26 @@ class PCFListController extends Controller
     {
         $this->authorize('pcf_request_store');
 
+        // $checkIfExist = PCFList::where('pcf_no', $request->pcf_no)
+        //                         ->where('rfq_no', $request->rfq_no)
+        //                         ->where('source_id', $request->source_id)
+        //                         ->first();
+
+        // Alert::success('Success', $checkIfExist);
         DB::beginTransaction();
 
         try {
+
             $pcfList = PCFList::create($request->validated() + [
                 'p_c_f_request_id' => $request->p_c_f_request_id,
+                'rfq_no' => 'SAL.01.' . $request->rfq_no,
             ]);
+
+            if ($request->p_c_f_request_id) {
+                $pcfRequest = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $pcfRequest->updated_by = auth()->user()->id;
+                $pcfRequest->save();
+            }
 
             $joins = DB::table('sources')
                     ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
@@ -49,6 +65,14 @@ class PCFListController extends Controller
         $this->authorize('pcf_request_delete');
 
         $pcfList = PCFList::findOrFail($item_id);
+
+        if ($pcfList->p_c_f_request_id !== null) {
+            $pcfRequest = PCFRequest::findOrFail($pcfList->p_c_f_request_id);
+            //update updated_by
+            $pcfRequest->updated_by = auth()->user()->id;
+            $pcfRequest->save();
+        }
+
         $pcfList->delete();
 
         return response()->json(['success' => 'success'], 200);
@@ -63,6 +87,14 @@ class PCFListController extends Controller
                         ->get();
 
             return Datatables::of($PCFList)
+                ->addColumn('bundled_product', function($data) {
+                    if ($data->is_bundled) {
+                        return '<span class="badge badge-primary">Yes</span>';
+                    }
+
+                    return '<span class="badge badge-info">No</span>';
+                    
+                }) 
                 ->addColumn('sales', function ($data) {
                     return number_format($data->sales, 2, '.', ',');
                 })
@@ -78,7 +110,7 @@ class PCFListController extends Controller
                                 <i class="fas fa-trash-alt text-danger"></i></a>';
                     }
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['bundled_product','actions'])
                 ->make(true);
         }
     }
@@ -107,6 +139,22 @@ class PCFListController extends Controller
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
+        }
+    }
+
+    public function checkIfItemIsExist(Request $request)
+    {
+        if ($request->ajax()) {
+            $checkIfExist = PCFList::where('pcf_no', $request->pcf_no)
+                                    ->where('rfq_no', $request->rfq_no)
+                                    ->where('source_id', $request->source_id)->count();
+            if ($checkIfExist) {
+                return response()->json([
+                    'status' => 200,
+                    'is_exist' => true,
+                    'message' => "Item already existed in current item list, Do you want to proceed?",
+                ]);
+            }
         }
     }
 }

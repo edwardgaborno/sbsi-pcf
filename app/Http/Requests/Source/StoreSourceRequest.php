@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Source;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class StoreSourceRequest extends FormRequest
 {
@@ -17,6 +18,31 @@ class StoreSourceRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     * remove commas on numbers to prevent error when saving
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        if (empty($this->cost_of_peripherals)) {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        } else {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -25,6 +51,7 @@ class StoreSourceRequest extends FormRequest
     {
         return [
             'supplier' => 'required|string',
+            'item_name' => 'required|string',
             'item_code' => 'required|string|unique:sources,item_code',
             'description' => 'required|string',
             'unit_price' => 'required|numeric',
@@ -45,6 +72,7 @@ class StoreSourceRequest extends FormRequest
     {
         return [
             'supplier.required' => 'This is a required field.',
+            'item_name.required' => 'This is a required field.',
             'item_code.required' => 'This is a required field.',
             'description.required' => 'This is a required field.',
             'unit_price.required' => 'This is a required field.',

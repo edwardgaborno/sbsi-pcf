@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Status extends Model
+class PCFInstitution extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
 
     public function pcfRequests()

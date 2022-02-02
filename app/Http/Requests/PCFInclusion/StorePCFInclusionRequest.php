@@ -25,6 +25,7 @@ class StorePCFInclusionRequest extends FormRequest
     {
         return [
             'pcf_no' => 'required',
+            'rfq_no' => 'required',
             'source_id' => 'required',
             'serial_no' => 'sometimes|nullable|string',
             'type' => 'required|string',

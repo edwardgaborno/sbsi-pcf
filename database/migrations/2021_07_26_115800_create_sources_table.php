@@ -16,6 +16,7 @@ class CreateSourcesTable extends Migration
         Schema::create('sources', function (Blueprint $table) {
             $table->id();
             $table->string('supplier');
+            $table->string('item_name');
             $table->string('item_code');
             $table->string('description');
             $table->decimal('unit_price', 11, 2);

@@ -89,6 +89,13 @@ class RolesAndPermissionSeeder extends Seeder
             'cfo_reject_pcf',
             'cfo_approve_quotation',
             'cfo_reject_quotation',
+
+            'institution_access',
+            'institution_create',
+            'institution_store',
+            'institution_edit',
+            'institution_update',
+            'institution_show',
         ];
 
         foreach ($permissions as $permission) {
@@ -180,8 +187,8 @@ class RolesAndPermissionSeeder extends Seeder
             'view_approved_quotation',
         ]);
 
-        $cfoRole = Role::create(['name' => 'Sales Assistant']);
-        $cfoRole->givePermissionTo([
+        $salesAssistRole = Role::create(['name' => 'Sales Assistant']);
+        $salesAssistRole->givePermissionTo([
             'pcf_request_access',
             'view_pcf',
             'download_pcf',
@@ -212,6 +219,12 @@ class RolesAndPermissionSeeder extends Seeder
             'source_show',
             'source_delete',
             'source_access',
+            'institution_access',
+            'institution_create',
+            'institution_store',
+            'institution_edit',
+            'institution_update',
+            'institution_show',
         ]);
 
         Role::create(['name' => 'Super Administrator']);

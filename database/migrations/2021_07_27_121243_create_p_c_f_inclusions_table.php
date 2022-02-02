@@ -16,11 +16,11 @@ class CreatePCFInclusionsTable extends Migration
         Schema::create('p_c_f_inclusions', function (Blueprint $table) {
             $table->id();
             $table->string('pcf_no');
+            $table->string('rfq_no');
             $table->foreignId('source_id')
                 ->nullable()
                 ->constrained('sources')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onUpdate('cascade');
             $table->foreignId('p_c_f_request_id')
                 ->nullable()
                 ->constrained('p_c_f_requests')

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\PCFRequest;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\PCFList;
+
 
 class HomeController extends Controller
 {
@@ -14,19 +17,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $pendingRequests = PCFRequest::with('status')
-                    ->where('status_id', 1)
-                    ->count();
+        // $pendingRequests = PCFRequest::with('status')
+        //             ->where('status_id', 1)
+        //             ->count();
 
-        $approvedRequests = PCFRequest::with('status')
-                    ->where('status_id', 6)
-                    ->count();
+        // $approvedRequests = PCFRequest::with('status')
+        //             ->where('status_id', 6)
+        //             ->count();
 
-        $forApprovals = PCFRequest::with('status')
-                    ->whereIn('status_id', [2, 3])
-                    ->count();
+        // $forApprovals = PCFRequest::with('status')
+        //             ->whereIn('status_id', [2, 3])
+        //             ->count();
 
-        return view('home.index', compact('pendingRequests', 'approvedRequests', 'forApprovals'));
+        // return view('home.index', compact('pendingRequests', 'approvedRequests', 'forApprovals'));
+
+        return view('home.index');
     }
 
     /**

@@ -25,6 +25,7 @@ class StorePCFListRequest extends FormRequest
     {
         return [
             'pcf_no' => 'required|string',
+            'rfq_no' => 'required|string',
             'source_id' => 'required',
             'quantity' => 'required|numeric',
             'sales' => 'required|numeric',

@@ -12,10 +12,11 @@
                 @csrf
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label for="source_item_code-i">Item Code</label>
-                        <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $pcf_no }}"> <!-- pcf no -->
-                        
-                        <select name="source_id" id="source_item_code-i" class="form-control @error('source_id') is-invalid @enderror select2" required></select>
+                        <label for="source_item_code-i">Item Name</label>
+                        <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $pcf_no }}"> <!-- pcf no -->                        
+                        <select name="source_id" id="source_item_code-i" class="form-control @error('source_id') is-invalid @enderror select2" required>
+                            <option value="" selected disabled></option>
+                        </select>
 
                         @error('source_id')
                             <span class="invalid-feedback" role="alert">
@@ -56,8 +57,8 @@
                         @enderror
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="sales_add-i">Sales</label>
-                        <input type="number" class="form-control @error('sales') is-invalid @enderror" name="sales" id="sales-i"
+                        <label for="sales_add-i">Selling Price</label>
+                        <input type="text" class="form-control @error('sales') is-invalid @enderror" name="sales" id="sales-i"
                             value="{{ old('sales') }}" required disabled>
 
                         @error('sales')
@@ -90,7 +91,8 @@
                             <th>Item Code</th>
                             <th>Item Description</th>
                             <th>Quantity (Per Year)</th>
-                            <th>Sales</th>
+                            <th>Bundled Product</th>
+                            <th>Selling Price</th>
                             <th>Total Sales</th>
                             <th>Actions</th>
                         </tr> 

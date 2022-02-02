@@ -25,23 +25,34 @@ class UpdatePCFRequestRequest extends FormRequest
     {
         return [
             'pcf_no' => 'required|string',
-            'date' => 'required|date',
-            'institution' => 'nullable|string',
-            'address' => 'nullable|string',
-            'contact_person' => 'nullable|string',
-            'designation' => 'nullable|string',
-            'thru_designation' => 'nullable|string',
+            'rfq_no' => 'required|string',
             'supplier' => 'required|string',
             'terms' => 'required|string',
             'validity' => 'required|string',
             'delivery' => 'required|string',
             'warranty' => 'nullable|string',
-            'contract_duration' => 'required|string',
+            'contract_duration' => 'sometimes|nullable|string',
             'date_bidding' => 'sometimes|nullable|date',
             'bid_docs_price' => 'sometimes|nullable|numeric',
             'manager' => 'required|string',
             'annual_profit' => 'required|numeric',
             'annual_profit_rate' => 'required|numeric'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'pcf_no.required' => 'This is a required field.',
+            'rfq_no.required' => 'This is a required field.',
+            'contact_person.required' => 'This is a required field.',
+            'supplier.required' => 'This is a required field.',
+            'terms.required' => 'This is a required field.',
+            'validity.required' => 'This is a required field.',
+            'delivery.required' => 'This is a required field.',
+            'manager.required' => 'This is a required field.',
+            'annual_profit.required' => 'This is a required field.',
+            'annual_profit_rate.required' => 'This is a required field.',
         ];
     }
 }

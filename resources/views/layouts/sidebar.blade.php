@@ -58,8 +58,13 @@
             </a>
             <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('settings.source.index') }}">Source</a>
+                    <a class="collapse-item" href="{{ route('settings.source.index') }}">Sources</a>
                 </div>
+                @can('institution_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('settings.institution.index') }}">Institutions</a>
+                    </div>
+                @endcan
             </div>
         </li>
     @endcan

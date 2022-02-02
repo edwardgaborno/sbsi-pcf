@@ -8,6 +8,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
 use App\Http\Controllers\BundleProductController;
+use App\Http\Controllers\PCFApproverController;
+use App\Http\Controllers\PCFInstitutionController;
+use App\Models\PCFInstitution;
+use App\Models\PCFRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,9 +60,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/view-quotation/{pcf_no}', [PCFRequestController::class, 'viewQuotation'])->name('.view_quotation');
 
             Route::put('/{p_c_f_request}/upload', [PCFRequestController::class, 'storePCFPdfFile'])->name('.putFile');
-
-            Route::get('/ajax/approve-request/{id}', [PCFRequestController::class, 'ApproveRequest'])->name('.enable');
-            Route::get('/ajax/disapprove-request/{id}', [PCFRequestController::class, 'DisapproveRequest'])->name('.disable');
+            
+            Route::post('/ajax/approve-pcf-request', [PCFRequestController::class, 'approvePcfRequest'])->name('.approve_pcf_request');
+            Route::post('/ajax/disapprove-pcf-request', [PCFRequestController::class, 'disapprovePcfRequest'])->name('.disapprove_pcf_request');
+            Route::get('/ajax/view-pcf-approvals/{id}', [PCFApproverController::class, 'index'])->name('.view_pcf_approvals');
+            Route::get('/ajax/cancel-pcf-request/{id}', [PCFRequestController::class, 'cancelPcfRequest'])->name('.cancel_pcf_request');
         });
     });
 
@@ -66,12 +72,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('PCF.sub')->group(function () {
         Route::name('PCF.sub')->group(function () {
             Route::get('/ajax/item-list/{pcf_no}', [PCFListController::class, 'pcfItemList'])->name('.item_list');
+            Route::get('/ajax/check-item/{pcf_no?}/{rfq_no?}/{source_id?}', [PCFListController::class, 'checkIfItemIsExist'])->name('.check_if_item_exist');
             Route::post('/ajax/count/{pcf_no}', [PCFListController::class, 'pcfItemCount'])->name('.item_count');
             Route::post('/store-items', [PCFListController::class, 'store'])->name('.store_items');
             Route::delete('/ajax/delete/pcf-list/{item_id}', [PCFListController::class, 'destroy'])->name('.destroy_item');
 
             Route::get('/ajax/foc-list/{pcf_no}', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
             Route::post('/store-foc', [PCFInclusionController::class, 'store'])->name('.store_foc');
+            Route::get('/ajax/check-inclusion/{pcf_no?}/{rfq_no?}/{source_id?}', [PCFInclusionController::class, 'checkIfInclusionIsExist'])->name('.check_if_inclusion_exist');
             Route::delete('/ajax/delete/pcf-foc/{foc_id}', [PCFInclusionController::class, 'destroy'])->name('.destroy_foc');
 
             Route::get('/ajax/bundled/item-list/{item_id}', [BundleProductController::class, 'pcfItemBundledProductLists'])->name('.bundled_item_lists');
@@ -113,6 +121,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/source/web/search/', [SourceController::class, 'sourceSearch'])->name('.source_search');
             Route::get('/get-details/source={source_id}', [SourceController::class, 'sourceDetails'])->name('.source_details');
             Route::get('/get-description/source={source_id}', [SourceController::class, 'sourceDescription'])->name('.source_description');
+
+            Route::get('/ajax/get-source-list', [SourceController::class, 'getSources'])->name('.source_list');
+        });
+    });
+
+    // settings/Institution
+    Route::prefix('settings.institution')->group(function () {
+        Route::name('settings.institution')->group(function () {
+            Route::get('/', [PCFInstitutionController::class, 'index'])->name('.index');
+            Route::post('/store', [PCFInstitutionController::class, 'store'])->name('.store');
+            Route::get('/get-institution-details/{institution_id}', [PCFInstitutionController::class, 'edit'])->name('.edit');
+            Route::put('/update', [PCFInstitutionController::class, 'update'])->name('.update');
+            Route::get('/ajax/institution-list', [PCFInstitutionController::class, 'show'])->name('.list');
+            Route::get('/ajax/get-institutions-dropdown', [PCFInstitutionController::class, 'getInstitutionsForDropdown'])->name('.institution_list');
+            Route::get('/ajax/enable-institution/{id}', [PCFInstitutionController::class, 'enableInstitution'])->name('.enable_institution');
+            Route::get('/ajax/disable-institution/{id}', [PCFInstitutionController::class, 'disableInstitution'])->name('.disable_institution');
         });
     });
 

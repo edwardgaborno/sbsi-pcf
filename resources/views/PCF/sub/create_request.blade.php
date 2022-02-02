@@ -54,7 +54,6 @@
                             <div class="card-body">
                                 <form action="{{ route('PCF.store') }}" method="post">
                                     @csrf
-                                    <!-- Left Element -->
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label for="pcf_no">PCF No.</label>
@@ -68,11 +67,11 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label for="date">Date</label>
-                                            <input type="date" class="form-control @error('date') is-invalid @enderror" name="date" id="date"
-                                                value="{{ \Carbon\Carbon::now()->toDateString() }}" required readonly>
+                                            <label for="pcf_no">RFQ No.</label>
+                                            <input type="text" class="form-control @error('rfq_no') is-invalid @enderror" name="rfq_no" id="rfq_no"
+                                                value="{{ old('rfq_no', $rfq_no) }}" required readonly>
 
-                                            @error('date')
+                                            @error('rfq_no')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -82,19 +81,20 @@
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label for="institution">Institution</label>
-                                            <textarea class="form-control @error('institution') is-invalid @enderror" name="institution" id="institution" cols="5"
-                                                rows="3" required>{{ old('institution') }}</textarea>
-
+                                            <select name="institution_id" id="institution" class="form-control @error('institution') is-invalid @enderror select2" required>
+                                                <option value="" selected disabled></option>
+                                            </select>
+                    
                                             @error('institution')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                            @enderror
+                                            @enderror 
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="address">Address</label>
                                             <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" cols="5"
-                                                rows="3">{{ old('address') }}</textarea>
+                                                rows="3" disabled>{{ old('address') }}</textarea>
 
                                             @error('address')
                                                 <span class="invalid-feedback" role="alert">
@@ -107,7 +107,7 @@
                                         <div class="form-group col-md-4">
                                                 <label for="contact_person">Contact Person</label>
                                                 <input type="text" class="form-control @error('contact_person') is-invalid @enderror" name="contact_person" id="contact_person"
-                                                    value="{{ old('contact_person') }}" required>
+                                                    value="{{ old('contact_person') }}" required disabled>
 
                                                 @error('contact_person')
                                                     <span class="invalid-feedback" role="alert">
@@ -118,7 +118,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="designation">Designation</label>
                                             <input type="text" class="form-control @error('designation') is-invalid @enderror" name="designation" id="designation"
-                                                value="{{ old('designation') }}">
+                                                value="{{ old('designation') }}" disabled>
 
                                             @error('designation')
                                                 <span class="invalid-feedback" role="alert">
@@ -129,7 +129,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="thru_duration_contract">Thru Designation</label>
                                             <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="thru_duration_contract"
-                                                value="{{ old('thru_designation') }}">
+                                                value="{{ old('thru_designation') }}" disabled>
 
                                             @error('thru designation')
                                                 <span class="invalid-feedback" role="alert">
@@ -201,7 +201,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="contract_duration">Duration of Contract</label>
                                             <input type="number" class="form-control @error('contract_duration') is-invalid @enderror" name="contract_duration" id="contract_duration"
-                                                value="{{ old('contract_duration') }}" required>
+                                                value="{{ old('contract_duration') }}">
 
                                             @error('contract_duration')
                                                 <span class="invalid-feedback" role="alert">
@@ -344,6 +344,7 @@
                 { data: 'source.item_code' },
                 { data: 'source.description' },
                 { data: 'quantity' },
+                { data: 'bundled_product' },
                 { data: 'sales' },
                 { data: 'total_sales' },
                 { data: 'actions' },
@@ -352,20 +353,81 @@
         getGrandTotal();
     });
 
-    //start of select2 function -- item_code
-    $(function () {
-        $('#source_item_code-i').select2({
-            width: "100%",
-            allowClear: true,
-            minimumInputLength: 3,
-            placeholder: 'Item code',
-            ajax: {
-                delay: 250,
-                url: '{{ route("settings.source.source_search") }}',
+    var data = [];
+
+    function getSources () {
+        $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.source/ajax/get-source-list',
+                contentType: "application/json; charset=utf-8",
+                cache: false,
                 dataType: 'json',
-            },
-        });
-    });
+            }).done(function(res) {
+                data = res.data;
+
+                $("#source_item_code-i").select2({
+                    data: data,
+                    width: "100%",
+                    allowClear: true,
+                    placeholder: 'Item name',
+                });
+
+                $("#source_item_code-foc").select2({
+                    data: data,
+                    width: "100%",
+                    allowClear: true,
+                    placeholder: 'Item name',
+                });
+
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+    }
+
+    function getInstitutions() {
+        $.ajax({
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/settings.institution/ajax/get-institutions-dropdown',
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                dataType: 'json',
+            }).done(function(res) {
+                data = res.data;
+                $("#institution").select2({
+                    data: data,
+                    width: "100%",
+                    allowClear: true,
+                    placeholder: 'Institution',
+                });
+
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+    }
+
+    getSources();
+    getInstitutions();
+
+    //start of select2 function -- item_code
+    // $(function () {
+    //     $('#source_item_code-i').select2({
+    //         width: "100%",
+    //         allowClear: true,
+    //         minimumInputLength: 1,
+    //         placeholder: 'Item code',
+    //         ajax: {
+    //             delay: 250,
+    //             url: '{{ route("settings.source.source_search") }}',
+    //             dataType: 'json',
+    //         },
+    //     });
+    // });
 
     $('#source_item_code-i').on('select2:select', function (e) {
         var data = e.params.data;
@@ -401,6 +463,14 @@
         }
     });
 
+    $('#institution').on('select2:select', function (e) {
+        var data = e.params.data;
+        document.getElementById("address").value = data.address;
+        document.getElementById("contact_person").value = data.contact_person;    
+        document.getElementById("designation").value = data.designation;    
+        document.getElementById("thru_duration_contract").value = data.thru_designation;
+    });
+
     $( "#source_item_code-i" ).on('change', function(e) {
         clearItemInputs();
         document.getElementById("quantity-i").disabled = true;
@@ -415,10 +485,57 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+            url: "{{ route('PCF.sub.check_if_item_exist') }}",
+            method:'GET',
+            data: {
+                pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("pcf_no").value,
+                source_id: document.getElementById("source_item_code-i").value,
+            },
+            success: function(response) {
+                console.log(response);
+                if (response.is_exist == true) {
+                    Swal.fire({
+                        title: 'Item already exist',
+                        text: "Do you want to proceed?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Confirm'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            saveItemList();
+                            clearItemInputs();
+                        }
+                    })
+                } else {
+                    saveItemList();
+                    clearItemInputs();
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                clearItemInputs();
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops! Something went wrong.',
+                    text: 'Please contact your system administrator.'
+                })
+            },
+        });
+    });
+
+    function saveItemList() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             url: "{{ route('PCF.sub.store_items') }}",
             method:'POST',
             data: {
                 pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("pcf_no").value,
                 source_id: document.getElementById("source_item_code-i").value,
                 quantity: document.getElementById("quantity-i").value,
                 sales: document.getElementById("sales-i").value,
@@ -450,7 +567,7 @@
                 })
             },
         });
-    });
+    }
 
     const element = document.querySelectorAll('#sales-i, #quantity-i');
     element.forEach(i => {
@@ -482,15 +599,14 @@
             var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
         } 
         else if (parseInt(currency_rate) == 1 && cost_of_peripherals == '') {
-            var opex = transfer_price * 1.13 + 0;
+            var opex = transfer_price * 1.15 + 0;
         }
         else if (parseInt(currency_rate) !== 1 && cost_of_peripherals !== '') {
-            var opex = transfer_price * 1.15 + parseFloat(cost_of_peripherals);
-        } 
-        else {
+            var opex = transfer_price * 1.3 + parseFloat(cost_of_peripherals);
+        }
+        else if (parseInt(currency_rate) !== 1 && cost_of_peripherals == '') {
             var opex = transfer_price * 1.3 + 0;
         }
-
         $("#opex-i").val(opex.toFixed(2));
     }
 
@@ -626,20 +742,20 @@
         getGrandTotal();
     });
 
-    //start of select2 function -- machine item code;
-    $(function () {
-        $('#source_item_code-foc').select2({
-            width: "100%",
-            allowClear: true,
-            minimumInputLength: 3,
-            placeholder: 'Item code',
-            ajax: {
-                delay: 250,
-                url: '{{ route("settings.source.source_search") }}',
-                dataType: 'json',
-            },
-        });
-    });
+    // //start of select2 function -- machine item code;
+    // $(function () {
+    //     $('#source_item_code-foc').select2({
+    //         width: "100%",
+    //         allowClear: true,
+    //         minimumInputLength: 3,
+    //         placeholder: 'Item code',
+    //         ajax: {
+    //             delay: 250,
+    //             url: '{{ route("settings.source.source_search") }}',
+    //             dataType: 'json',
+    //         },
+    //     });
+    // });
 
     $('#source_item_code-foc').on('select2:select', function (e) {
         var data = e.params.data;
@@ -683,10 +799,57 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+            url: "{{ route('PCF.sub.check_if_inclusion_exist') }}",
+            method:'GET',
+            data: {
+                pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("pcf_no").value,
+                source_id: document.getElementById("source_item_code-foc").value,
+            },
+            success: function(response) {
+                console.log(response);
+                if (response.is_exist == true) {
+                    Swal.fire({
+                        title: 'Inclusion already exist',
+                        text: "Do you want to proceed?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Confirm'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            saveInclusionList();
+                            clearItemInputs();
+                        }
+                    })
+                } else {
+                    saveInclusionList();
+                    clearItemInputs();
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                clearItemInputs();
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Oops! Something went wrong.',
+                    text: 'Please contact your system administrator.'
+                })
+            },
+        });
+    });
+
+    function saveInclusionList() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             url: "{{ route('PCF.sub.store_foc') }}",
             method:'POST',
             data: {
                 pcf_no: document.getElementById("pcf_no").value,
+                rfq_no: document.getElementById("rfq_no").value,
                 source_id: document.getElementById("source_item_code-foc").value,
                 serial_no: document.getElementById("serial_no-foc").value,
                 type: document.getElementById("type-foc").value,
@@ -716,7 +879,7 @@
                 })
             },
         });
-    });
+    }
 
     //FOC Opex Function
     function calculateOpexFOC()
@@ -881,6 +1044,7 @@
                         document.getElementById("quantity_bundle").value = "";
 
                         $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                        $('#pcfItem_datatable').DataTable().ajax.reload();
 
                         Toast.fire({
                             icon: 'success',
@@ -894,6 +1058,7 @@
                         document.getElementById("quantity_bundle").value = "";
 
                         $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                        $('#pcfItem_datatable').DataTable().ajax.reload();
 
                         Toast.fire({
                             icon: 'error',
@@ -969,6 +1134,7 @@
                             url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
                         }).done(function(response) {
                             $('#pcfItemBundle_datatable').DataTable().ajax.reload();
+                            $('#pcfItem_datatable').DataTable().ajax.reload();
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Removed',
@@ -1038,7 +1204,7 @@
                         document.getElementById("machine_quantity_bundle").value = "";
 
                         $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
-
+                        $('#pcfFOC_dataTable').DataTable().ajax.reload();
                         Toast.fire({
                             icon: 'success',
                             title: 'Added',
@@ -1126,6 +1292,7 @@
                             url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
                         }).done(function(response) {
                             $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
+                            $('#pcfFOC_dataTable').DataTable().ajax.reload();
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Removed',
