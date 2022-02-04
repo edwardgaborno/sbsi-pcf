@@ -13,6 +13,7 @@ use App\Http\Controllers\PCFApproverController;
 use App\Http\Controllers\PCFInstitutionController;
 use App\Models\PCFInstitution;
 use App\Models\PCFRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -130,14 +131,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // settings/Institution
     Route::prefix('settings.institution')->group(function () {
         Route::name('settings.institution')->group(function () {
+            # get #########################################################################################################################################
             Route::get('/', [PCFInstitutionController::class, 'index'])->name('.index');
-            Route::post('/store', [PCFInstitutionController::class, 'store'])->name('.store');
             Route::get('/get-institution-details/{institution_id}', [PCFInstitutionController::class, 'edit'])->name('.edit');
-            Route::put('/update', [PCFInstitutionController::class, 'update'])->name('.update');
             Route::get('/ajax/institution-list', [PCFInstitutionController::class, 'show'])->name('.list');
             Route::get('/ajax/get-institutions-dropdown', [PCFInstitutionController::class, 'getInstitutionsForDropdown'])->name('.institution_list');
             Route::get('/ajax/enable-institution/{id}', [PCFInstitutionController::class, 'enableInstitution'])->name('.enable_institution');
             Route::get('/ajax/disable-institution/{id}', [PCFInstitutionController::class, 'disableInstitution'])->name('.disable_institution');
+            # put #########################################################################################################################################
+            Route::put('/update', [PCFInstitutionController::class, 'update'])->name('.update');
+            # post #########################################################################################################################################
+            Route::post('/store', [PCFInstitutionController::class, 'store'])->name('.store');
+            Route::post('/store-address', [PCFInstitutionController::class, 'storeAddress'])->name('.store_address');
+            Route::post('/get-institution-data', [PCFInstitutionController::class, 'getInsitutionData'])->name('.instituion.data');
+
         });
     });
 

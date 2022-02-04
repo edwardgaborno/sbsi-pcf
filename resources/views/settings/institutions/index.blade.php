@@ -1,30 +1,30 @@
 @extends('layouts.app')
-@section('title','PCF - Institution List')
+@section('title', 'PCF - Institution List')
 
 @section('content')
-<div id="wrapper">
+    <div id="wrapper">
 
-    <!-- Sidebar -->
-    @include('layouts.sidebar')
-    <!-- End of Sidebar -->
+        <!-- Sidebar -->
+        @include('layouts.sidebar')
+        <!-- End of Sidebar -->
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
-        <div id="content">
+            <!-- Main Content -->
+            <div id="content">
 
-            <!-- Topbar -->
-            @include('layouts.navbar')
-            <!-- End of Topbar -->
+                <!-- Topbar -->
+                @include('layouts.navbar')
+                <!-- End of Topbar -->
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
 
-                <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Institution List</h1>
-                </div>
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Institution List</h1>
+                    </div>
 
                     <!-- Content Row -->
                     <div class="row">
@@ -40,11 +40,11 @@
                                         @endcan
                                     </div>
                                 </div>
-                                @if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
+                                @if (auth()->user()->hasRole('Administrator') ||
+    auth()->user()->hasRole('Super Administrator'))
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-hover table-striped dt-responsive" id="institution-datatable" width="100%"
-                                                cellspacing="0">
+                                            <table class="table table-hover table-striped dt-responsive" id="institution-datatable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr class="thead-dark">
                                                         <th>ID</th>
@@ -67,25 +67,89 @@
                         </div>
                     </div>
                     <!-- Content Row -->
+                </div>
+                <!-- /.container-fluid -->
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
+            <!-- Modal Component -->
+            @include('modals.institutions.create')
+            @include('modals.institutions.edit')
+            <!-- End of Modal Component -->
+            <!-- Footer -->
+            @include('layouts.footer')
+            <!-- End of Footer -->
         </div>
-        <!-- End of Main Content -->
-        <!-- Modal Component -->
-        @include('modals.institutions.create')
-        @include('modals.institutions.edit')
-        <!-- End of Modal Component -->
-        <!-- Footer -->
-        @include('layouts.footer')
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
     </div>
-    <!-- End of Content Wrapper -->
-</div>
-<!-- End of Page Wrapper -->
+    <!-- End of Page Wrapper -->
 @endsection
+
+@push('modals')
+    <div class="modal fade" id="add_address_modal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3 id="_institution" class="text-center text-dark"></h3>
+
+                    <div class="row mt-2">
+                        <input type="hidden" class="institution_id">
+                        <div class="col-12" id="_address"></div>
+                        <div class="col-12">
+                            <input type="text" class="form-control address">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAddress()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endpush
 
 @section('scripts')
     <script>
+        const institution = document.querySelector('#_institution')
+        const _address = document.querySelector('#_address')                
+        const _institution_id = document.querySelector('.institution_id')
+
+        const addAddress = async (id) => {
+            const res = await callApi('post', "{!! route('settings.institution.instituion.data') !!}", {id})
+            if (res.status === 200) {
+                const data = res.data.data
+                const addresses = res.data.data.addresses
+                let textarea = ''
+
+                institution.innerText = res.data.data.institution
+                _institution_id.value = id
+                addresses.map(el => {
+                    textarea += `<textarea rows="2" class="form-control" readonly>${el.address}</textarea><br />`
+                })
+                _address.innerHTML = textarea
+                $('#add_address_modal').modal('show')
+            }
+        }
+
+        const saveAddress = async () => {
+            const address = document.querySelector('.address').value
+            const institution_id = document.querySelector('.institution_id').value
+            const res = await callApi('post', "{!! route('settings.institution.store_address') !!}", {address, institution_id})
+                .catch(err => displayMessage('error', 'Error!', err.response.data.message))
+                
+            if (res.status === 201) {
+                $('#add_address_modal').modal('toggle')
+                document.querySelector('.address').value = ''
+                return displayMessage('success', 'Success!', res.data.message)
+            }
+        }
+
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -113,25 +177,43 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                 },
-                columns: [
-                    { data: 'id' },
-                    { data: 'institution' },
-                    { data: 'address' },
-                    { data: 'contact_person' },
-                    { data: 'designation' },
-                    { data: 'thru_designation' },
-                    { data: 'status', orderable: false },
-                    { data: 'actions', orderable: false, searchable: false }
+                columns: [{
+                        data: 'id'
+                    },
+                    {
+                        data: 'institution'
+                    },
+                    {
+                        data: 'address'
+                    },
+                    {
+                        data: 'contact_person'
+                    },
+                    {
+                        data: 'designation'
+                    },
+                    {
+                        data: 'thru_designation'
+                    },
+                    {
+                        data: 'status',
+                        orderable: false
+                    },
+                    {
+                        data: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
                 ],
             });
         });
 
         let institution_id;
 
-        $('#institution-datatable').on('click', '.edit-institution-modal', function (e) {
+        $('#institution-datatable').on('click', '.edit-institution-modal', function(e) {
             e.preventDefault();
             institution_id = $(this).data('id');
-            if (institution_id){
+            if (institution_id) {
                 $.ajax({
                     method: 'GET',
                     headers: {
@@ -159,18 +241,18 @@
             }
         })
 
-        $('#institution-datatable').on('click', '.enable-institution', function (e) {
+        $('#institution-datatable').on('click', '.enable-institution', function(e) {
             e.preventDefault();
             institution = $(this).data('id');
-            if (institution){
+            if (institution) {
                 enableInstitution(institution);
             }
         });
 
-        $('#institution-datatable').on('click', '.disable-institution', function (e) {
+        $('#institution-datatable').on('click', '.disable-institution', function(e) {
             e.preventDefault();
             institution = $(this).data('id');
-            if (institution){
+            if (institution) {
                 disableInstitution(institution);
             }
         });
@@ -258,6 +340,5 @@
         @elseif($errors->has('institution'))
             $('#add-institution-modal').modal('show');
         @endif
-
     </script>
 @endsection

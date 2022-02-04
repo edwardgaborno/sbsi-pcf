@@ -107,16 +107,7 @@
     @endpush
 
     @section('scripts')
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
-            const callApi = async (method, url, data) => {
-                return axios({
-                    method,
-                    url,
-                    data
-                })
-            }
-
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',

@@ -10,6 +10,13 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\Institutions\StoreInstitutionRequest;
 use App\Http\Requests\Institutions\UpdateInstitutionRequest;
 use App\Http\Resources\InstitutionResource;
+use App\Models\PCFAddress;
+use App\Models\PCFInstitutionAddress;
+use Illuminate\Support\Facades\Auth;
+use DataTable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class PCFInstitutionController extends Controller
 {
@@ -18,11 +25,44 @@ class PCFInstitutionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('institution_access');
-        
         return view('settings.institutions.index');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInsitutionData(Request $request): JsonResponse {
+        if ($request->wantsJson()) {
+            $data = PCFInstitution::with('addresses')->whereHas('addresses', function (Builder $query) use ($request) {
+                $query->where('p_c_f_institution_addresses.institution_id', $request->id);
+            })
+                ->first();
+            return new JsonResponse(['data' => $data, 'message' => 'Retrieve successfully.'], Response::HTTP_OK);
+        }
+        return new JsonResponse(['message' => 'Whoops, something went wrong,'], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * Store a newly created resource in table of addresses.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeAddress(Request $request): JsonResponse {
+        try {
+            return DB::transaction(function () use ($request) {
+                $address = PCFAddress::create(['address' => $request->address]);
+                $address->institution()->sync(['institution_id' => $request->institution_id]);
+                return new JsonResponse(['message' => 'Store address successfully.', 'data' => $address], Response::HTTP_CREATED);
+            });
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     /**
@@ -45,22 +85,22 @@ class PCFInstitutionController extends Controller
     {
         $this->authorize('institution_store');
 
-        DB::beginTransaction();
-
         try {
+            //modern way for transactional database query will rollback all queries automatically once failed.
+            return DB::transaction(function () use ($request) { 
+                $institution = PCFInstitution::create($request->validated());
+                $address = PCFAddress::create([
+                    'address' => $request->address
+                ]);
+                $institution->addresses()->sync(['address_id' => $address->id,]);
+                Alert::success('Success', 'Institution has been added');
 
-            $dd = PCFInstitution::create($request->validated());
-            DB::commit();
-
-            Alert::success('Success', 'Institution has been added');
-
+                return redirect()->route('settings.institution.index');
+            });
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
+            return redirect()->route('settings.institution.index');
         }
-        catch (\Throwable $th) {
-            DB::rollBack();
-            Alert::error('Error', 'Something went wrong! please contact your system administrator.');
-        }
-
-        return redirect()->route('settings.institution.index');
     }
 
     public function getInstitutionsForDropdown()
@@ -83,30 +123,30 @@ class PCFInstitutionController extends Controller
             $instituions = PCFInstitution::orderBy('id', 'DESC')->get();
 
             return Datatables::of($instituions)
-                ->addColumn('status', function($data) {
+                ->addColumn('status', function ($data) {
                     if ($data->is_active == 1) {
                         return '<span class="badge badge-success">Active</span>';
                     }
 
                     return '<span class="badge badge-danger">Inactive</span>';
-                    
                 })
                 ->addColumn('actions', function ($data) {
-                    if(auth()->user()->can('institution_edit')) {
+                    if (auth()->user()->can('institution_edit')) {
                         if ($data->is_active == 1) {
                             return '<a href="javascript:void(0);" class="badge badge-info edit-institution-modal" data-toggle="modal"
-                                        data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>
+                                        data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
                                     <a href="javascript:void(0);" class="badge badge-danger disable-institution"
-                                        data-id="'. $data->id .'"><i class="fas fa-ban"></i> Disable</a>';
+                                        data-id="' . $data->id . '"><i class="fas fa-ban"></i> Disable</a>
+                                    <a href="javascript:void(0)" class="badge badge-success" onclick="addAddress(' . $data->id . ')"><i class="fas fa-plus"></i> Add Address</a>';
                         }
 
                         return '<a href="javascript:void(0);" class="badge badge-info edit-institution-modal" data-toggle="modal"
-                                        data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>
+                                        data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
                                     <a href="javascript:void(0);" class="badge badge-success enable-institution"
-                                        data-id="'. $data->id .'"><i class="far fa-check-circle"></i> Enable</a>';
+                                        data-id="' . $data->id . '"><i class="far fa-check-circle"></i> Enable</a>';
                     }
                 })
-                ->rawColumns(['status','actions'])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
     }
@@ -120,7 +160,7 @@ class PCFInstitutionController extends Controller
     public function edit($institution_id)
     {
         $this->authorize('institution_access');
-        
+
         $institution = PCFInstitution::find($institution_id);
 
         if (!$institution) {
@@ -146,13 +186,11 @@ class PCFInstitutionController extends Controller
         try {
             $institution = PCFInstitution::findOrFail($request->institution_id);
             $institution->update($request->validated());
-            
+
             DB::commit();
 
             Alert::success('Success', 'Institution has been updated');
-
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             DB::rollBack();
             Alert::error('Error', 'Something went wrong! please contact your system administrator.');
         }

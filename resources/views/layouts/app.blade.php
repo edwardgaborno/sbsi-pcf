@@ -16,6 +16,8 @@
         <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
         <link href="{{ asset('dist/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/r-2.2.9/datatables.min.css"/>
+        <script src="{{ mix('js/app.js') }}" defer></script>
+        <script src="{{ mix('js/api.js') }}" defer></script>
         @stack('styles')
         <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     </head>
