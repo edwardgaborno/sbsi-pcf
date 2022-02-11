@@ -15,19 +15,30 @@ class CreateSourcesTable extends Migration
     {
         Schema::create('sources', function (Blueprint $table) {
             $table->id();
-            $table->string('supplier');
-            $table->string('item_name');
+            $table->foreignId('supplier_id')
+                ->nullable()
+                ->constrained('suppliers')
+                ->onUpdate('cascade');
             $table->string('item_code');
             $table->string('description');
             $table->decimal('unit_price', 11, 2);
             $table->decimal('currency_rate');
             $table->decimal('tp_php', 12, 2);
-            $table->string('item_group')->nullable();
-            $table->string('uom')->nullable();
-            $table->string('mandatory_peripherals')->nullable();
+            $table->decimal('tp_php_less_tax', 12, 2);
+            $table->foreignId('uom_id')
+                ->nullable()
+                ->constrained('unit_of_measurements')
+                ->onUpdate('cascade');
+            // $table->string('mandatory_peripherals')->nullable();
             $table->decimal('cost_of_peripherals', 11, 2)->nullable();
-            $table->string('segment')->nullable();
-            $table->string('item_category')->nullable();
+            $table->foreignId('segment_id')
+            ->nullable()
+            ->constrained('segments')
+            ->onUpdate('cascade');
+            $table->foreignId('item_category_id')
+                ->nullable()
+                ->constrained('item_categories')
+                ->onUpdate('cascade');
             $table->decimal('standard_price', 11, 2);
             $table->string('profitability');
             $table->timestamps();

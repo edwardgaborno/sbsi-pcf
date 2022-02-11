@@ -49,13 +49,11 @@
                                                 <tr class="thead-dark">
                                                     <th>ID</th>
                                                     <th>Supplier</th>
-                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                     <th>Unit Price</th>
                                                     <th>Currency Rate</th>
                                                     <th>Total Price (Php)</th>
-                                                    <th>Item Group</th>
                                                     <th>UOM</th>
                                                     <th>Mandatory Peripherals</th>
                                                     <th>Cost Of Peripherals</th>
@@ -80,7 +78,6 @@
                                             <thead>
                                                 <tr class="thead-dark">
                                                     <th>Supplier</th>
-                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                 </tr>
@@ -142,7 +139,6 @@
                 },
                 columns: [
                     { data: 'supplier' },
-                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                 ],
@@ -166,13 +162,11 @@
                 columns: [
                     { data: 'id' },
                     { data: 'supplier' },
-                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                     { data: 'unit_price' },
                     { data: 'currency_rate' },
                     { data: 'tp_php' },
-                    { data: 'item_group' },
                     { data: 'uom' },
                     { data: 'mandatory_peripherals' },
                     { data: 'cost_of_peripherals' },
@@ -208,7 +202,6 @@
                     $('#editSourceModal').modal('show');
                     $('#edit_source_id').val(data.id);
                     $('#edit_supplier').val(data.supplier);
-                    $('#edit_item_name').val(data.item_name);
                     $('#edit_item_code').val(data.item_code);
                     $('#edit_description').val(data.description);
                     $('#edit_unit_price').val(unit_price);

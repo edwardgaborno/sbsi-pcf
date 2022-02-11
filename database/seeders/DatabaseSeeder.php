@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Segment;
+use App\Models\Supplier;
+use App\Models\UnitOfMeasurement;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +20,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionSeeder::class,
             UserSeeder::class,
+            ItemCategorySeeder::class,
+            MandatoryPeripheralsCategorySeeder::class,
+            SegmentSeeder::class,
+            UnitOfMeasurementSeeder::class,
+            SupplierSeeder::class,
         ]);
     }
 }

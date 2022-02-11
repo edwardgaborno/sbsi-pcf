@@ -23,7 +23,7 @@
     @can('pcf_request_access')
     <li class="nav-item">
         <a class="nav-link" href="{{ route('PCF.index') }}">
-            <i class="fas fa-list"></i>
+            <i class="fas fa-file-contract"></i>
             <span>PCF Request</span></a>
     </li>
     @endcan
@@ -39,17 +39,45 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="{{ route('users.index') }}">Users</a>
                 </div>
-                <div class="bg-white py-2 collapse-inner rounded">
+                {{-- <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="#">Roles</a>
                 </div>
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="#">Permissions</a>
+                </div> --}}
+            </div>
+        </li>
+    @endcan
+    @can('business_partner_access')
+        <!-- Nav Item - Setting user management Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#business_partner" aria-expanded="true"
+                aria-controls="manageUsers">
+                <i class="fas fa-industry"></i>
+                <span>Business Partner</span>
+            </a>
+            <div id="business_partner" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                @can('supplier_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('business_partners.supplier.index') }}">Supplier</a>
+                    </div>
+                @endcan
+                @can('institution_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('settings.institution.index') }}">Institution</a>
+                    </div>
+                @endcan
+                {{-- <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="#">Roles</a>
                 </div>
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="#">Permissions</a>
+                </div> --}}
             </div>
         </li>
     @endcan
     <!-- Nav Item - Setting Source Menu -->
-    @can('pcf_source_access')
+    @can('settings_access')
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#settings" aria-expanded="true"
                 aria-controls="settings">
@@ -57,19 +85,26 @@
                 <span>Settings</span>
             </a>
             <div id="settings" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('settings.source.index') }}">Sources</a>
-                </div>
-                @can('institution_access')
+                @can('source_access')
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('settings.institution.index') }}">Institutions</a>
+                        <a class="collapse-item" href="{{ route('settings.source.index') }}">Source</a>
                     </div>
                 @endcan
-
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('settings.department.index') }}">Departments</a>
-                </div>
-                
+                @can('department_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('settings.department.index') }}">Department</a>
+                    </div>
+                @endcan
+                @can('price_management_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('settings.profitability_percentage.index') }}">Profitability Percentage</a>
+                    </div>
+                @endcan
+                @can('mandatory_peripherals_access')
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('settings.mandatory_peripheral.index') }}">Mandatory Peripheral</a>
+                    </div>
+                @endcan
             </div>
         </li>
     @endcan

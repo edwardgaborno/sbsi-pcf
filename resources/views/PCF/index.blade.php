@@ -158,6 +158,7 @@
                 serverSide: true,
                 responsive: true,
                 ordering: true,
+                order: [5 , 'DESC'],
                 ajax: {
                     headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

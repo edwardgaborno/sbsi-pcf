@@ -164,13 +164,17 @@ class PCFRequestController extends Controller
 
                     $userApproved = PCFApprover::where('p_c_f_request_id', $data->id)->where('done_by', auth()->user()->id)->where('approval_status', 1)->max('id');
                     $userDisapproved = PCFApprover::where('p_c_f_request_id', $data->id)->where('done_by', auth()->user()->id)->where('approval_status', 0)->max('id');
-
+                    // $maxDisapprover = PCFApprover::where('p_c_f_request_id', $data->id)->where('done_by', '!=', auth()->user()->id)->where('approval_status', 0)->max('id');
+                    // return $userApproved;
                     //with document uploaded
                     $uploadPcf = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
                                     <i class="fas fa-upload"></i> Upload Approved PCF</a>
+                                <a target="_blank" href="#" class="badge badge-danger cancelPcfRequest" data-id="'.$data->id.'"
+                                    rel="noopener noreferrer"> Cancel Request </a>
                                 <a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
-                                    $uploadedPcfView = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
+
+                    $uploadedPcfView = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" 
                                     rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
 
                     $uploadedPcfwEditView = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info">
@@ -283,13 +287,17 @@ class PCFRequestController extends Controller
                         if (\Auth::user()->roles->pluck('name')->first() == 'PSR') {
                             if (!empty($data->pcf_document)) {
                                 if (($data->is_cfo_approved !== null && $data->is_cfo_approved === 0) || ($data->is_accounting_approved !== null && $data->is_accounting_approved === 0)) {
-                                    return $uploadPcf;
+                                    return $uploadedPcfwEditView;
                                 } 
             
                                 if ($data->is_cfo_approved === null || $data->is_accounting_approved === null) {
                                     return $viewPcfPdf;
                                 }
                             } else {
+                                if ($data->is_accounting_approved === 0 || $data->is_cfo_approved === 0) {
+                                    //upload approved pcf 
+                                    return $uploadPcf;
+                                }
                                 if ($data->is_cfo_approved === null || $data->is_accounting_approved === null) {
                                     return $viewPcfPdfWithCancelRequest;
                                 }
@@ -300,12 +308,18 @@ class PCFRequestController extends Controller
                             if (!empty($data->pcf_document)) {
                                 
                             } else {
+                                if ($data->is_psr_manager_approved == 1 && $userApproved !== null) {
+                                    return $viewPcfPdf;
+                                }
                                 if ($data->is_marketing_approved == 1 && $data->is_accounting_approved == 1 && $data->is_nsm_approved == 1 && $data->is_cfo_approved == 1) {
                                     return $viewPcfPdf;
-                                } else if ($data->is_psr_manager_approved == 1) {
-                                    return $viewPcfPdf;
-                                } else if($data->is_psr_manager_approved == 0 || ($userApproved !== null || ($userDisapproved > $userApproved))) {
+
+                                } else if ($data->is_nsm_approved === 0 || $data->is_cfo_approved === 0 || $data->is_accounting_approved === 0) {
                                     return $psrManagerButtons;
+
+                                } else if($data->is_psr_manager_approved === 0 || ($userApproved !== null || ($userDisapproved > $userApproved))) {
+                                    return $psrManagerButtons;
+
                                 }
                             }
                         }
@@ -320,7 +334,7 @@ class PCFRequestController extends Controller
                                 } else if ($data->is_marketing_approved === 0 || $userApproved == null) {
                                     return $wEditApproval;
 
-                                } else if ($data->is_marketing_approved == 1 && $userApproved == null) {
+                                } else if (($data->is_marketing_approved == 1 && $userApproved == null) || ($data->is_marketing_approved == 1 && ($userDisapproved > $userApproved))) {
                                     return $wEditApproval;
 
                                 } else if ($data->is_marketing_approved == 1 && ($userApproved !== null || $userApproved > $userDisapproved)) {
@@ -423,18 +437,18 @@ class PCFRequestController extends Controller
                 return response()->json(['success' => 'success'], 200);
             }
 
-            if (\Auth::user()->roles->pluck('name')->first() == 'Accounting') {
-                $accountingApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
-                $accountingApprove->is_accounting_approved = 1;
-                $accountingApprove->save();
-
-                return response()->json(['success' => 'success'], 200);
-            }
-
             if (\Auth::user()->roles->pluck('name')->first() == 'National Sales Manager') {
                 $nsmApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
                 $nsmApprove->is_nsm_approved = 1;
                 $nsmApprove->save();
+
+                return response()->json(['success' => 'success'], 200);
+            }
+
+            if (\Auth::user()->roles->pluck('name')->first() == 'Accounting') {
+                $accountingApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $accountingApprove->is_accounting_approved = 1;
+                $accountingApprove->save();
 
                 return response()->json(['success' => 'success'], 200);
             }
@@ -469,30 +483,41 @@ class PCFRequestController extends Controller
 
             if (\Auth::user()->roles->pluck('name')->first() == 'Marketing') {
                 $marketingApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $marketingApprove->is_psr_manager_approved = null;
                 $marketingApprove->is_marketing_approved = 0;
                 $marketingApprove->save();
 
                 return response()->json(['success' => 'success'], 200);
             }
 
-            if (\Auth::user()->roles->pluck('name')->first() == 'Accounting') {
-                $accountingApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
-                $accountingApprove->is_accounting_approved = 0;
-                $accountingApprove->save();
-
-                return response()->json(['success' => 'success'], 200);
-            }
-
             if (\Auth::user()->roles->pluck('name')->first() == 'National Sales Manager') {
                 $nsmApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $nsmApprove->is_psr_manager_approved = null;
+                $nsmApprove->is_marketing_approved = null;
                 $nsmApprove->is_nsm_approved = 0;
                 $nsmApprove->save();
 
                 return response()->json(['success' => 'success'], 200);
             }
 
+            if (\Auth::user()->roles->pluck('name')->first() == 'Accounting') {
+                $accountingApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $accountingApprove->is_psr_manager_approved = null;
+                $accountingApprove->is_marketing_approved = null;
+                $accountingApprove->is_nsm_approved = null;
+                $accountingApprove->is_cfo_approved = null;
+                $accountingApprove->is_accounting_approved = 0;
+                $accountingApprove->save();
+
+                return response()->json(['success' => 'success'], 200);
+            }
+
             if (\Auth::user()->roles->pluck('name')->first() == 'Chief Finance Officer') {
                 $cfoApprove = PCFRequest::findOrFail($request->p_c_f_request_id);
+                $cfoApprove->is_psr_manager_approved = null;
+                $cfoApprove->is_marketing_approved = null;
+                $cfoApprove->is_nsm_approved = null;
+                $cfoApprove->is_accounting_approved = null;
                 $cfoApprove->is_cfo_approved = 0;
                 $cfoApprove->save();
 

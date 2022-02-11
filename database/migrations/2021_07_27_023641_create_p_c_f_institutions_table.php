@@ -19,7 +19,11 @@ class CreatePCFInstitutionsTable extends Migration
             $table->string('address');
             $table->string('contact_person');
             $table->string('designation');
-            $table->string('thru_designation'); 
+            $table->string('thru_contact_person')->nullable(); 
+            $table->string('thru_designation')->nullable(); 
+            $table->string('email')->nullable();
+            $table->string('contact_number')->nullable();
+            $table->string('telephone_number')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

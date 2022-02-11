@@ -40,8 +40,7 @@
                                         @endcan
                                     </div>
                                 </div>
-                                @if (auth()->user()->hasRole('Administrator') ||
-    auth()->user()->hasRole('Super Administrator'))
+                                @if (auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table table-hover table-striped dt-responsive" id="institution-datatable" width="100%" cellspacing="0">
@@ -52,6 +51,7 @@
                                                         <th>Address</th>
                                                         <th>Contact Person</th>
                                                         <th>Designation</th>
+                                                        <th>Thru Contact Person</th>
                                                         <th>Thru Designation</th>
                                                         <th>Status</th>
                                                         <th>Actions</th>
@@ -74,6 +74,7 @@
             <!-- Modal Component -->
             @include('modals.institutions.create')
             @include('modals.institutions.edit')
+            @include('modals.institutions.show')
             <!-- End of Modal Component -->
             <!-- Footer -->
             @include('layouts.footer')
@@ -84,85 +85,8 @@
     <!-- End of Page Wrapper -->
 @endsection
 
-@push('modals')
-    <div class="modal fade" id="add_address_modal" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Address</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h3 id="_institution" class="text-center text-dark"></h3>
-
-                    <div class="row mt-2">
-                        <input type="hidden" class="institution_id">
-                        <div class="col-12" id="_address"></div>
-                        <div class="col-12">
-                            <input type="text" class="form-control address">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveAddress()">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-@endpush
-
 @section('scripts')
     <script>
-        const institution = document.querySelector('#_institution')
-        const _address = document.querySelector('#_address')                
-        const _institution_id = document.querySelector('.institution_id')
-
-        const addAddress = async (id) => {
-            const res = await callApi('post', "{!! route('settings.institution.instituion.data') !!}", {id})
-            if (res.status === 200) {
-                const data = res.data.data
-                const addresses = res.data.data.addresses
-                let textarea = ''
-
-                institution.innerText = res.data.data.institution
-                _institution_id.value = id
-                addresses.map(el => {
-                    textarea += `<textarea rows="2" class="form-control" readonly>${el.address}</textarea><br />`
-                })
-                _address.innerHTML = textarea
-                $('#add_address_modal').modal('show')
-            }
-        }
-
-        const saveAddress = async () => {
-            const address = document.querySelector('.address').value
-            const institution_id = document.querySelector('.institution_id').value
-            const res = await callApi('post', "{!! route('settings.institution.store_address') !!}", {address, institution_id})
-                .catch(err => displayMessage('error', 'Error!', err.response.data.message))
-                
-            if (res.status === 201) {
-                $('#add_address_modal').modal('toggle')
-                document.querySelector('.address').value = ''
-                return displayMessage('success', 'Success!', res.data.message)
-            }
-        }
-
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        })
-
         $(function() {
             $('#institution-datatable').DataTable({
                 "stripeClasses": [],
@@ -191,6 +115,9 @@
                     },
                     {
                         data: 'designation'
+                    },
+                    {
+                        data: 'thru_contact_person'
                     },
                     {
                         data: 'thru_designation'
@@ -230,13 +157,17 @@
                     $('#edit-address').val(data.address);
                     $('#edit-contact-person').val(data.contact_person);
                     $('#edit-designation').val(data.designation);
+                    $('#edit-thru-contact-person').val(data.thru_contact_person);
                     $('#edit-thru-designation').val(data.thru_designation);
+                    $('#edit-email').val(data.email);
+                    $('#edit-contact-number').val(data.contact_number);
+                    $('#edit-telephone-number').val(data.telephone_number);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Oops! Something went wrong.',
-                        text: 'Please contact your system administrator.'
-                    })
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
                 });
             }
         })
@@ -277,7 +208,7 @@
                         },
                         success: function(response) {
                             //reload table 
-                            $("#institution-datatable").DataTable().ajax.reload(null, false);
+                            $("#institution-datatable").DataTable().ajax.reload();
                             Swal.fire(
                                 'Success!',
                                 'Institution has been disabled',
@@ -333,6 +264,59 @@
                     });
                 }
             })
+        }
+
+        $('#view_close').click(function () {
+            $('#institution_addresses_datatable').DataTable().clear().destroy();
+            $('#view_institution_addresses_modal').modal('toggle')
+            // $("#institution_addresses_datatable").DataTable().ajax.reload(null, false);
+        })
+
+        //validate institution on store
+        $('#validateBtn').click(function () {
+            const institution_name = document.querySelector("#institution").value;
+            //reload table 
+            checkInstitutionAvailability(institution_name)
+            $('#view_institution_addresses_modal').modal('show')
+        })
+
+        //validate institution on Edit 
+        $('#validateBtnEdit').click(function () {
+            const institution_name = document.querySelector("#edit-institution").value;
+            //reload table 
+            checkInstitutionAvailability(institution_name)
+            $('#view_institution_addresses_modal').modal('show')
+        })
+
+        function checkInstitutionAvailability(institution_name) {
+            $('#institution_addresses_datatable').DataTable({
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    type: 'GET',
+                    dataType: 'json',
+                    url: '/settings.institution/get-institution-addresses/' + institution_name,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [{
+                        data: 'institution'
+                    },
+                    {
+                        data: 'address'
+                    },
+                    {
+                        data: 'status',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+            });
         }
 
         @if ($errors->has('edit_institution'))

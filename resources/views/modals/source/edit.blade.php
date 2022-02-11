@@ -29,20 +29,6 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="edit_item_name">Item Name</label>
-                                <input type="hidden" class="form-control" name="source_id" id="edit_source_id">
-                                <input type="text" class="form-control @error('supplier') is-invalid @enderror" 
-                                    name="item_name" id="edit_item_name" value="{{ old('item_name') }}" required>
-
-                                @error('item_name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
                                 <label for="edit_item_code">Item Code</label>
                                 <input type="text" class="form-control @error('item_code') is-invalid @enderror" name="item_code" id="edit_item_code"
                                     value="{{ old('item_code') }}" required>

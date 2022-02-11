@@ -53,9 +53,9 @@ class UpdateSourceRequest extends FormRequest
             'unit_price' => 'required|numeric',
             'currency_rate' => 'required|numeric',
             'tp_php' => 'required|numeric',
+            'tp_php_less_tax' => 'required|numeric',
             'item_group' => 'sometimes|nullable|string',
             'uom' => 'sometimes|nullable|string',
-            'mandatory_peripherals' => 'sometimes|nullable|string',
             'cost_of_peripherals' => 'sometimes|nullable|numeric',
             'segment' => 'sometimes|nullable|string',
             'item_category' => 'required|string',
@@ -74,6 +74,7 @@ class UpdateSourceRequest extends FormRequest
             'currency_rate.required' => 'This is a required field.',
             'item_category.required' => 'This is a required field.',
             'tp_php.required' => 'This is a required field.',
+            'tp_php_less_tax.required' => 'This is a required field.',
             'standard_price.required' => 'This is a required field.',
             'profitability.required' => 'This is a required field.',
         ];
