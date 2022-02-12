@@ -23,22 +23,22 @@ class Source extends Model
 
     public function itemCategories()
     {
-        return $this->belongsTo(ItemCategory::class, 'id', 'item_category_id');
+        return $this->belongsTo(ItemCategory::class, 'item_category_id', 'id');
     }
 
     public function segments()
     {
-        return $this->belongsTo(Segments::class, 'id', 'segment_id');
+        return $this->belongsTo(Segment::class, 'segment_id', 'id');
     }
 
     public function unitOfMeasurements()
     {
-        return $this->belongsTo(UnitOfMeasurement::class, 'id', 'uom_id');
+        return $this->belongsTo(UnitOfMeasurement::class, 'uom_id', 'id');
     }
 
     public function suppliers()
     {
-        return $this->belongsTo(Supplier::class, 'id', 'supplier_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
     public function sourceMandatoryPeripherals() { 

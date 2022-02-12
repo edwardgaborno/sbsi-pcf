@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ItemCategory;
+use App\Models\MandatoryPeripheral;
+use App\Models\MandatoryPeripheralCategory;
 use App\Models\SourceMandatoryPeripheral;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 class SourceMandatoryPeripheralController extends Controller
 {
@@ -12,9 +16,29 @@ class SourceMandatoryPeripheralController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function index(Request $request, $id)
     {
-        //
+        $this->authorize('source_access');
+
+        if ($request->ajax()) {
+            $sourceMandatoryPeripherals = SourceMandatoryPeripheral::where('source_id', $id)->orderBy('created_at', 'desc')->get();          
+            return Datatables::of($sourceMandatoryPeripherals)
+                ->addColumn('item_code', function ($data) {
+                    return $data->mandatoryPeripherals->item_code;
+                })
+                ->addColumn('item_description', function ($data) {
+                    return $data->mandatoryPeripherals->item_description;   
+                })
+                ->addColumn('quantity', function ($data) {
+                    return $data->mandatoryPeripherals->quantity;
+                })
+                ->addColumn('item_category', function ($data) {
+                    $itemCategory = MandatoryPeripheralCategory::where('id', $data->mandatoryPeripherals->peripherals_category_id)->first();
+                    return $itemCategory->mp_category;
+                })
+                ->make(true);   
+        }
     }
 
     /**

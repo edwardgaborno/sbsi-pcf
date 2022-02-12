@@ -13,11 +13,12 @@ class PCFApproverController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index(Request $request, $id)
     {
         $this->authorize('pcf_request_access');
 
-        $pcfRequest = PCFApprover::where('p_c_f_request_id', $id)->orderBy('created_at', 'desc')->get();          
+        if ($request->ajax()) {
+            $pcfRequest = PCFApprover::where('p_c_f_request_id', $id)->orderBy('created_at', 'desc')->get();          
             return Datatables::of($pcfRequest)
                 ->addColumn('approval_status', function ($data) {
                     if ($data->approval_status == 1) {
@@ -43,10 +44,7 @@ class PCFApproverController extends Controller
                 })
                 ->rawColumns(['approval_status'])
                 ->make(true);
-
-        // if ($request->ajax()) {
-            
-        // }
+        }
     }
 
     /**

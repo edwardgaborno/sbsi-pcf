@@ -14,11 +14,13 @@ use App\Http\Controllers\MandatoryPeripheralController;
 use App\Http\Controllers\PCFApproverController;
 use App\Http\Controllers\PCFInstitutionController;
 use App\Http\Controllers\ProfitabilityPercentageController;
+use App\Http\Controllers\SourceMandatoryPeripheralController;
 use App\Http\Controllers\SupplierController;
 use App\Models\PCFInstitution;
 use App\Models\PCFRequest;
 use App\Models\Price;
 use App\Models\ProfitabilityPercentage;
+use App\Models\SourceMandatoryPeripheral;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Route;
 
@@ -132,6 +134,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('/ajax/get-source-list', [SourceController::class, 'getSources'])->name('.source_list');
             Route::get('/ajax/get-profit-rate-percentage/{id}', [ProfitabilityPercentageController::class, 'getProfitRatePercentage'])->name('.get_profit_rate_percentage');
+            Route::get('/ajax/view-mandatory-peripherals/{id}', [SourceMandatoryPeripheralController::class, 'index'])->name('.get_source_mandatory_peripherals');
         });
     });
 

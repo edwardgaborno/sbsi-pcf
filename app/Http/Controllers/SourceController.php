@@ -25,7 +25,15 @@ class SourceController extends Controller
     {
         $this->authorize('pcf_source_access');
 
-        return view('settings.source.index');
+        $unitOfMeasurements = UnitOfMeasurement::where('is_active', 1)->orderBy('id', 'ASC')->get();
+        $itemCategories = ItemCategory::where('is_active', 1)->orderBy('id', 'ASC')->get();
+        $segments = Segment::where('is_active', 1)->orderBy('id', 'ASC')->get();
+
+        return view('settings.source.index', [
+            'unitOfMeasurements' => $unitOfMeasurements,
+            'itemCategories' => $itemCategories,
+            'segments' => $segments,
+        ]);
     }
 
     public function create()
@@ -45,13 +53,11 @@ class SourceController extends Controller
 
     public function store(StoreSourceRequest $request)
     {
-
         $this->authorize('source_store');
 
         DB::beginTransaction();
 
         try {
-
             $saveSource = Source::create($request->validated() + [
                 'supplier_id' => $request->supplier_id,
                 'uom_id' => $request->oum_id,
@@ -60,10 +66,12 @@ class SourceController extends Controller
             ]);
 
             if ($request->mandatory_peripherals) {
-                $saveSourceMandatoryPeripherals = new SourceMandatoryPeripheral;
-                $saveSourceMandatoryPeripherals->source_id = $saveSource->id;
-                $saveSourceMandatoryPeripherals->mandatory_peripheral_id = $request->mandatory_peripherals;
-                $saveSourceMandatoryPeripherals->save();
+               foreach ($request->mandatory_peripherals as $mp) {
+                    $saveSourceMandatoryPeripherals = new SourceMandatoryPeripheral;
+                    $saveSourceMandatoryPeripherals->source_id = $saveSource->id;
+                    $saveSourceMandatoryPeripherals->mandatory_peripheral_id = $mp;
+                    $saveSourceMandatoryPeripherals->save();
+               }
             }
 
             DB::commit();
@@ -102,9 +110,7 @@ class SourceController extends Controller
             }
             
             DB::commit();
-
             Alert::success('Success', 'The source has been updated');
-
         }
         catch (\Throwable $th) {
             DB::rollBack();
@@ -112,6 +118,7 @@ class SourceController extends Controller
 
         return redirect()->route('settings.source.index');
     }
+
     private function formatNumber($value)
     {
         return number_format($value, 2, '.', ',');
@@ -120,112 +127,54 @@ class SourceController extends Controller
     public function adminSourceList(Request $request)
     {
         $this->authorize('source_access');
-        // $sources = DB::table('sources')
-        //             ->select(
-        //                 'sources.id as id', 
-        //                 'sources.item_code as item_code', 
-        //                 'sources.description as description', 
-        //                 'sources.unit_price as unit_price', 
-        //                 'sources.currency_rate as currency_rate', 
-        //                 'sources.tp_php as tp_php', 
-        //                 'sources.cost_of_peripherals as cost_of_peripherals', 
-        //                 'sources.standard_price as standard_price', 
-        //                 'sources.profitability as profitability', 
-        //                 'suppliers.supplier_name as supplier',
-        //                 'segments.segment as segment',
-        //                 'item_categories.category_name as item_category',
-        //                 'source_mandatory_peripherals.source_id as source_id',
-        //                 'source_mandatory_peripherals.mandatory_peripheral_id as mp_id',
 
-        //                 // 'mandatory_peripherals.item_code as mp_item_code',
-        //             )
-        //             ->leftJoin('source_mandatory_peripherals', 'source_mandatory_peripherals.source_id','=', 'sources.id')
-        //             // ->leftJoin('mandatory_peripherals', 'mandatory_peripherals.id','=', 'source_mandatory_peripherals.mandatory_peripheral_id')
-        //             ->leftJoin('suppliers', 'suppliers.id', '=', 'sources.supplier_id')
-        //             ->leftJoin('unit_of_measurements', 'unit_of_measurements.id', '=', 'sources.uom_id')
-        //             ->leftJoin('segments', 'segments.id', '=', 'sources.segment_id')
-        //             ->leftJoin('item_categories', 'item_categories.id', '=', 'sources.item_category_id')
-        //             ->get();
-        // dd($sources);
         if ($request->ajax()) {
 
-            // $sources = DB::table('sources')
-            //         ->select(
-            //             'sources.id as id', 
-            //             'sources.item_code as item_code', 
-            //             'sources.description as description', 
-            //             'sources.unit_price as unit_price', 
-            //             'sources.currency_rate as currency_rate', 
-            //             'sources.tp_php as tp_php', 
-            //             'sources.cost_of_peripherals as cost_of_peripherals', 
-            //             'sources.standard_price as standard_price', 
-            //             'sources.profitability as profitability', 
-            //             'suppliers.supplier_name as supplier',
-            //             'unit_of_measurements.uom as uom',
-            //             'segments.segment as segment',
-            //             'item_categories.category_name as item_category',
-            //             'source_mandatory_peripherals.source_id as source_id',
-            //             'source_mandatory_peripherals.mandatory_peripheral_id as mp_id',
+            $sources = Source::latest()
+                ->select(
+                    'id', 
+                    'supplier_id',
+                    'segment_id',
+                    'uom_id',
+                    'item_category_id',
+                    'item_code', 
+                    'description', 
+                    'unit_price', 
+                    'currency_rate', 
+                    'tp_php',
+                    'cost_of_peripherals', 
+                    'standard_price', 
+                    'profitability'
+                    )
+                ->get();
 
-            //             // 'mandatory_peripherals.item_code as mp_item_code',
-            //         )
-            //         ->leftJoin('source_mandatory_peripherals', 'source_mandatory_peripherals.source_id','=', 'sources.id')
-            //         // ->leftJoin('mandatory_peripherals', 'mandatory_peripherals.id','=', 'source_mandatory_peripherals.mandatory_peripheral_id')
-            //         ->leftJoin('suppliers', 'suppliers.id', '=', 'sources.supplier_id')
-            //         ->leftJoin('unit_of_measurements', 'unit_of_measurements.id', '=', 'sources.uom_id')
-            //         ->leftJoin('segments', 'segments.id', '=', 'sources.segment_id')
-            //         ->leftJoin('item_categories', 'item_categories.id', '=', 'sources.item_category_id')
-            //         ->get();
-            $soures = Source::all();
-
-            return Datatables::of($sources)
+                return Datatables::of($sources)
                 ->addIndexColumn()
                 ->addColumn('supplier', function ($data) {
-                    return $data->supplier;
+                    return $data->suppliers->supplier_name;
                 })
                 ->addColumn('unit_price', fn($data) => $this->formatNumber($data->unit_price))
-                ->addColumn('tp_php', function ($data) {
-                    return number_format($data->tp_php, 2, '.', ',');
-                })
+                ->addColumn('tp_php', fn($data) => $this->formatNumber($data->tp_php))
                 ->addColumn('uom', function ($data) {
-                    if (empty($data->uom)) {
+                    if (empty($data->unitOfMeasurements->uom)) {
                         return 'None';
                     }
-                    return $data->uom;
+                    return $data->unitOfMeasurements->uom;
                 })
                 ->addColumn('segment', function ($data) {
-                    if (empty($data->segment)) {
+                    if (empty($data->segments->segment)) {
                         return 'None';
                     }
-                    return $data->segment;
+                    return $data->segments->segment;
                 })
                 ->addColumn('item_category', function ($data) {
-                    return $data->item_category;
+                    return $data->itemCategories->category_name;
                 })
                 ->addColumn('mandatory_peripherals', function ($data) {
-                    $item_codes = [];
-                    $mps = MandatoryPeripheral::where('id', $data->mp_id)->get();
-                    if (!$mps->isEmpty()) {
-                        foreach ($mps as $mp) {
-                            array_push($item_codes, [
-                                    'item_code' => $mp->item_code
-                                ]
-                            );//angulu ng dataase structure
-                        }
-                        return $item_codes;
-                    } else {
-                        return "None";
-                    }
+                    return '<a href="#" data-toggle="modal" data-target="#view_mandatory_peripherals_modal" class="badge badge-primary view-mp-details" data-source_id="'.$data->id.'">View List</a>';
                 })
-                ->addColumn('cost_of_peripherals', function ($data) {
-                    if (empty($data->cost_of_peripherals)) {
-                        return 'None';
-                    }
-                    return number_format($data->cost_of_peripherals, 2, '.', ',');
-                })
-                ->addColumn('standard_price', function ($data) {
-                    return number_format($data->standard_price, 2, '.', ',');
-                })
+                ->addColumn('cost_of_peripherals', fn($data) => $this->formatNumber($data->cost_of_peripherals))
+                ->addColumn('standard_price', fn($data) => $this->formatNumber($data->standard_price))
                 ->addColumn('actions', function ($data) {
                     if(auth()->user()->can('source_edit')) {
                         return
@@ -233,62 +182,9 @@ class SourceController extends Controller
                             data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>';
                     }
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['mandatory_peripherals','actions'])
                 ->make(true);
         }
-
-        // if ($request->ajax()) {
-
-        //     $sources = Source::latest()
-        //         ->select('id','item_code', 'description', 'unit_price', 'currency_rate', 'tp_php',
-        //                 'mandatory_peripherals', 'cost_of_peripherals', 'standard_price', 'profitability')
-        //         ->get();
-
-        //     return Datatables::of($sources)
-        //         ->addIndexColumn()
-        //         ->addColumn('supplier', function ($data) {
-        //             return $data->suppliers->supplier_name;
-        //         })
-        //         ->addColumn('unit_price', function ($data) {
-        //             return number_format($data->unit_price, 2, '.', ',');
-        //         })
-        //         ->addColumn('tp_php', function ($data) {
-        //             return number_format($data->tp_php, 2, '.', ',');
-        //         })
-        //         ->addColumn('uom', function ($data) {
-        //             return $data->unitOfMeasurements->uom;
-        //         })
-        //         ->addColumn('segment', function ($data) {
-        //             return $data->segments->segment;
-        //         })
-        //         ->addColumn('item_category', function ($data) {
-        //             return $data->itemCategories->category_name;
-        //         })
-        //         ->addColumn('mandatory_peripherals', function ($data) {
-        //             if (empty($data->mandatory_peripherals)) {
-        //                 return "None";
-        //             }
-        //             return $data->mandatory_peripherals;
-        //         })
-        //         ->addColumn('cost_of_peripherals', function ($data) {
-        //             if (empty($data->cost_of_peripherals)) {
-        //                 return 'None';
-        //             }
-        //             return number_format($data->cost_of_peripherals, 2, '.', ',');
-        //         })
-        //         ->addColumn('standard_price', function ($data) {
-        //             return number_format($data->standard_price, 2, '.', ',');
-        //         })
-        //         ->addColumn('actions', function ($data) {
-        //             if(auth()->user()->can('source_edit')) {
-        //                 return
-        //                 '<a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
-        //                     data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>';
-        //             }
-        //         })
-        //         ->rawColumns(['actions'])
-        //         ->make(true);
-        // }
     }
 
     public function psrSourceList(Request $request)
@@ -322,8 +218,37 @@ class SourceController extends Controller
     {
         $this->authorize('source_access');
         
-        $source = Source::find($source_id);
-
+        // $source = Source::find($source_id);
+        $source = DB::table('sources')
+                    ->distinct()
+                    ->select(
+                        'sources.id as id', 
+                        'sources.supplier_id as supplier_id', 
+                        'sources.item_code as item_code', 
+                        'sources.description as description',
+                        'sources.unit_price as unit_price',
+                        'sources.currency_rate as currency_rate',
+                        'sources.tp_php as tp_php',
+                        'sources.tp_php_less_tax as tp_php_less_tax',
+                        'sources.uom_id as uom_id',
+                        'sources.segment_id as segment_id',
+                        'sources.item_category_id as item_category_id',
+                        'sources.cost_of_peripherals as cost_of_peripherals',
+                        'sources.standard_price as standard_price',
+                        'sources.profitability as profitability',
+                        'source_mandatory_peripherals.source_id as smp_source_id',
+                        'source_mandatory_peripherals.mandatory_peripheral_id as mp_id',
+                        'mandatory_peripherals.item_code as mp_item_code',
+                    )
+                    ->leftJoin('suppliers', 'suppliers.id', 'sources.supplier_id')
+                    ->leftJoin('unit_of_measurements', 'unit_of_measurements.id', 'sources.uom_id')
+                    ->leftJoin('segments', 'segments.id', 'sources.segment_id')
+                    ->leftJoin('item_categories', 'item_categories.id', 'sources.item_category_id')
+                    ->leftJoin('source_mandatory_peripherals', 'source_mandatory_peripherals.source_id', '=', 'sources.id')
+                    ->leftJoin('mandatory_peripherals', 'mandatory_peripherals.id', 'source_mandatory_peripherals.mandatory_peripheral_id')
+                    ->where('source_mandatory_peripherals.source_id', $source_id)
+                        ->get();
+        return response()->json($source);
         if (!$source) {
             return response()->json(['message' => 'Not Found!'], 404);
         }

@@ -16,4 +16,9 @@ class MandatoryPeripheral extends Model
         return $this->hasOne(MandatoryPeripheralCategory::class, 'id', 'peripherals_category_id');
     }
 
+    public function mpItemCategories()
+    {
+        return $this->belongsTo(MandatoryPeripheralCategory::class, 'peripherals_category_id', 'id');
+    }
+
 }

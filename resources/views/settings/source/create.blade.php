@@ -56,7 +56,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="supplier">Supplier <span style="color: red;">*</span></label>
-                                                    <select class="form-control select2 @error('supplier') is-invalid @enderror" name="supplier_id" id="supplier">
+                                                    <select class="form-control select2 @error('supplier') is-invalid @enderror" name="supplier_id" id="supplier" required>
                                                         <option value="" selected disabled></option>
                                                     </select>
 
@@ -69,7 +69,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Item Code <span style="color: red;">*</span></label>
+                                                    <label for="item_code">Item Code <span style="color: red;">*</span></label>
                                                     <input type="text" class="form-control @error('item_code') is-invalid @enderror" name="item_code" id="item_code"
                                                         value="{{ old('item_code') }}" required>
 
@@ -97,7 +97,7 @@
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Unit Price <span style="color: red;">*</span></label>
+                                                    <label for="unit_price">Unit Price <span style="color: red;">*</span></label>
                                                     <input type="text" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price" id="unit_price"
                                                         value="{{ old('unit_price') }}" required>
 
@@ -110,7 +110,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Currency Rate <span style="color: red;">*</span></label>
+                                                    <label for="currency_rate">Currency Rate <span style="color: red;">*</span></label>
                                                     <input type="text" class="form-control @error('currency_rate') is-invalid @enderror" name="currency_rate" id="currency_rate"
                                                         value="{{ old('currency_rate') }}" required>
 
@@ -123,7 +123,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Total Price (Php)</label>
+                                                    <label for="tp_php">Total Price (Php)</label>
                                                     <input type="text" class="form-control @error('tp_php') is-invalid @enderror" name="tp_php" id="tp_php"
                                                         value="{{ old('tp_php') }}" required readonly>
 
@@ -161,7 +161,7 @@
                                                         @endforeach
                                                     </select>
 
-                                                    @error('sgement')
+                                                    @error('uom_id')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
                                                         </span>
@@ -171,7 +171,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="segment">Segment</label>
-                                                    <select class="form-control @error('segment') is-invalid @enderror" name="segment" id="segment">
+                                                    <select class="form-control @error('segment') is-invalid @enderror" name="segment_id" id="segment">
                                                         <option value="" selected disabled>Select Segment</option>
                                                         @foreach ($segments as $segment)
                                                             <option value="{{ $segment->id }}" {{ (old('uom_id') == $segment->id ? 'selected' : '') }}>{{ $segment->segment }}</option>
@@ -188,7 +188,6 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="item_category">Item Category <span style="color: red;">*</span></label>
-                                                    <input type="hidden" name="item_category_name" id="item_category_name" disabled>
                                                     <select class="form-control @error('item_category_id') is-invalid @enderror" name="item_category_id" id="item_category" required>
                                                         <option value="" selected disabled>Select Item Category</option>
                                                         @foreach ($itemCategories as $itemCategory)
@@ -208,8 +207,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="specimen_type">Mandatory Peripherals</label>
-                                                    <select class="form-control select2 @error('mandatory_peripherals') is-invalid @enderror" name="mandatory_peripherals" id="mandatory_peripherals">
-                                                        <option value="" selected disabled></option>
+                                                    <select class="form-control select2 @error('mandatory_peripherals') is-invalid @enderror" name="mandatory_peripherals[]" multiple="multiple" id="mandatory_peripherals">
                                                     </select>
 
                                                     @error('mandatory_peripherals')
@@ -247,7 +245,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="profitability">Profitability</label>
+                                                    <label for="profitability">Profitability (%)</label>
                                                     <input type="text" class="form-control @error('profitability') is-invalid @enderror" name="profitability" id="profitability"
                                                         value="{{ old('profitability') }}" required readonly>
 
@@ -374,7 +372,6 @@
                     dataType: 'json',
                 }).done(function(res) {
                     document.getElementById("profitability").value = res.percentage;
-                    document.getElementById("item_category_name").value = res.category_name;
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'No profit rate percentage',
@@ -413,9 +410,8 @@
             const currency_rate = parseFloat(document.getElementById("currency_rate").value.replace(/,/g, ''));
             const tp_php_less_tax = parseFloat(document.getElementById("tp_php_less_tax").value.replace(/,/g, ''));
             const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value.replace(/,/g, ''));
-            const item_category_name = document.getElementById("item_category_name").value;
+            const item_category_name=  $( "#item_category option:selected" ).text();
             const standard_price = document.getElementById("standard_price");
-
             if (currency_rate === 1) {
                 if (!isNaN(cost_of_peripherals) && item_category_name === "MACHINE") {
                     standard_price.value = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
