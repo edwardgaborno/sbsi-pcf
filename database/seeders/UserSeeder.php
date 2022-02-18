@@ -16,71 +16,74 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //create default user
+        //Administrator User
         $super_admin = User::create([
             'name' => 'Ardison Pagulayan',
             'email' => 'ardi.pagulayan@sbsi.com.ph',
             'password' => Hash::make('admin'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Admin',
+            'department_id' => 4,
             'email_verified_at' => Carbon::now()
         ]);
-
-        //create default user permission
         $super_admin->assignRole('Super Administrator');
-        //permissions will be set on authservice provider Boot function
-
-        //for testing purposes accts;
-        $admin = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@email.com',
-            'password' => Hash::make('12345'),
-            'is_approved' => true,
-            'status' => true,
-            'department' => 'Admin',
-            'email_verified_at' => Carbon::now()
-        ]);
-
-        $admin->assignRole('Administrator');
-
-        //for testing purposes accts;
+        
+        //SALES 
         $psr = User::create([
             'name' => 'PSR',
             'email' => 'psr@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Sales',
+            'department_id' => 1,
             'email_verified_at' => Carbon::now()
         ]);
-
         $psr->assignRole('PSR');
 
-        //for testing purposes accts;
         $psr_mgr = User::create([
             'name' => 'PSR Manager',
             'email' => 'psr.manager@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Sales',
+            'department_id' => 1,
+            'email_verified_at' => Carbon::now()
+        ]);
+        $psr_mgr->assignRole('PSR Manager');
+
+        $nsm = User::create([
+            'name' => 'National Sales Manager',
+            'email' => 'nsm@email.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+            'email_verified_at' => Carbon::now()
+        ]);
+        $nsm->assignRole('National Sales Manager');
+
+        $sales_asst = User::create([
+            'name' => 'Sales Assistant',
+            'email' => 'sales.assistant@email.com',
+            'password' => Hash::make('12345'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
             'email_verified_at' => Carbon::now()
         ]);
 
-        $psr_mgr->assignRole('PSR Manager');
+        $sales_asst->assignRole('Sales Assistant');
 
-        //for testing purposes accts;
+        //Marketing
         $mktg = User::create([
             'name' => 'Marketing1',
             'email' => 'marketing1@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Marketing',
+            'department_id' => 2,
             'email_verified_at' => Carbon::now()
         ]);
-
         $mktg->assignRole('Marketing');
 
         $mktg = User::create([
@@ -89,20 +92,20 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Marketing',
+            'department_id' => 2,
             'email_verified_at' => Carbon::now()
         ]);
 
         $mktg->assignRole('Marketing');
 
-        //for testing purposes accts;
+        //Accounting
         $acct = User::create([
             'name' => 'Accounting1',
             'email' => 'accounting1@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Accounting',
+            'department_id' => 3,
             'email_verified_at' => Carbon::now()
         ]);
 
@@ -114,49 +117,20 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Accounting',
+            'department_id' => 3,
             'email_verified_at' => Carbon::now()
         ]);
-
         $acct->assignRole('Accounting');
 
-        //for testing purposes accts;
-        $nsm = User::create([
-            'name' => 'National Sales Manager',
-            'email' => 'nsm@email.com',
-            'password' => Hash::make('12345'),
-            'is_approved' => true,
-            'status' => true,
-            'department' => 'Sales',
-            'email_verified_at' => Carbon::now()
-        ]);
-
-        $nsm->assignRole('National Sales Manager');
-
-        //for testing purposes accts;
         $cfo = User::create([
             'name' => 'Chief Finance Officer',
             'email' => 'cfo@email.com',
             'password' => Hash::make('12345'),
             'is_approved' => true,
             'status' => true,
-            'department' => 'Finance',
+            'department_id' => 3,
             'email_verified_at' => Carbon::now()
         ]);
-
         $cfo->assignRole('Chief Finance Officer');
-
-        //for testing purposes accts;
-        $sales_asst = User::create([
-            'name' => 'Sales Assistant',
-            'email' => 'sales.assistant@email.com',
-            'password' => Hash::make('12345'),
-            'is_approved' => true,
-            'status' => true,
-            'department' => 'Sales',
-            'email_verified_at' => Carbon::now()
-        ]);
-
-        $sales_asst->assignRole('Sales Assistant');
     }
 }

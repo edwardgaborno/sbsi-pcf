@@ -20,4 +20,9 @@ class PCFList extends Model
     {
         return $this->hasMany(PCFRequest::class);
     }
+
+    public function sources()
+    {
+        return $this->belongsTo(Source::class, 'source_id', 'id');
+    }
 }

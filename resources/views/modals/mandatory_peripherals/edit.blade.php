@@ -14,11 +14,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item-code">Item Code<span style="color: red;"> *</span></label>
-                                <input type="hidden" name="mp_id" id="edit-mp-id">
-                                <input type="text" class="form-control @error('item_code') is-invalid @enderror" name="item_code" id="edit-item-code" value="{{ old('item_code') }}" required>
+                                <label for="edit_item_code">Item Code<span style="color: red;"> *</span></label>
+                                <input type="hidden" name="mp_id" id="edit-mp-id" value="{{ old('mp_id') }}">
+                                <select name="source_id" id="edit_item_code" class="form-control @error('source_id') is-invalid @enderror select2" required>
+                                </select>
 
-                                @error('item_code')
+                                @error('source_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -27,10 +28,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item-description">Item Description<span style="color: red;"> *</span></label>
-                                <input type="text" class="form-control @error('item-description') is-invalid @enderror" name="item_description" id="edit-item-description" value="{{ old('item_description') }}">
+                                <label for="edit_item_description">Item Description<span style="color: red;"> *</span></label>
+                                <input type="text" class="form-control @error('item_description') is-invalid @enderror" name="item_description" id="edit_item_description" readonly>
 
-                                @error('item-description')
+                                @error('item_description')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

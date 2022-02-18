@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ItemCategory;
+use App\Models\ProfitabilityPercentage;
 use Illuminate\Database\Seeder;
 
 class ItemCategorySeeder extends Seeder
@@ -17,16 +18,19 @@ class ItemCategorySeeder extends Seeder
         $itemCategories = [
             'ACCESSORIES',
             'CONSUMABLES',
-            'MACHINE',
+            'MACHINES',
             'PIPETORS',
             'SPAREPARTS',
             'REAGENTS',
             'OTHERS'
         ];
-
         foreach ($itemCategories as $itemCategory) {
-            ItemCategory::create([
+            $saveItemCategory = ItemCategory::create([
                 'category_name' => $itemCategory
+            ]);
+            ProfitabilityPercentage::create([
+                'item_category_id' => $saveItemCategory->id,
+                'percentage' => ($itemCategory == 'MACHINES' ? '30.00' : '50.00')
             ]);
         }
     }

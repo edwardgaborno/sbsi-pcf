@@ -45,6 +45,7 @@ class MandatoryPeripheralController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * 
      */
     public function store(StoreMandatoryPeripheralsRequest $request)
     {
@@ -75,9 +76,13 @@ class MandatoryPeripheralController extends Controller
         $this->authorize('mandatory_peripherals_show');
 
         if ($request->ajax()) {
+
             $mp = MandatoryPeripheral::orderBy('id', 'DESC')->get();
 
             return Datatables::of($mp)
+                ->addColumn('source_id', function($data) {
+                    return $data->sources->item_code;
+                })
                 ->addColumn('category', function ($data) {
                     return $data->mandatoryPeripheralCategories->mp_category;
                 })
@@ -118,12 +123,17 @@ class MandatoryPeripheralController extends Controller
     {
         $this->authorize('mandatory_peripherals_edit');
 
-        $editMp = MandatoryPeripheral::findOrFail($id);
+        $editMp = MandatoryPeripheral::with('sources')->findOrFail($id);
+        $mpAllDataForSelect2Edit = MandatoryPeripheral::with('sources')->get();
+
         if (!$editMp) {
             return response()->json(['message' => 'Not Found!'], 404);
         }
 
-        return response()->json($editMp);
+        return response()->json([
+            'editMp' => $editMp,
+            'mpAllDataForSelect2Edit' => $mpAllDataForSelect2Edit,
+        ]);
     }
 
     /**
@@ -136,6 +146,7 @@ class MandatoryPeripheralController extends Controller
     public function update(UpdateMandatoryPeripheralsRequest $request)
     {
         $this->authorize('mandatory_peripherals_update');
+        
         if (isset($request->validator) && $request->validator->fails()) {
             $errorMessage = $request->validator->messages();
             //set session to determine modal pop-up (Create modal or Edit modal)
@@ -150,7 +161,6 @@ class MandatoryPeripheralController extends Controller
 
         $updateMandatoryPeripheral = MandatoryPeripheral::findOrFail($request->mp_id);
         $updateMandatoryPeripheral->update($request->validated());
-
 
         Alert::success('Success', 'Mandatory Peripheral has been updated successfully.');
         
@@ -187,6 +197,31 @@ class MandatoryPeripheralController extends Controller
     {
         $mp = MandatoryPeripheral::where('is_active', 1)->orderBy('id', 'DESC')->get();
         return MandatoryPeripheralResource::collection($mp);
+    }
+
+    public function getSourceMandatoryPeripherals(Request $request, $id)
+    {
+        $this->authorize('source_access');
+        if ($request->ajax()) {
+
+            $ids = preg_split("/[,]/",$id);
+            $sourceMandatoryPeripherals = MandatoryPeripheral::whereIn('id', $ids)->orderBy('id', 'DESC')->get();      
+
+            return Datatables::of($sourceMandatoryPeripherals)
+                ->addColumn('item_code', function ($data) {
+                    return $data->item_code;
+                })
+                ->addColumn('item_description', function ($data) {
+                    return $data->item_description;   
+                })
+                ->addColumn('quantity', function ($data) {
+                    return $data->quantity;
+                })
+                ->addColumn('item_category', function ($data) {
+                    return $data->mpItemCategories->mp_category;
+                })
+                ->make(true);   
+        }
     }
 
     /**

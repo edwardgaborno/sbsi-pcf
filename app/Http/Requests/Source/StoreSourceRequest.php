@@ -62,10 +62,10 @@ class StoreSourceRequest extends FormRequest
             'uom_id' => 'nullable|numeric',
             'segment_id' => 'nullable|numeric',
             'item_category_id' => 'required|numeric',
-            'uom' => 'sometimes|nullable|string',
             'cost_of_peripherals' => 'sometimes|nullable|numeric',
             'standard_price' => 'required|numeric',
             'profitability' => 'required|string',
+            'mandatory_peripherals_ids' => 'sometimes|nullable|array'
         ];
     }
 

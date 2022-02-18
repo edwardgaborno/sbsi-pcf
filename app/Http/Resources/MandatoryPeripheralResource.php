@@ -16,7 +16,8 @@ class MandatoryPeripheralResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'text' => $this->item_code,
+            'text' => $this->item_description,
+            'title' => $this->item_description
         ];
     }
 }

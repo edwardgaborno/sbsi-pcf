@@ -206,11 +206,11 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Mandatory Peripherals</label>
-                                                    <select class="form-control select2 @error('mandatory_peripherals') is-invalid @enderror" name="mandatory_peripherals[]" multiple="multiple" id="mandatory_peripherals">
+                                                    <label for="mandatory_peripherals">Mandatory Peripherals</label>
+                                                    <select class="form-control select2 @error('mandatory_peripherals_ids') is-invalid @enderror" name="mandatory_peripherals_ids[]" multiple="multiple" id="mandatory_peripherals">
                                                     </select>
 
-                                                    @error('mandatory_peripherals')
+                                                    @error('mandatory_peripherals_ids')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
                                                         </span>
@@ -219,7 +219,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="specimen_type">Cost of Peripherals</label>
+                                                    <label for="cost_of_peripherals">Cost of Peripherals</label>
                                                     <input type="text" class="form-control @error('cost_of_peripherals') is-invalid @enderror" name="cost_of_peripherals" id="cost_of_peripherals"
                                                         value="{{ old('cost_of_peripherals') }}">
 

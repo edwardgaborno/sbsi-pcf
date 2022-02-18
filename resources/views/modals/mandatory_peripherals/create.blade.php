@@ -13,10 +13,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item-code">Item Code<span style="color: red;"> *</span></label>
-                                <input type="text" class="form-control @error('item_code') is-invalid @enderror" name="item_code" id="item-code" value="{{ old('item_code') }}" required>
+                                <label for="item_code">Item Code <span style="color: red;">*</span></label>
+                                <select name="source_id" id="item_code" class="form-control @error('source_id') is-invalid @enderror select2" required>
+                                    <option value="" selected disabled></option>
+                                </select>
 
-                                @error('item_code')
+                                @error('source_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -25,10 +27,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="item-description">Item Description<span style="color: red;"> *</span></label>
-                                <input type="text" class="form-control @error('item-description') is-invalid @enderror" name="item_description" id="item-description" value="{{ old('item_description') }}">
+                                <label for="item_description">Item Description<span style="color: red;"> *</span></label>
+                                <input type="text" class="form-control @error('item_description') is-invalid @enderror" name="item_description" id="item_description" value="{{ old('item_description') }}" readonly>
 
-                                @error('item-description')
+                                @error('item_description')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

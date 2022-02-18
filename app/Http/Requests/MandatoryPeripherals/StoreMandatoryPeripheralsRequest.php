@@ -35,7 +35,7 @@ class StoreMandatoryPeripheralsRequest extends FormRequest
     public function rules()
     {
         return [
-            'item_code' => 'required|string|unique:mandatory_peripherals,item_code',
+            'source_id' => 'required|string|unique:mandatory_peripherals,source_id',
             'item_description' => 'required|string',
             'quantity' => 'required|numeric|min:1',
             'peripherals_category_id' => 'required|numeric',
@@ -45,7 +45,7 @@ class StoreMandatoryPeripheralsRequest extends FormRequest
     public function messages()
     {
         return [
-            'item_code.required' => 'This is a required field.',
+            'source_id.required' => 'This is a required field.',
             'item_description.required' => 'This is a required field.',
             'quantity.required' => 'This is a required field.',
             'peripherals_category_id.required' => 'This is a required field.',

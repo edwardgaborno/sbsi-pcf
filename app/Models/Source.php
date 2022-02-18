@@ -11,6 +11,10 @@ class Source extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'mandatory_peripherals_ids' => 'array'
+    ];
+
     public function pcfLists() 
     {
         return $this->hasMany(PCFList::class);

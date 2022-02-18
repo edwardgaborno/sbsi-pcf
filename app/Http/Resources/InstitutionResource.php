@@ -20,6 +20,7 @@ class InstitutionResource extends JsonResource
             'address' => $this->address,
             'contact_person' => $this->contact_person,
             'designation' => $this->designation,
+            'thru_contact_person' => $this->thru_contact_person,
             'thru_designation' => $this->thru_designation,
         ];
     }

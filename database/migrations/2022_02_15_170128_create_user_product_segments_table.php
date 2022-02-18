@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMandatoryPeripheralsTable extends Migration
+class CreateUserProductSegmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,16 @@ class CreateMandatoryPeripheralsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mandatory_peripherals', function (Blueprint $table) {
+        Schema::create('user_product_segments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('source_id')
+            $table->foreignId('user_id')
                 ->nullable()
-                ->constrained('sources')
+                ->constrained('users')
                 ->onUpdate('cascade');
-            $table->string('item_description');
-            $table->integer('quantity');
-            $table->foreignId('peripherals_category_id')
+            $table->foreignId('product_segment_id')
                 ->nullable()
-                ->constrained('mandatory_peripheral_categories')
+                ->constrained('product_segments')
                 ->onUpdate('cascade');
-            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }
@@ -37,6 +34,6 @@ class CreateMandatoryPeripheralsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mandatory_peripherals');
+        Schema::dropIfExists('user_product_segments');
     }
 }

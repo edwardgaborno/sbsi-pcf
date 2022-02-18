@@ -16,7 +16,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="edit_supplier">Supplier <span style="color: red;">*</span></label>
-                                <input type="hidden" class="form-control" name="source_id" id="edit_source_id">
+                                <input type="hidden" class="form-control" name="source_id" id="edit_source_id" value={{ old('source_id') }}>
                                 <select class="form-control select2 @error('supplier') is-invalid @enderror" name="supplier_id" id="edit_supplier" required>
                                 </select>
 
@@ -167,10 +167,9 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="edit_mandatory_peripherals">Mandatory Peripherals</label>
-                                <input type="text" class="form-control select2 @error('mandatory_peripherals') is-invalid @enderror" name="mandatory_peripherals[]" multiple="multiple" id="edit_mandatory_peripherals"
-                                    value="{{ old('mandatory_peripherals') }}">
-
-                                @error('mandatory_peripherals')
+                                <select class="form-control select2 @error('mandatory_peripherals_ids') is-invalid @enderror" name="mandatory_peripherals_ids[]" multiple="multiple" id="edit_mandatory_peripherals" required>
+                                </select>
+                                @error('mandatory_peripherals_ids')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

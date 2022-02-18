@@ -47,6 +47,7 @@ class UpdateUserRequest extends FormRequest
                         ->uncompromised(3)
             ],
             'role' => 'required',
+            'department_id' => 'required|numeric'
         ];
     }
 
@@ -56,6 +57,7 @@ class UpdateUserRequest extends FormRequest
             'name.required' => 'This is a required field.',
             'email.required' => 'This is a required field.',
             'role.required' => 'This is a required field.',
+            'department_id' => 'This is a required field'
         ];
     }
 }

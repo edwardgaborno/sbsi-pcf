@@ -16,6 +16,7 @@ use App\Http\Controllers\PCFInstitutionController;
 use App\Http\Controllers\ProfitabilityPercentageController;
 use App\Http\Controllers\SourceMandatoryPeripheralController;
 use App\Http\Controllers\SupplierController;
+use App\Models\MandatoryPeripheral;
 use App\Models\PCFInstitution;
 use App\Models\PCFRequest;
 use App\Models\Price;
@@ -134,7 +135,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('/ajax/get-source-list', [SourceController::class, 'getSources'])->name('.source_list');
             Route::get('/ajax/get-profit-rate-percentage/{id}', [ProfitabilityPercentageController::class, 'getProfitRatePercentage'])->name('.get_profit_rate_percentage');
-            Route::get('/ajax/view-mandatory-peripherals/{id}', [SourceMandatoryPeripheralController::class, 'index'])->name('.get_source_mandatory_peripherals');
+            // Route::get('/ajax/view-mandatory-peripherals/{id}', [SourceMandatoryPeripheralController::class, 'index'])->name('.get_source_mandatory_peripherals');
+            Route::get('/ajax/view-source-mandatory-peripherals/{id}', [MandatoryPeripheralController::class, 'getSourceMandatoryPeripherals'])->name('.get_source_mandatory_peripherals');
+            Route::get('/ajax/get-source-suppliers/{id}', [SourceController::class, 'geSourceFilteredBySupplier'])->name('.get_source_filtered_by_supplier');
         });
     });
 

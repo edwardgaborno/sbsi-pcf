@@ -39,6 +39,10 @@ class CreatePCFRequestsTable extends Migration
             $table->decimal('annual_profit_rate');
             $table->string('pcf_document')->nullable();
             $table->boolean('is_cancelled')->default(0);
+            $table->string('contact_person');
+            $table->string('designation');
+            $table->string('thru_contact_person')->nullable();
+            $table->string('thru_designation')->nullable();
             $table->foreignId('created_by') // user_id
                 ->nullable()
                 ->constrained('users')

@@ -41,6 +41,7 @@ class CreateSourcesTable extends Migration
                 ->onUpdate('cascade');
             $table->decimal('standard_price', 11, 2);
             $table->string('profitability');
+            $table->json('mandatory_peripherals_ids')->nullable();
             $table->timestamps();
         });
     }

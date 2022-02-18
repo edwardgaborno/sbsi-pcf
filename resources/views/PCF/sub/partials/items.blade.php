@@ -12,7 +12,7 @@
                 @csrf
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label for="source_item_code-i">Item Name</label>
+                        <label for="source_item_code-i">Item Code (<a href="#" data-toggle="modal" data-target="#pcf_view_sources_modal">View Sources</a>)</label>
                         <input type="hidden" class="form-control" name="pcf_no" id="pcf_no" value="{{ $pcf_no }}"> <!-- pcf no -->                        
                         <select name="source_id" id="source_item_code-i" class="form-control @error('source_id') is-invalid @enderror select2" required>
                             <option value="" selected disabled></option>
@@ -57,7 +57,7 @@
                         @enderror
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="sales_add-i">Selling Price</label>
+                        <label for="sales_add-i">Unit Price</label>
                         <input type="text" class="form-control @error('sales') is-invalid @enderror" name="sales" id="sales-i"
                             value="{{ old('sales') }}" required disabled>
 
@@ -88,13 +88,33 @@
                 <table class="table table-striped table-hover dt-responsive" id="pcfItem_datatable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Supplier</th>
                             <th>Item Code</th>
                             <th>Item Description</th>
                             <th>Quantity (Per Year)</th>
-                            <th>Bundled Product</th>
-                            <th>Selling Price</th>
+                            <th>UOM</th>
+                            <th>Unit Price</th>
                             <th>Total Sales</th>
+                            <th>Above Standard Price</th>
                             <th>Actions</th>
+                        </tr> 
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Mandatory Peripherals</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover dt-responsive" id="mandatory_peripherals_datatable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Item Description</th>
+                            <th>Quantity</th>
+                            <th>Item Category</th>
                         </tr> 
                     </thead>
                     <tbody>

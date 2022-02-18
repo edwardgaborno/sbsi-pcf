@@ -36,7 +36,7 @@ class UpdateMandatoryPeripheralsRequest extends FormRequest
     public function rules()
     {
         return [
-            'item_code' => [
+            'source_id' => [
                 'required',
                 'string',
                 Rule::unique('mandatory_peripherals')->ignore($this->mp_id),
@@ -50,7 +50,7 @@ class UpdateMandatoryPeripheralsRequest extends FormRequest
     public function messages()
     {
         return [
-            'item_code.required' => 'This is a required field.',
+            'source_id.required' => 'This is a required field.',
             'item_description.required' => 'This is a required field.',
             'quantity.required' => 'This is a required field.',
             'peripherals_category_id.required' => 'This is a required field.',

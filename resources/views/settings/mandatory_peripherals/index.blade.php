@@ -1,6 +1,42 @@
 @extends('layouts.app')
 @section('title', 'PCF - Mandatory Peripheral List')
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .accordion .fa {
+            margin-right: 0.5rem;
+        }
 
+        .accordion button, .accordion button:hover, .accordion button:focus {
+            text-decoration: none;
+        }
+        .pull-left{
+            float:left!important;
+        }
+        .pull-right{
+            float:right!important;
+        }
+        .select2-selection ,
+        .select2-selection--single {
+            height: 38px !important;
+        }
+        .select2-selection,
+        .select2-selection--single,
+        .select2-selection--clearable {
+            height: 38px !important;
+        }
+        .select2-container--default,
+        .select2-selection--single,
+        .select2-selection__rendered {
+            line-height: 38px !important;
+        }
+        .select2-container--default 
+        .select2-selection--single 
+        .select2-selection__arrow {
+            height: 38px !important;
+        }
+    </style>
+@endpush
 @section('content')
     <div id="wrapper">
 
@@ -68,8 +104,8 @@
             </div>
             <!-- End of Main Content -->
             <!-- Modal Component -->
-            @include('modals.mandatory_peripherals.create')
             @include('modals.mandatory_peripherals.edit')
+            @include('modals.mandatory_peripherals.create')
             <!-- End of Modal Component -->
             <!-- Footer -->
             @include('layouts.footer')
@@ -79,6 +115,10 @@
     </div>
     <!-- End of Page Wrapper -->
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@endpush
 
 @section('scripts')
     <script>
@@ -101,7 +141,7 @@
                         data: 'id'
                     },
                     {
-                        data: 'item_code'
+                        data: 'source_id'
                     },
                     {
                         data: 'item_description'
@@ -125,6 +165,44 @@
             });
         });
 
+        function getSources () {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/ajax/get-source-list',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    data = res.data;
+                    $("#item_code").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Item code',
+                    });
+                    
+                    $("#edit_item_code").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Item code',
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                });
+        }
+
+        getSources();
+
+        $('#item_code').on('select2:select', function (e) {
+            var data = e.params.data;
+            document.getElementById("item_description").value = data.description;
+        });
+
         let mp_id;
 
         $('#mp-datatable').on('click', '.edit-mp-modal', function(e) {
@@ -141,11 +219,19 @@
                     cache: false,
                     dataType: 'json',
                 }).done(function(data) {
-                    $('#edit-mp-id').val(data.id);
-                    $('#edit-item-code').val(data.item_code);
-                    $('#edit-item-description').val(data.item_description);
-                    $('#edit-quantity').val(data.quantity);
-                    $('#edit-peripherals-category-id [value='+data.peripherals_category_id+']').prop('selected', true);
+                    var result = $.grep(data.mpAllDataForSelect2Edit, function(e) { 
+                        return e.source_id == data.editMp.source_id; 
+                    });
+                    $('#edit-mp-id').val(data.editMp.id);
+                    $('#edit_item_code').val(data.editMp.sources.id).select2({
+                        data: data.mpAllDataForSelect2Edit,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Item Code',
+                    });
+                    $('#edit_item_description').val(result[0].item_description);
+                    $('#edit-quantity').val(data.editMp.quantity);
+                    $('#edit-peripherals-category-id [value='+data.editMp.peripherals_category_id+']').prop('selected', true);
                     $('#edit-mp-modal').modal('show');
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     console.log(errorThrown);
@@ -157,6 +243,11 @@
                 });
             }
         })
+
+        $('#edit_item_code').on('select2:select', function (e) {
+            let item_description = e.params.data.title;
+            document.getElementById("edit_item_description").value = item_description;
+        });
 
         $('#mp-datatable').on('click', '.enable-mp', function(e) {
             e.preventDefault();

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDepartmentIdToUsersTable extends Migration
+class CreateDepartmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AddDepartmentIdToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('department_id')->nullable();
+        Schema::create('departments', function (Blueprint $table) {
+            $table->id();
+            $table->string('department');
+            $table->boolean('is_active')->default(1);
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ class AddDepartmentIdToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('departments');
     }
 }

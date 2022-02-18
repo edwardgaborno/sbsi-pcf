@@ -125,11 +125,19 @@
                     cache: false,
                     dataType: 'json',
                 }).done(function(data) {
+                    //reset checkboxes every edit to prevent always checked 
+                    clearCheckboxes();
                     $('#editUserModal').modal('show');
                     $('#user_id').val(data.id);
                     $('#edit_name').val(data.name);
                     $('#edit_email').val(data.email);
-                    $('#edit_role').val(data.roles[0].id)
+                    $('#edit_role').val(data.roles[0].id);
+                    $('#edit_department_id').val(data.department_id);
+                    $('#edit_area_region').val(data.area_region);
+                    var arr = data.user_product_segments;
+                    for(var i=0; i<arr.length; i++){
+                        $('input[type="checkbox"][value="' + arr[i].product_segment_id +'"]').prop('checked', 'checked');
+                    }
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Something went wrong!',
@@ -137,6 +145,22 @@
                         'error'
                     )
                 });
+            }
+        });
+
+        function clearCheckboxes() {
+            $('input[type=checkbox]').each(function() { 
+                    this.checked = false; 
+            }); 
+        }
+
+        $(".toggle-password").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
             }
         });
 
@@ -258,45 +282,6 @@
                 }
             })
         }
-
-
-        // delete user;
-        $('#user_dataTable').on('click', '.deleteUser', function (e) {
-            e.preventDefault();
-            user_id = $(this).data('id');
-            Swal.fire({
-                title: 'Delete User Account',
-                text: "This user account will be permanently deleted",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        method: 'DELETE',
-                        url: '/user-management/users/ajax/delete/account/' + user_id,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                    }).done(function(data) {
-                        $("#user_dataTable").DataTable().ajax.reload();
-                        Swal.fire(
-                            'Success!',
-                            'User account has been deleted',
-                            'success'
-                        )
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire(
-                            'Something went wrong!',
-                            'Please contact your system administrator!',
-                            'error'
-                        )
-                    });
-                }
-            })
-        });
     </script>
 
     <script>

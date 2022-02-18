@@ -21,4 +21,9 @@ class MandatoryPeripheral extends Model
         return $this->belongsTo(MandatoryPeripheralCategory::class, 'peripherals_category_id', 'id');
     }
 
+    public function sources()
+    {
+        return $this->belongsTo(Source::class, 'source_id', 'id');
+    }
+
 }
