@@ -12,39 +12,65 @@ use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\UserManagementAccess\User\StoreUserRequest;
 use App\Http\Requests\UserManagementAccess\User\UpdateUserRequest;
+use App\Models\Department;
+use App\Models\ProductSegment;
+use App\Models\UserProductSegment;
 
 class UserController extends Controller
 {
     public function index()
     {
         $this->authorize('user_access');
+        $productSegments = ProductSegment::where('is_active', 1)->orderBy('product_segment', 'ASC')->get();
+        $departments = Department::where('is_active', 1)->orderBy('department', 'ASC')->get();
 
-        return view('users.index');
+        return view('users.index', [
+            'productSegments' => $productSegments,
+            'departments' => $departments
+        ]);
     }
 
     public function create()
     {
-        return view('users.create');
+        $productSegments = ProductSegment::where('is_active', 1)->orderBy('product_segment', 'ASC')->get();
+        $departments = Department::where('is_active', 1)->orderBy('department', 'ASC')->get();
+
+        return view('users.create', [
+            'productSegments' => $productSegments,
+            'departments' => $departments
+        ]);
     }
 
     public function store(StoreUserRequest $request)
     {
         $this->authorize('user_create');
-
         DB::beginTransaction();
 
         $data = $request->validated();
         $role = Role::find($data['role']);
 
         try {
-            $user = User::firstOrCreate([
-                'email' => $data['email'], // this will check if email exists in the database;
-            ],[
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
-            $user->assignRole($role->name);
+            $saveUser = new User;
+            $saveUser->name = $request->name;
+            $saveUser->email = $request->email;
+            $saveUser->password = Hash::make($request->password);
+            $saveUser->department_id = $request->department_id;
+
+            if ($request->area_region) {
+                $saveUser->area_region = $request->area_region;
+            }
+
+            if ($request->product_segment_id) {
+                foreach ($request->product_segment_id as $productSegmentId) {
+                    $saveProductSegment = new UserProductSegment;
+                    $saveProductSegment->user_id = $saveUser->id;
+                    $saveProductSegment->product_segment_id = $productSegmentId;
+                    $saveProductSegment->save();
+                }
+            }
+
+            $saveUser->save();
+            $saveUser->assignRole($role->name);
 
             DB::commit();
             Alert::success('Success', 'User has been created.');
@@ -66,41 +92,48 @@ class UserController extends Controller
         $role = Role::find($data['role']);
 
         try {
-            $user = User::findOrFail($request->user_id);
+            $updateUser = User::findOrFail($request->user_id);
+            $updateUser->name = $request->name;
+            $updateUser->email = $request->email;
+            $updateUser->department_id = $request->department_id;
 
-            if($request->filled('password')) {
-                $user->update([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($data['password']),
-                ]);
+            if ($request->password) {
+                $updateUser->password = Hash::make($request->password);
             }
-            else {
-                $user->update([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                ]);
+
+            if ($request->area_region) {
+                $updateUser->area_region = $request->area_region;
             }
-            $user->removeRole($user->roles->first());
-            $user->assignRole($role->name);
+
+            $updateUser->save();
+
+            if ($request->product_segment_id) {
+                //delete old SBU records 
+                UserProductSegment::where('user_id', $request->user_id)->delete();
+                //save new SBU records
+                foreach ($request->product_segment_id as $productSegmentId) {
+                    $saveProductSegment = new UserProductSegment;
+                    $saveProductSegment->user_id = $updateUser->id;
+                    $saveProductSegment->product_segment_id = $productSegmentId;
+                    $saveProductSegment->save();
+                }
+            } else {
+                //if user unchecked all SBU
+                //delete all SBU records
+                UserProductSegment::where('user_id', $request->user_id)->delete();
+            }
+
+            $updateUser->removeRole($updateUser->roles->first());
+            $updateUser->assignRole($role->name);
 
             DB::commit();
-            alert()->success('Success', 'User credentials has been updated.');
+            alert()->success('Success', 'User account has been updated.');
         }
         catch (\Throwable $th) {
             DB::rollBack();
         }
 
-        return back();
-    }
-
-    public function destroy($user_id)
-    {
-        $this->authorize('user_delete');
-
-        User::findOrFail($user_id)->delete();
-
-        return response()->json(['success' => 'success'], 200);
+        return redirect()->route('users.index');
     }
 
     public function usersList(Request $request)
@@ -117,7 +150,7 @@ class UserController extends Controller
                     return '<span class="badge badge-light">' . $data->getRoleNames() . '</span>';
                 })
                 ->addColumn('department', function ($data) {
-                    return $data->department;
+                    return $data->departments->department;
                 })
                 ->addColumn('status', function ($data) {
 
@@ -139,32 +172,24 @@ class UserController extends Controller
                         '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
                         <a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
-                            <i class="far fa-check-circle"></i> Enable</a>
-                        <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
-                            <i class="fas fa-user-minus"></i> Delete</a>';
+                            <i class="far fa-check-circle"></i> Enable</a>';
                     } else if($data->status == 1 && $data->is_approved == 0) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
                         <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
-                            <i class="fas fa-ban"></i> Disable</a>
-                        <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
-                            <i class="fas fa-user-minus"></i> Delete</a>';
+                            <i class="fas fa-ban"></i> Disable</a>';
                     } else if($data->status == 0 && $data->is_approved == 1) {
                         return
                         '<a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
-                            <i class="far fa-check-circle"></i> Enable</a>
-                        <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
-                            <i class="fas fa-user-minus"></i> Delete</a>';
+                            <i class="far fa-check-circle"></i> Enable</a>';
                     }
                     else {
                         return
                         '<a href="javascript:void(0)" class="badge badge-info editUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-edit"></i> Edit</a>
                         <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
-                            <i class="fas fa-ban"></i> Disable</a>
-                        <a href="javascript:void(0)" class="badge badge-danger deleteUser" data-id="' . $data->id . '">
-                            <i class="fas fa-user-minus"></i> Delete</a>';
+                            <i class="fas fa-ban"></i> Disable</a>';
                     }
                 })
                 ->rawColumns(['role', 'status', 'actions'])
@@ -178,7 +203,10 @@ class UserController extends Controller
 
         $user = User::with(['roles' => function ($query) {
                     $query->select('id', 'name');
-                }])->findOrFail($user_id);
+                }])->with(['userProductSegments' => function ($query) {
+                    $query->select('id', 'user_id', 'product_segment_id');
+                }])
+                ->findOrFail($user_id);
                 
         return response()->json($user);
     }

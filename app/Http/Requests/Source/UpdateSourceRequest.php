@@ -43,7 +43,7 @@ class UpdateSourceRequest extends FormRequest
     public function rules()
     {
         return [
-            'supplier' => 'required|string',
+            'supplier_id' => 'required|string',
             'item_code' => [
                 'required',
                 'string',
@@ -53,27 +53,28 @@ class UpdateSourceRequest extends FormRequest
             'unit_price' => 'required|numeric',
             'currency_rate' => 'required|numeric',
             'tp_php' => 'required|numeric',
-            'item_group' => 'sometimes|nullable|string',
-            'uom' => 'sometimes|nullable|string',
-            'mandatory_peripherals' => 'sometimes|nullable|string',
+            'tp_php_less_tax' => 'required|numeric',
+            'uom_id' => 'nullable|numeric',
+            'segment_id' => 'nullable|numeric',
+            'item_category_id' => 'required|numeric',
             'cost_of_peripherals' => 'sometimes|nullable|numeric',
-            'segment' => 'sometimes|nullable|string',
-            'item_category' => 'required|string',
             'standard_price' => 'required|numeric',
             'profitability' => 'required|string',
+            'mandatory_peripherals_ids' => 'sometimes|nullable|array'
         ];
     }
 
     public function messages()
     {
         return [
-            'supplier.required' => 'This is a required field.',
+            'supplier_id.required' => 'This is a required field.',
+            'item_category_id.required' => 'This is a required field.',
             'item_code.required' => 'This is a required field.',
             'description.required' => 'This is a required field.',
             'unit_price.required' => 'This is a required field.',
             'currency_rate.required' => 'This is a required field.',
-            'item_category.required' => 'This is a required field.',
             'tp_php.required' => 'This is a required field.',
+            'tp_php_less_tax.required' => 'This is a required field.',
             'standard_price.required' => 'This is a required field.',
             'profitability.required' => 'This is a required field.',
         ];

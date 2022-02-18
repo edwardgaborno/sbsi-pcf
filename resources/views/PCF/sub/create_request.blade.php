@@ -11,6 +11,31 @@
         .accordion button, .accordion button:hover, .accordion button:focus {
             text-decoration: none;
         }
+        .pull-left{
+            float:left!important;
+        }
+        .pull-right{
+            float:right!important;
+        }
+        .select2-selection ,
+        .select2-selection--single {
+            height: 38px !important;
+        }
+        .select2-selection,
+        .select2-selection--single,
+        .select2-selection--clearable {
+            height: 38px !important;
+        }
+        .select2-container--default,
+        .select2-selection--single,
+        .select2-selection__rendered {
+            line-height: 38px !important;
+        }
+        .select2-container--default 
+        .select2-selection--single 
+        .select2-selection__arrow {
+            height: 38px !important;
+        }
     </style>
 @endpush
 
@@ -43,19 +68,14 @@
                     <a href="{{ route('PCF.index') }}" class="btn btn-sm btn-light mr-2"><i class="fas fa-arrow-circle-left"></i> Back to index page</a>
                 </div>
                 <br>
-                <div class="accordion" id="accordionExample">
-                    @include('PCF.sub.partials.items')
-                    @include('PCF.sub.partials.machines')
-                </div>
-                <br>
-                <div class="row">
+                <div class="row" style="position: sticky; top: 0;">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('PCF.store') }}" method="post">
+                                <form action="{{ route('PCF.store') }}" method="post" id="submit_pcf_request_form">
                                     @csrf
                                     <div class="row">
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-2">
                                             <label for="pcf_no">PCF No.</label>
                                             <input type="text" class="form-control @error('pcf_no') is-invalid @enderror" name="pcf_no" id="pcf_no"
                                                 value="{{ old('pcf_no', $pcf_no) }}" required readonly>
@@ -66,7 +86,7 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-2">
                                             <label for="pcf_no">RFQ No.</label>
                                             <input type="text" class="form-control @error('rfq_no') is-invalid @enderror" name="rfq_no" id="rfq_no"
                                                 value="{{ old('rfq_no', $rfq_no) }}" required readonly>
@@ -77,9 +97,7 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-3">
                                             <label for="institution">Institution</label>
                                             <select name="institution_id" id="institution" class="form-control @error('institution') is-invalid @enderror select2" required>
                                                 <option value="" selected disabled></option>
@@ -91,11 +109,10 @@
                                                 </span>
                                             @enderror 
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-5">
                                             <label for="address">Address</label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" cols="5"
-                                                rows="3" disabled>{{ old('address') }}</textarea>
-
+                                            <input type="text" class="form-control @error('address') is-invalid @enderror" name="address" id="address" value="{{ old('address') }}" disabled>
+                                        
                                             @error('address')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -104,10 +121,10 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                                 <label for="contact_person">Contact Person</label>
                                                 <input type="text" class="form-control @error('contact_person') is-invalid @enderror" name="contact_person" id="contact_person"
-                                                    value="{{ old('contact_person') }}" required disabled>
+                                                    value="{{ old('contact_person') }}" required>
 
                                                 @error('contact_person')
                                                     <span class="invalid-feedback" role="alert">
@@ -115,10 +132,10 @@
                                                     </span>
                                                 @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label for="designation">Designation</label>
                                             <input type="text" class="form-control @error('designation') is-invalid @enderror" name="designation" id="designation"
-                                                value="{{ old('designation') }}" disabled>
+                                                value="{{ old('designation') }}" required>
 
                                             @error('designation')
                                                 <span class="invalid-feedback" role="alert">
@@ -126,12 +143,23 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="thru_duration_contract">Thru Designation</label>
-                                            <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="thru_duration_contract"
-                                                value="{{ old('thru_designation') }}" disabled>
+                                        <div class="form-group col-md-3">
+                                            <label for="thru_contact_person">Thru Contact Person</label>
+                                            <input type="text" class="form-control @error('thru_contact_person') is-invalid @enderror" name="thru_contact_person" id="thru_contact_person"
+                                                value="{{ old('thru_contact_person') }}">
 
-                                            @error('thru designation')
+                                            @error('thru_contact_person')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="thru_designation">Thru Designation</label>
+                                            <input type="text" class="form-control @error('thru_designation') is-invalid @enderror" name="thru_designation" id="thru_designation"
+                                                value="{{ old('thru_designation') }}">
+
+                                            @error('thru_designation')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -282,21 +310,25 @@
                                         </div>
                                     </div>
                                     <!-- End Right Element -->
-                                    <button type="submit" class="btn btn-primary float-right">{{ __('Add PCF Request') }}</button>
+                                    <button type="submit" class="btn btn-primary float-right">{{ __('Submit PCF Request') }}</button>
                                     <a href="{{ route('PCF.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
+                <br>
+                <div class="accordion" id="accordionExample">
+                    @include('PCF.sub.partials.items')
+                    @include('PCF.sub.partials.sources')
+                    @include('PCF.sub.partials.machines')
+                </div>
+                <button type="button" id="submit_pcf_request" class="btn btn-primary float-right">{{ __('Submit PCF Request') }}</button>
+                <a href="{{ route('PCF.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a>
             </div>
             <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->
-        <!-- Modal Component -->
-        @include('PCF.sub.partials.items_bundle_options')
-        @include('PCF.sub.partials.machines_bundle_options')
-        <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
         <!-- End of Footer -->
@@ -312,6 +344,29 @@
 
 @section('scripts')
     <script>
+    function CopyToClipboard(item_code, btn_id) {
+        // console.log(item_code);
+        var doc = document
+        , text = doc.getElementById(item_code)
+        , range, selection;
+
+        if (doc.body.createTextRange) {
+            range = doc.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } else if (window.getSelection) {
+            selection = window.getSelection();        
+            range = doc.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        document.getElementById(btn_id).innerHTML="Copied";
+    }
+
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -341,12 +396,14 @@
                 },
             },
             columns: [
+                { data: 'supplier' },
                 { data: 'source.item_code' },
                 { data: 'source.description' },
                 { data: 'quantity' },
-                { data: 'bundled_product' },
+                { data: 'uom' },
                 { data: 'sales' },
                 { data: 'total_sales' },
+                { data: 'above_standard_price' },
                 { data: 'actions' },
             ],
         });
@@ -372,14 +429,14 @@
                     data: data,
                     width: "100%",
                     allowClear: true,
-                    placeholder: 'Item name',
+                    placeholder: 'Item code',
                 });
 
                 $("#source_item_code-foc").select2({
                     data: data,
                     width: "100%",
                     allowClear: true,
-                    placeholder: 'Item name',
+                    placeholder: 'Item code',
                 });
 
             }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -477,6 +534,10 @@
         document.getElementById("sales-i").disabled = true;
     });
     //end of select2 function
+
+    $('#submit_pcf_request').click( function() {
+        $('#submit_pcf_request_form').submit();
+    });
 
     //on pcfList form submit; ajax
     $('#pcfListForm').on('submit', function(e) {
@@ -1016,327 +1077,6 @@
 
     <script>
         $(function () {
-            $('#pcfItem_datatable').on('click', '.pcfListCreateBundle', function (e) {
-                e.preventDefault();
-                $('#bundleItemsModal').modal('show');
-
-                document.getElementById("pcfList_id").value = $(this).data('id');
-
-                $('#pcfItemBundle_datatable').DataTable().clear().destroy();
-                getBundleItem($(this).data('id'));
-            })
-            $('#pcfListBundleForm').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "{{ route('PCF.sub.store_bundle_options') }}",
-                    method:'POST',
-                    data: {
-                        p_c_f_list_id: document.getElementById("pcfList_id").value,
-                        source_id: document.getElementById("item_code_bundle").value,
-                        quantity: document.getElementById("quantity_bundle").value,
-                    },
-                    success: function(response) {
-                        $("#item_code_bundle").val('').trigger('change')
-                        document.getElementById("description_bundle").value = "";
-                        document.getElementById("quantity_bundle").value = "";
-
-                        $('#pcfItemBundle_datatable').DataTable().ajax.reload();
-                        $('#pcfItem_datatable').DataTable().ajax.reload();
-
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Added',
-                            text: 'Item has been added as a bundle'
-                        })
-                    },
-                    error: function (response) {
-                        $("#item_code_bundle").val('').trigger('change')
-                        document.getElementById("description_bundle").value = "";
-                        document.getElementById("quantity_bundle").value = "";
-
-                        $('#pcfItemBundle_datatable').DataTable().ajax.reload();
-                        $('#pcfItem_datatable').DataTable().ajax.reload();
-
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        })
-                    },
-                });
-            });
-
-            $("#item_code_bundle").select2({
-                dropdownParent: $('#bundleItemsModal'),
-                width: "100%",
-                allowClear: true,
-                minimumInputLength: 3,
-                placeholder: 'Item code',
-                ajax: {
-                    url: '{{ route("settings.source.source_search") }}',
-                    dataType: 'json',
-                },
-            });
-
-            $('#item_code_bundle').on('select2:select', function (e) {
-                var data = e.params.data;
-                var source_id = data.id
-                if(source_id) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        contentType: "application/json; charset=utf-8",
-                        dataType: 'json',
-                        cache: false,
-                        method: 'GET',
-                        url: '/settings.source/get-description/source=' + source_id,
-                    }).done(function(data) {
-                        document.getElementById("description_bundle").value = data.description;
-                        document.getElementById("quantity_bundle").disabled = false;
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        });
-                    });
-                }
-            });
-
-            $("#item_code_bundle").on('change', function(e) {
-                document.getElementById("description_bundle").value = "";
-                document.getElementById("quantity_bundle").value = "";
-                document.getElementById("quantity_bundle").disabled = true;
-            });
-
-            $('#pcfItemBundle_datatable').on('click', '.pcfListBundleDelete', function (e) {
-                e.preventDefault();
-                bundleItemId = $(this).data('id');
-                Swal.fire({
-                    title: 'Remove item?',
-                    text: "This item will be removed as a bundled product",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Confirm'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            method: 'DELETE',
-                            url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
-                        }).done(function(response) {
-                            $('#pcfItemBundle_datatable').DataTable().ajax.reload();
-                            $('#pcfItem_datatable').DataTable().ajax.reload();
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Removed',
-                                text: 'The product has been removed from the current item listing.'
-                            })
-                        }).fail(function(jqXHR, textStatus, errorThrown) {
-                            Toast.fire({
-                                icon: 'error',
-                                title: 'Oops! Something went wrong.',
-                                text: 'Please contact your system administrator.'
-                            })
-                        });
-                    }
-                })
-            });
-
-            //scripts for getting bundleItem, starts here;
-            function getBundleItem(bundleItemId) {
-                $('#pcfItemBundle_datatable').DataTable({
-                    "stripeClasses": [],
-                    processing: false,
-                    serverSide: true,
-                    responsive: true,
-                    searchable: true,
-                    ordering: true,
-                    ajax: {
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url : "/PCF.sub/ajax/bundled/item-list/" + bundleItemId,
-                    },
-                    columns: [
-                        { data: 'source.item_code' },
-                        { data: 'source.description' },
-                        { data: 'quantity' },
-                        { data: 'actions' },
-                    ],
-                });
-            };
-
-            $('#pcfFOC_dataTable').on('click', '.pcfInclusionsCreateBundle', function (e) {
-                e.preventDefault();
-                $('#bundleMachinesModal').modal('show');
-
-                document.getElementById("pcfInclusion_id").value = $(this).data('id');
-
-                $('#pcfInclusionsBundle_datatable').DataTable().clear().destroy();
-                getInclusionBundledItem($(this).data('id'));
-            })
-
-            $('#pcfMachinesBundleForm').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "{{ route('PCF.sub.store_bundle_options') }}",
-                    method:'POST',
-                    data: {
-                        p_c_f_inclusion_id: document.getElementById("pcfInclusion_id").value,
-                        source_id: document.getElementById("machine_item_code_bundle").value,
-                        quantity: document.getElementById("machine_quantity_bundle").value,
-                    },
-                    success: function(response) {
-                        $("#machine_item_code_bundle").val('').trigger('change')
-                        document.getElementById("machine_description_bundle").value = "";
-                        document.getElementById("machine_quantity_bundle").value = "";
-
-                        $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
-                        $('#pcfFOC_dataTable').DataTable().ajax.reload();
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Added',
-                            text: 'Item has been added as a bundle'
-                        })
-                    },
-                    error: function (response) {
-                        $("#machine_item_code_bundle").val('').trigger('change')
-                        document.getElementById("machine_description_bundle").value = "";
-                        document.getElementById("machine_quantity_bundle").value = "";
-
-                        $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
-
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        })
-                    },
-                });
-            });
-
-            $("#machine_item_code_bundle").select2({
-                dropdownParent: $('#bundleMachinesModal'),
-                width: "100%",
-                allowClear: true,
-                minimumInputLength: 3,
-                placeholder: 'Item code',
-                ajax: {
-                    url: '{{ route("settings.source.source_search") }}',
-                    dataType: 'json',
-                },
-            });
-
-            $('#machine_item_code_bundle').on('select2:select', function (e) {
-                var data = e.params.data;
-                var source_id = data.id
-                if(source_id) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        contentType: "application/json; charset=utf-8",
-                        dataType: 'json',
-                        cache: false,
-                        method: 'GET',
-                        url: '/settings.source/get-description/source=' + source_id,
-                    }).done(function(data) {
-                        document.getElementById("machine_description_bundle").value = data.description;
-                        document.getElementById("machine_quantity_bundle").disabled = false;
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Oops! Something went wrong.',
-                            text: 'Please contact your system administrator.'
-                        });
-                    });
-                }
-            });
-
-            $("#machine_item_code_bundle").on('change', function(e) {
-                document.getElementById("machine_description_bundle").value = "";
-                document.getElementById("machine_quantity_bundle").value = "";
-                document.getElementById("machine_quantity_bundle").disabled = true;
-            });
-
-            $('#pcfInclusionsBundle_datatable').on('click', '.pcfInclusionBundleDelete', function (e) {
-                e.preventDefault();
-                bundleItemId = $(this).data('id');
-                Swal.fire({
-                    title: 'Remove item?',
-                    text: "This item will be removed as a bundled product",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Confirm'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            method: 'DELETE',
-                            url: '/PCF.sub/ajax/delete/bundled-item/' + bundleItemId,
-                        }).done(function(response) {
-                            $('#pcfInclusionsBundle_datatable').DataTable().ajax.reload();
-                            $('#pcfFOC_dataTable').DataTable().ajax.reload();
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Removed',
-                                text: 'The product has been removed from the current item listing.'
-                            })
-                        }).fail(function(jqXHR, textStatus, errorThrown) {
-                            Toast.fire({
-                                icon: 'error',
-                                title: 'Oops! Something went wrong.',
-                                text: 'Please contact your system administrator.'
-                            })
-                        });
-                    }
-                })
-            });
-
-            //scripts for getting bundleItem, starts here;
-            function getInclusionBundledItem(bundledItemId) {
-                $('#pcfInclusionsBundle_datatable').DataTable({
-                    "stripeClasses": [],
-                    processing: false,
-                    serverSide: true,
-                    responsive: true,
-                    searchable: true,
-                    ordering: true,
-                    ajax: {
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url : "/PCF.sub/ajax/bundled/machines-list/" + bundledItemId,
-                    },
-                    columns: [
-                        { data: 'source.item_code' },
-                        { data: 'source.description' },
-                        { data: 'quantity' },
-                        { data: 'actions' },
-                    ],
-                });
-            };
-        });
-    </script>
-
-    <script>
-        $(function () {
             $(".collapse.show").each(function () {
                 $(this)
                 .prev(".card-header")
@@ -1379,5 +1119,123 @@
                 }
             })   
         });
+    </script>
+    <script>
+        $("#supplier_filter").on('change', function () {
+            var supplier_id = $(this).val();
+            if (supplier_id) {
+                $('#pcf_view_sources_datatable').DataTable().clear().destroy();
+                $('#pcf_view_sources_datatable').DataTable({
+                    "dom": '<"pull-left"f><"pull-right"l>tip',
+                    "stripeClasses": [],
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    searchable: true,
+                    ordering: true,
+                    ajax: {
+                        url: '/settings.source/ajax/get-source-suppliers/' + supplier_id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    },
+                    columns: [
+                        { data: 'supplier' },
+                        { data: 'item_code' },
+                        { data: 'description' },
+                        { data: 'uom' },
+                        { data: 'item_category' },
+                        { data: 'copy' },
+                    ],
+                });
+            } else {
+                $('#pcf_view_sources_datatable').DataTable().clear().destroy();
+                $('#pcf_view_sources_datatable').DataTable({
+                    "dom": '<"pull-left"f><"pull-right"l>tip',
+                    "stripeClasses": [],
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    searchable: true,
+                    ordering: true,
+                    ajax: {
+                        url: "{{ route('settings.source.full_list') }}",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    },
+                    columns: [
+                        { data: 'supplier' },
+                        { data: 'item_code' },
+                        { data: 'description' },
+                        { data: 'uom' },
+                        { data: 'item_category' },
+                        { data: 'copy' },
+                    ],
+                });
+            }
+        });
+
+        $(function() {
+            $('#pcf_view_sources_datatable').DataTable({
+                "dom": '<"pull-left"f><"pull-right"l>tip',
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    url: "{{ route('settings.source.full_list') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [
+                    { data: 'supplier' },
+                    { data: 'item_code' },
+                    { data: 'description' },
+                    { data: 'uom' },
+                    { data: 'item_category' },
+                    { data: 'copy' },
+                ],
+            });
+        });
+
+        function getSuppliers() {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/business-partners/suppliers/ajax/get-suppliers-dropdown',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    data = res.data;
+                    $("#edit_supplier").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                    });
+
+                    $("#supplier_filter").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                });
+        }
+        getSuppliers();
     </script>
 @endsection

@@ -1,6 +1,25 @@
 @extends('layouts.app')
 @section('title','PCF - Source List')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .accordion .fa {
+            margin-right: 0.5rem;
+        }
+
+        .accordion button, .accordion button:hover, .accordion button:focus {
+            text-decoration: none;
+        }
+        .pull-left{
+            float:left!important;
+        }
+        .pull-right{
+            float:right!important;
+        }
+    </style>
+@endpush
+
 @section('content')
 <div id="wrapper">
 
@@ -40,8 +59,17 @@
                                         @endcan
                                     </div>
                                 </div>
-                            @if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
+                            @if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator') || auth()->user()->hasRole('Accounting'))
                                 <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="supplier_filter">Filtered By:</label>
+                                                <select class="form-control select2 @error('supplier') is-invalid @enderror" name="supplier" id="supplier_filter" required>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover table-striped dt-responsive" id="source_dataTable" width="100%"
                                             cellspacing="0">
@@ -49,13 +77,11 @@
                                                 <tr class="thead-dark">
                                                     <th>ID</th>
                                                     <th>Supplier</th>
-                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                     <th>Unit Price</th>
                                                     <th>Currency Rate</th>
                                                     <th>Total Price (Php)</th>
-                                                    <th>Item Group</th>
                                                     <th>UOM</th>
                                                     <th>Mandatory Peripherals</th>
                                                     <th>Cost Of Peripherals</th>
@@ -72,7 +98,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if(auth()->user()->hasRole('PSR'))
+                            @if(auth()->user()->hasRole('PSR') || auth()->user()->hasRole('Marketing'))
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-striped table-hover dt-responsive" id="psrSource_dataTable" width="100%"
@@ -80,7 +106,6 @@
                                             <thead>
                                                 <tr class="thead-dark">
                                                     <th>Supplier</th>
-                                                    <th>Item Name</th>
                                                     <th>Item Code</th>
                                                     <th>Description</th>
                                                 </tr>
@@ -101,6 +126,7 @@
         <!-- End of Main Content -->
         <!-- Modal Component -->
         @include('modals.source.edit')
+        @include('modals.mandatory_peripherals.index')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -110,6 +136,10 @@
 </div>
 <!-- End of Page Wrapper -->
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@endpush
 
 @section('scripts')
     <script>
@@ -125,6 +155,104 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         })
+
+        $("#supplier_filter").on('change', function () {
+            var supplier_id = $(this).val();
+            if (supplier_id) {
+                $('#source_dataTable').DataTable().clear().destroy();
+                $('#source_dataTable').DataTable({
+                    "dom": '<"pull-left"f><"pull-right"l>tip',
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    url: '/settings.source/ajax/get-source-suppliers/' + supplier_id,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [
+                        { data: 'id' },
+                        { data: 'supplier' },
+                        { data: 'item_code' },
+                        { data: 'description' },
+                        { data: 'unit_price' },
+                        { data: 'currency_rate' },
+                        { data: 'tp_php' },
+                        { data: 'uom' },
+                        { data: 'mandatory_peripherals' },
+                        { data: 'cost_of_peripherals' },
+                        { data: 'segment' },
+                        { data: 'item_category' },
+                        { data: 'standard_price' },
+                        { data: 'profitability' },
+                        { data: 'actions', orderable: false, searchable: false }
+                    ],
+                });
+            } else {
+                $('#source_dataTable').DataTable().clear().destroy();
+                $('#source_dataTable').DataTable({
+                    "dom": '<"pull-left"f><"pull-right"l>tip',
+                    "stripeClasses": [],
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    searchable: true,
+                    ordering: true,
+                    ajax: {
+                        url: "{{ route('settings.source.full_list') }}",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    },
+                    columns: [
+                        { data: 'id' },
+                        { data: 'supplier' },
+                        { data: 'item_code' },
+                        { data: 'description' },
+                        { data: 'unit_price' },
+                        { data: 'currency_rate' },
+                        { data: 'tp_php' },
+                        { data: 'uom' },
+                        { data: 'mandatory_peripherals' },
+                        { data: 'cost_of_peripherals' },
+                        { data: 'segment' },
+                        { data: 'item_category' },
+                        { data: 'standard_price' },
+                        { data: 'profitability' },
+                        { data: 'actions', orderable: false, searchable: false }
+                    ],
+                });
+            }
+        });
+
+        $("#source_dataTable").on('click', '.view-mp-details', function (e) {
+            e.preventDefault();
+            var mp_ids = $(this).data('mp_ids');
+            $('#mandatory_peripherals_datatable').DataTable().clear().destroy();
+            $('#mandatory_peripherals_datatable').DataTable({
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ordering: true,
+                ajax: {
+                    headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/ajax/view-source-mandatory-peripherals/' + mp_ids,
+                },
+                columns: [
+                    { data: 'item_code' },
+                    { data: 'item_description' },
+                    { data: 'quantity' },
+                    { data: 'item_category' },
+                ],
+            });
+        });
 
         $(function() {
             $('#psrSource_dataTable').DataTable({
@@ -142,7 +270,6 @@
                 },
                 columns: [
                     { data: 'supplier' },
-                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                 ],
@@ -151,6 +278,7 @@
 
         $(function() {
             $('#source_dataTable').DataTable({
+                "dom": '<"pull-left"f><"pull-right"l>tip',
                 "stripeClasses": [],
                 processing: true,
                 serverSide: true,
@@ -166,13 +294,11 @@
                 columns: [
                     { data: 'id' },
                     { data: 'supplier' },
-                    { data: 'item_name' },
                     { data: 'item_code' },
                     { data: 'description' },
                     { data: 'unit_price' },
                     { data: 'currency_rate' },
                     { data: 'tp_php' },
-                    { data: 'item_group' },
                     { data: 'uom' },
                     { data: 'mandatory_peripherals' },
                     { data: 'cost_of_peripherals' },
@@ -190,6 +316,11 @@
         $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
             e.preventDefault();
             source_id = $(this).data('id');
+            let unit_price = '';
+            let tp_php = '';
+            let tp_php_less_tax = '';
+            let cost_of_peripherals = '';
+            let standard_price = '';
             if (source_id){
                 $.ajax({
                     method: 'GET',
@@ -203,23 +334,34 @@
                 }).done(function(data) {
                     var unit_price = data.unit_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                     var tp_php = data.tp_php.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    var cost_of_peripherals = data.cost_of_peripherals.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    var tp_php_less_tax = data.tp_php_less_tax.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    if (data.cost_of_peripherals) {
+                        var cost_of_peripherals = data.cost_of_peripherals.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
                     var standard_price = data.standard_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                     $('#editSourceModal').modal('show');
                     $('#edit_source_id').val(data.id);
-                    $('#edit_supplier').val(data.supplier);
-                    $('#edit_item_name').val(data.item_name);
+                    $('#edit_supplier').val(data.supplier_id).select2({
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                    });
+                    $('#edit_uom [value='+data.uom_id+']').prop('selected', true);
                     $('#edit_item_code').val(data.item_code);
                     $('#edit_description').val(data.description);
                     $('#edit_unit_price').val(unit_price);
                     $('#edit_currency_rate').val(data.currency_rate);
                     $('#edit_tp_php').val(tp_php);
-                    $('#edit_item_group').val(data.item_group);
-                    $('#edit_uom').val(data.uom);
-                    $('#edit_mandatory_peripherals').val(data.mandatory_peripherals);
+                    $('#edit_tp_php_less_tax').val(tp_php_less_tax);
+                    // $('#edit_mandatory_peripherals').multiSelect('select', data.mandatory_peripherals);
+                    $('#edit_mandatory_peripherals').val(data.mandatory_peripherals_ids).select2({
+                        width: "100%",
+                        multiple:true,
+                        allowClear: true,
+                    });
                     $('#edit_cost_of_peripherals').val(cost_of_peripherals);
-                    $('#edit_segment').val(data.segment);
-                    $('#edit_item_category').val(data.item_category);
+                    $('#edit_segment [value='+data.segment_id+']').prop('selected', true);
+                    $('#edit_item_category [value='+data.item_category_id+']').prop('selected', true);
                     $('#edit_standard_price').val(standard_price);
                     $('#edit_profitability').val(data.profitability);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -231,6 +373,73 @@
                 });
             }
         })
+
+        function getSuppliers() {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/business-partners/suppliers/ajax/get-suppliers-dropdown',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    data = res.data;
+                    $("#edit_supplier").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                    });
+
+                    $("#supplier_filter").select2({
+                        data: data,
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                });
+        }
+
+        function getMandatoryPeripherals() {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings/mandatory-peripherals/ajax/get-mandatory-peripherals-dropdown',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    data = res.data;
+                    $("#edit_mandatory_peripherals").select2({
+                        data: data,
+                        width: "100%",
+                        multiple:true,
+                        allowClear: true,
+                        placeholder: 'Select Mandatory Peripherals',
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
+                });
+        }
+
+        getSuppliers();
+        getMandatoryPeripherals();
 
         const edit_element = document.querySelectorAll('#edit_unit_price, #edit_currency_rate, #edit_cost_of_peripherals');
         edit_element.forEach(j => {
@@ -305,7 +514,8 @@
             // format number
             $(this).val(function(index, value) {
                 return value
-                .replace(/\D/g, "")
+                // .replace(/\D/g, "")
+                .replace(/[^0-9.]/g, '')
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 ;
             });

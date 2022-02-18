@@ -1,30 +1,30 @@
 @extends('layouts.app')
-@section('title','PCF - Institution List')
+@section('title', 'PCF - Institution List')
 
 @section('content')
-<div id="wrapper">
+    <div id="wrapper">
 
-    <!-- Sidebar -->
-    @include('layouts.sidebar')
-    <!-- End of Sidebar -->
+        <!-- Sidebar -->
+        @include('layouts.sidebar')
+        <!-- End of Sidebar -->
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
-        <div id="content">
+            <!-- Main Content -->
+            <div id="content">
 
-            <!-- Topbar -->
-            @include('layouts.navbar')
-            <!-- End of Topbar -->
+                <!-- Topbar -->
+                @include('layouts.navbar')
+                <!-- End of Topbar -->
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
 
-                <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Institution List</h1>
-                </div>
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Institution List</h1>
+                    </div>
 
                     <!-- Content Row -->
                     <div class="row">
@@ -40,11 +40,10 @@
                                         @endcan
                                     </div>
                                 </div>
-                                @if(auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
+                                @if (auth()->user()->hasRole('Administrator') || auth()->user()->hasRole('Super Administrator'))
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-hover table-striped dt-responsive" id="institution-datatable" width="100%"
-                                                cellspacing="0">
+                                            <table class="table table-hover table-striped dt-responsive" id="institution-datatable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr class="thead-dark">
                                                         <th>ID</th>
@@ -52,6 +51,7 @@
                                                         <th>Address</th>
                                                         <th>Contact Person</th>
                                                         <th>Designation</th>
+                                                        <th>Thru Contact Person</th>
                                                         <th>Thru Designation</th>
                                                         <th>Status</th>
                                                         <th>Actions</th>
@@ -67,38 +67,26 @@
                         </div>
                     </div>
                     <!-- Content Row -->
+                </div>
+                <!-- /.container-fluid -->
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
+            <!-- Modal Component -->
+            @include('modals.institutions.create')
+            @include('modals.institutions.edit')
+            @include('modals.institutions.show')
+            <!-- End of Modal Component -->
+            <!-- Footer -->
+            @include('layouts.footer')
+            <!-- End of Footer -->
         </div>
-        <!-- End of Main Content -->
-        <!-- Modal Component -->
-        @include('modals.institutions.create')
-        @include('modals.institutions.edit')
-        <!-- End of Modal Component -->
-        <!-- Footer -->
-        @include('layouts.footer')
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
     </div>
-    <!-- End of Content Wrapper -->
-</div>
-<!-- End of Page Wrapper -->
+    <!-- End of Page Wrapper -->
 @endsection
 
 @section('scripts')
     <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        })
-
         $(function() {
             $('#institution-datatable').DataTable({
                 "stripeClasses": [],
@@ -113,25 +101,46 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                 },
-                columns: [
-                    { data: 'id' },
-                    { data: 'institution' },
-                    { data: 'address' },
-                    { data: 'contact_person' },
-                    { data: 'designation' },
-                    { data: 'thru_designation' },
-                    { data: 'status', orderable: false },
-                    { data: 'actions', orderable: false, searchable: false }
+                columns: [{
+                        data: 'id'
+                    },
+                    {
+                        data: 'institution'
+                    },
+                    {
+                        data: 'address'
+                    },
+                    {
+                        data: 'contact_person'
+                    },
+                    {
+                        data: 'designation'
+                    },
+                    {
+                        data: 'thru_contact_person'
+                    },
+                    {
+                        data: 'thru_designation'
+                    },
+                    {
+                        data: 'status',
+                        orderable: false
+                    },
+                    {
+                        data: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
                 ],
             });
         });
 
         let institution_id;
 
-        $('#institution-datatable').on('click', '.edit-institution-modal', function (e) {
+        $('#institution-datatable').on('click', '.edit-institution-modal', function(e) {
             e.preventDefault();
             institution_id = $(this).data('id');
-            if (institution_id){
+            if (institution_id) {
                 $.ajax({
                     method: 'GET',
                     headers: {
@@ -148,29 +157,33 @@
                     $('#edit-address').val(data.address);
                     $('#edit-contact-person').val(data.contact_person);
                     $('#edit-designation').val(data.designation);
+                    $('#edit-thru-contact-person').val(data.thru_contact_person);
                     $('#edit-thru-designation').val(data.thru_designation);
+                    $('#edit-email').val(data.email);
+                    $('#edit-contact-number').val(data.contact_number);
+                    $('#edit-telephone-number').val(data.telephone_number);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Oops! Something went wrong.',
-                        text: 'Please contact your system administrator.'
-                    })
+                    Swal.fire(
+                        'Something went wrong!',
+                        'Please contact your system administrator!',
+                        'error'
+                    )
                 });
             }
         })
 
-        $('#institution-datatable').on('click', '.enable-institution', function (e) {
+        $('#institution-datatable').on('click', '.enable-institution', function(e) {
             e.preventDefault();
             institution = $(this).data('id');
-            if (institution){
+            if (institution) {
                 enableInstitution(institution);
             }
         });
 
-        $('#institution-datatable').on('click', '.disable-institution', function (e) {
+        $('#institution-datatable').on('click', '.disable-institution', function(e) {
             e.preventDefault();
             institution = $(this).data('id');
-            if (institution){
+            if (institution) {
                 disableInstitution(institution);
             }
         });
@@ -195,7 +208,7 @@
                         },
                         success: function(response) {
                             //reload table 
-                            $("#institution-datatable").DataTable().ajax.reload(null, false);
+                            $("#institution-datatable").DataTable().ajax.reload();
                             Swal.fire(
                                 'Success!',
                                 'Institution has been disabled',
@@ -253,11 +266,63 @@
             })
         }
 
+        $('#view_close').click(function () {
+            $('#institution_addresses_datatable').DataTable().clear().destroy();
+            $('#view_institution_addresses_modal').modal('toggle')
+            // $("#institution_addresses_datatable").DataTable().ajax.reload(null, false);
+        })
+
+        //validate institution on store
+        $('#validateBtn').click(function () {
+            const institution_name = document.querySelector("#institution").value;
+            //reload table 
+            checkInstitutionAvailability(institution_name)
+            $('#view_institution_addresses_modal').modal('show')
+        })
+
+        //validate institution on Edit 
+        $('#validateBtnEdit').click(function () {
+            const institution_name = document.querySelector("#edit-institution").value;
+            //reload table 
+            checkInstitutionAvailability(institution_name)
+            $('#view_institution_addresses_modal').modal('show')
+        })
+
+        function checkInstitutionAvailability(institution_name) {
+            $('#institution_addresses_datatable').DataTable({
+                "stripeClasses": [],
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                searchable: true,
+                ordering: true,
+                ajax: {
+                    type: 'GET',
+                    dataType: 'json',
+                    url: '/settings.institution/get-institution-addresses/' + institution_name,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                },
+                columns: [{
+                        data: 'institution'
+                    },
+                    {
+                        data: 'address'
+                    },
+                    {
+                        data: 'status',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+            });
+        }
+
         @if ($errors->has('edit_institution'))
             $('#edit-institution-modal').modal('show');
         @elseif($errors->has('institution'))
             $('#add-institution-modal').modal('show');
         @endif
-
     </script>
 @endsection

@@ -25,15 +25,15 @@ class UpdateInstitutionRequest extends FormRequest
     public function rules()
     {
         return [
-            'institution' => [
-                'required',
-                'string',
-                Rule::unique('p_c_f_institutions')->ignore($this->institution_id),
-            ],
+            'institution' => 'required|string',
             'address' => 'required|string',
             'contact_person' => 'required|string',
             'designation' => 'required|string',
-            'thru_designation' => 'required|string',
+            'thru_contact_person' => 'nullable|string',
+            'thru_designation' => 'nullable|string',
+            'email' => 'nullable|string',
+            'contact_number' => 'nullable|string',
+            'telephone_number' => 'nullable|string',
         ];
     }
 
@@ -43,8 +43,7 @@ class UpdateInstitutionRequest extends FormRequest
             'institution.required' => 'This is a required field.',
             'address.required' => 'This is a required field.',
             'contact_person.required' => 'This is a required field.',
-            'designation.required' => 'This is a required field.',
-            'thru_designation.required' => 'This is a required field.',
+            'designation.required' => 'This is a required field.'
         ];
     }
 }

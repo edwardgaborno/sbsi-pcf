@@ -23,6 +23,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Department List</h1>
                         <h1 class="h3 mb-0 text-gray-800">Institution List</h1>
                     </div>
 
@@ -107,16 +108,7 @@
     @endpush
 
     @section('scripts')
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
-            const callApi = async (method, url, data) => {
-                return axios({
-                    method,
-                    url,
-                    data
-                })
-            }
-
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',

@@ -73,8 +73,6 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('PCF.sub.partials.items_bundle_options')
-        @include('PCF.sub.partials.machines_bundle_options')
         @include('modals.approvals.index')
         @include('modals.approvals.approve_pcf')
         @include('modals.approvals.disapprove_pcf')
@@ -158,6 +156,7 @@
                 serverSide: true,
                 responsive: true,
                 ordering: true,
+                order: [5 , 'DESC'],
                 ajax: {
                     headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

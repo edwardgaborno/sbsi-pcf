@@ -87,30 +87,32 @@ class PCFListController extends Controller
                         ->get();
 
             return Datatables::of($PCFList)
-                ->addColumn('bundled_product', function($data) {
-                    if ($data->is_bundled) {
-                        return '<span class="badge badge-primary">Yes</span>';
-                    }
-
-                    return '<span class="badge badge-info">No</span>';
-                    
-                }) 
+                ->addColumn('supplier', function($data) {
+                    return $data->sources->suppliers->supplier_name;
+                })
                 ->addColumn('sales', function ($data) {
                     return number_format($data->sales, 2, '.', ',');
                 })
                 ->addColumn('total_sales', function ($data) {
                     return number_format($data->total_sales, 2, '.', ',');
                 })
+                ->addColumn('uom', function ($data) {
+                    return $data->sources->unitOfMeasurements->uom;
+                })
+                ->addColumn('above_standard_price', function($data) {
+                    if ($data->above_standard_price == 'Yes') {
+                        return '<span class="badge badge-success">Yes</span>';
+                    }
+                    return '<span class="badge badge-warning">No</span>';
+                }) 
                 ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('pcf_request_delete')) {
                         return '
-                            <a href="javascript:void(0)" class="badge badge-primary pcfListCreateBundle" data-toggle="modal" data-id="' . $data->id . '">
-                                <i class="fas fa-box"></i> Bundle Items</a>
                             <a href="javascript:void(0)" class="pcfListDelete" data-id="' . $data->id . '">
                                 <i class="fas fa-trash-alt text-danger"></i></a>';
                     }
                 })
-                ->rawColumns(['bundled_product','actions'])
+                ->rawColumns(['above_standard_price','actions'])
                 ->make(true);
         }
     }

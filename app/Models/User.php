@@ -54,4 +54,14 @@ class User extends Authenticatable
     {
         $this->hasMany(PCFApprover::class);
     }
+
+    public function departments()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
+    }
+
+    public function userProductSegments()
+    {
+        return $this->hasMany(UserProductSegment::class, 'user_id', 'id');
+    }
 }

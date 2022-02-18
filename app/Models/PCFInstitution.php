@@ -14,4 +14,9 @@ class PCFInstitution extends Model
     {
         $this->hasMany(PCFRequest::class);
     }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(PCFAddress::class, 'p_c_f_institution_addresses', 'institution_id', 'address_id')->withTimestamps();
+    }
 }

@@ -9,10 +9,20 @@ use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\PCFInclusionController;
 use App\Http\Controllers\BundleProductController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ItemCategoryController;
+use App\Http\Controllers\MandatoryPeripheralController;
 use App\Http\Controllers\PCFApproverController;
 use App\Http\Controllers\PCFInstitutionController;
+use App\Http\Controllers\ProfitabilityPercentageController;
+use App\Http\Controllers\SourceMandatoryPeripheralController;
+use App\Http\Controllers\SupplierController;
+use App\Models\MandatoryPeripheral;
 use App\Models\PCFInstitution;
 use App\Models\PCFRequest;
+use App\Models\Price;
+use App\Models\ProfitabilityPercentage;
+use App\Models\SourceMandatoryPeripheral;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -109,7 +119,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    // Source Index View
+    // settings/source
     Route::prefix('settings.source')->group(function () {
         Route::name('settings.source')->group(function () {
             Route::get('/', [SourceController::class, 'index'])->name('.index');
@@ -124,20 +134,88 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/get-description/source={source_id}', [SourceController::class, 'sourceDescription'])->name('.source_description');
 
             Route::get('/ajax/get-source-list', [SourceController::class, 'getSources'])->name('.source_list');
+            Route::get('/ajax/get-profit-rate-percentage/{id}', [ProfitabilityPercentageController::class, 'getProfitRatePercentage'])->name('.get_profit_rate_percentage');
+            // Route::get('/ajax/view-mandatory-peripherals/{id}', [SourceMandatoryPeripheralController::class, 'index'])->name('.get_source_mandatory_peripherals');
+            Route::get('/ajax/view-source-mandatory-peripherals/{id}', [MandatoryPeripheralController::class, 'getSourceMandatoryPeripherals'])->name('.get_source_mandatory_peripherals');
+            Route::get('/ajax/get-source-suppliers/{id}', [SourceController::class, 'geSourceFilteredBySupplier'])->name('.get_source_filtered_by_supplier');
         });
     });
 
     // settings/Institution
     Route::prefix('settings.institution')->group(function () {
         Route::name('settings.institution')->group(function () {
+            # get #########################################################################################################################################
             Route::get('/', [PCFInstitutionController::class, 'index'])->name('.index');
-            Route::post('/store', [PCFInstitutionController::class, 'store'])->name('.store');
             Route::get('/get-institution-details/{institution_id}', [PCFInstitutionController::class, 'edit'])->name('.edit');
-            Route::put('/update', [PCFInstitutionController::class, 'update'])->name('.update');
             Route::get('/ajax/institution-list', [PCFInstitutionController::class, 'show'])->name('.list');
             Route::get('/ajax/get-institutions-dropdown', [PCFInstitutionController::class, 'getInstitutionsForDropdown'])->name('.institution_list');
             Route::get('/ajax/enable-institution/{id}', [PCFInstitutionController::class, 'enableInstitution'])->name('.enable_institution');
             Route::get('/ajax/disable-institution/{id}', [PCFInstitutionController::class, 'disableInstitution'])->name('.disable_institution');
+            # put #########################################################################################################################################
+            Route::put('/update', [PCFInstitutionController::class, 'update'])->name('.update');
+            # post #########################################################################################################################################
+            Route::post('/store', [PCFInstitutionController::class, 'store'])->name('.store');
+            Route::post('/store-address', [PCFInstitutionController::class, 'storeAddress'])->name('.store_address');
+            Route::post('/get-institution-data', [PCFInstitutionController::class, 'getInsitutionData'])->name('.institution.data');
+            Route::get('/get-institution-addresses/{search_key}', [PCFInstitutionController::class, 'getInstitutionAddresses'])->name('.addresses_list');
+
+        });
+    });
+
+    //settings/department
+    Route::prefix('settings/department')->name('settings.department.')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index'])->name('index');
+        Route::post('/', [DepartmentController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
+    });
+
+    //settings/profitablity-percentage
+    Route::prefix('settings/profitability-percentage')->group(function () {
+        Route::name('settings.profitability_percentage')->group(function () {
+            # get ###################################################################################################################################
+            Route::get('/', [ProfitabilityPercentageController::class, 'index'])->name('.index');
+            Route::get('/profitability-percentage-list', [ProfitabilityPercentageController::class, 'show'])->name('.show');
+            Route::get('/edit/{id}', [ProfitabilityPercentageController::class, 'edit'])->name('.edit');
+            Route::get('/ajax/disable-profitability-percentage/{id}', [ProfitabilityPercentageController::class, 'disable'])->name('.disable');
+            Route::get('/ajax/enable-profitability-percentage/{id}', [ProfitabilityPercentageController::class, 'enable'])->name('.enable');
+            # post ##################################################################################################################################
+            Route::post('/store', [ProfitabilityPercentageController::class, 'store'])->name('.store');
+            # put ###################################################################################################################################
+            Route::put('/update', [ProfitabilityPercentageController::class, 'update'])->name('.update');
+        });
+    });
+
+    //settings/mandatory-peripherals
+    Route::prefix('settings/mandatory-peripherals')->group(function () {
+        Route::name('settings.mandatory_peripheral')->group(function () {
+            # get ###################################################################################################################################
+            Route::get('/', [MandatoryPeripheralController::class, 'index'])->name('.index');
+            Route::get('/mandatory-peripherals-list', [MandatoryPeripheralController::class, 'show'])->name('.show');
+            Route::get('/ajax/edit/{id}', [MandatoryPeripheralController::class, 'edit'])->name('.edit');
+            Route::get('/ajax/disable-peripheral/{id}', [MandatoryPeripheralController::class, 'disable'])->name('.disable');
+            Route::get('/ajax/enable-peripheral/{id}', [MandatoryPeripheralController::class, 'enable'])->name('.enable');
+            Route::get('/ajax/get-mandatory-peripherals-dropdown', [MandatoryPeripheralController::class, 'getMandatoryPeripherals'])->name('.get_mandatory_peripherals');
+            # post ##################################################################################################################################
+            Route::post('/store', [MandatoryPeripheralController::class, 'store'])->name('.store');
+            # put ###################################################################################################################################
+            Route::put('/update', [MandatoryPeripheralController::class, 'update'])->name('.update');
+        });
+    });
+
+    //business partners
+    Route::prefix('business-partners/suppliers')->group(function () {
+        Route::name('business_partners.supplier')->group(function () {
+            # get ###################################################################################################################################
+            Route::get('/', [SupplierController::class, 'index'])->name('.index');
+            Route::get('/supplier-list', [SupplierController::class, 'show'])->name('.show');
+            Route::get('/ajax/edit/{id}', [SupplierController::class, 'edit'])->name('.edit');
+            Route::get('/ajax/disable-supplier/{id}', [SupplierController::class, 'disable'])->name('.disable');
+            Route::get('/ajax/enable-supplier/{id}', [SupplierController::class, 'enable'])->name('.enable');
+            Route::get('/ajax/get-suppliers-dropdown', [SupplierController::class, 'getSuppliersCollection'])->name('.getSuppliers');
+            # post ##################################################################################################################################
+            Route::post('/store', [SupplierController::class, 'store'])->name('.store');
+            # put ###################################################################################################################################
+            Route::put('/update', [SupplierController::class, 'update'])->name('.update');
         });
     });
 
