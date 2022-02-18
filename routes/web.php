@@ -219,6 +219,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
+    //settings department
+    Route::prefix('settings/department')->name('settings.department.')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index'])->name('index');
+        Route::post('/', [DepartmentController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
+    });
+
 });
 
 require __DIR__.'/auth.php';
