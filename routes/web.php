@@ -138,6 +138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Route::get('/ajax/view-mandatory-peripherals/{id}', [SourceMandatoryPeripheralController::class, 'index'])->name('.get_source_mandatory_peripherals');
             Route::get('/ajax/view-source-mandatory-peripherals/{id}', [MandatoryPeripheralController::class, 'getSourceMandatoryPeripherals'])->name('.get_source_mandatory_peripherals');
             Route::get('/ajax/get-source-suppliers/{id}', [SourceController::class, 'geSourceFilteredBySupplier'])->name('.get_source_filtered_by_supplier');
+            Route::get('/ajax/get-cost-peripherals-total', [MandatoryPeripheralController::class, 'getMandatoryTotalCostPeripherals'])->name('.get_mandatory_total_cost_peripheral');
         });
     });
 

@@ -224,6 +224,20 @@ class MandatoryPeripheralController extends Controller
         }
     }
 
+    public function getMandatoryTotalCostPeripherals(Request $request)
+    {
+        $this->authorize('mandatory_peripherals_access');
+        $totalCostPeripherals = 0;
+        if ($request->ids) {
+            foreach ($request->ids as $id) {
+                $getMandatoryUnitPrice = MandatoryPeripheral::where('id', $id)->first();
+                $totalCostPeripherals += $getMandatoryUnitPrice->sources->unit_price;
+            }
+            return response()->json(['totalCostPeripherals' => $totalCostPeripherals], 202);
+        }
+        return response()->json(['error' => 'Invalid Request!'], 401);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

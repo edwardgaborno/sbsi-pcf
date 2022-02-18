@@ -7,9 +7,25 @@
         .accordion .fa {
             margin-right: 0.5rem;
         }
-
         .accordion button, .accordion button:hover, .accordion button:focus {
             text-decoration: none;
+        }
+        .select2-selection ,
+        .select2-selection--single {
+            height: 38px !important;
+        }
+        .select2-selection,
+        .select2-selection--single,
+        .select2-selection--clearable {
+            height: 38px !important;
+        }
+        .select2-selection__clear > span {
+            line-height: 35px !important;
+        }
+        .select2-container--default,
+        .select2-selection--single
+        .select2-selection__arrow {
+            height: 38px !important;
         }
     </style>
 @endpush
@@ -83,9 +99,8 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="description">Description <span style="color: red;">*</span></label>
-                                                    <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" cols="5"
-                                                        rows="3" required>{{ old('description') }}</textarea>
-
+                                                    <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description" required>
+                                
                                                     @error('description')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
@@ -221,7 +236,7 @@
                                                 <div class="form-group">
                                                     <label for="cost_of_peripherals">Cost of Peripherals</label>
                                                     <input type="text" class="form-control @error('cost_of_peripherals') is-invalid @enderror" name="cost_of_peripherals" id="cost_of_peripherals"
-                                                        value="{{ old('cost_of_peripherals') }}">
+                                                        value="{{ old('cost_of_peripherals') }}" readonly>
 
                                                     @error('cost_of_peripherals')
                                                         <span class="invalid-feedback" role="alert">
@@ -352,6 +367,36 @@
                 calculateTPpHpLessTax();
                 calculateStandardPrice();
             });
+        });
+
+        $('#mandatory_peripherals').on('change', function (e) {
+            let mp_ids = $(this).val();
+            if (mp_ids.length > 0) {
+                $.ajax({
+                    method: 'get',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        "ids": mp_ids
+                    },
+                    url: '/settings.source/ajax/get-cost-peripherals-total/',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    document.getElementById("cost_of_peripherals").value = parseFloat(res.totalCostPeripherals).toFixed(2);
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Somethin went wrong!',
+                        jqXHR.responseJSON.message,
+                        'error'
+                    )
+                });
+            } else {
+                console.log('walang laman');
+                document.getElementById("cost_of_peripherals").value = null;
+            }
         });
 
         document.getElementById('item_category').addEventListener('change', function() {
