@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\PCFList\StorePCFListRequest;
+use App\Models\PCFInclusion;
 use App\Models\PCFRequest;
+use App\Models\PCFRequestMandatoryItem;
+use App\Models\PCFRequestMandatoryPeripheral;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PCFListController extends Controller
@@ -15,13 +18,6 @@ class PCFListController extends Controller
     public function store(StorePCFListRequest $request)
     {
         $this->authorize('pcf_request_store');
-
-        // $checkIfExist = PCFList::where('pcf_no', $request->pcf_no)
-        //                         ->where('rfq_no', $request->rfq_no)
-        //                         ->where('source_id', $request->source_id)
-        //                         ->first();
-
-        // Alert::success('Success', $checkIfExist);
         DB::beginTransaction();
 
         try {
@@ -30,6 +26,19 @@ class PCFListController extends Controller
                 'p_c_f_request_id' => $request->p_c_f_request_id,
                 'rfq_no' => 'SAL.01.' . $request->rfq_no,
             ]);
+
+            //check if added items has mandatory peripherals
+            $checkIfItemHasMandatoryPeripherals = $pcfList->sources->mandatory_peripherals_ids;
+
+            if ($checkIfItemHasMandatoryPeripherals) {
+                //loop mandatory peripheral ids
+                //save mandatory peripherals of added items with pcf no
+                foreach($checkIfItemHasMandatoryPeripherals as $mandatoryIds) {
+                    $pcfList->pcfMandatoryItems()->create($request->validated() + [
+                        'mandatory_peripheral_id' => $mandatoryIds,
+                    ]);
+                }
+            }
 
             if ($request->p_c_f_request_id) {
                 $pcfRequest = PCFRequest::findOrFail($request->p_c_f_request_id);
@@ -53,7 +62,7 @@ class PCFListController extends Controller
             DB::commit();
         }
         catch (\Throwable $th) {
-
+            info($th);
             DB::rollBack();
         }
 
@@ -97,7 +106,7 @@ class PCFListController extends Controller
                     return number_format($data->total_sales, 2, '.', ',');
                 })
                 ->addColumn('uom', function ($data) {
-                    return $data->sources->unitOfMeasurements->uom;
+                    return optional($data->sources->unitOfMeasurements)->uom;
                 })
                 ->addColumn('above_standard_price', function($data) {
                     if ($data->above_standard_price == 'Yes') {
@@ -144,6 +153,28 @@ class PCFListController extends Controller
         }
     }
 
+    public function getPcfListMandatoryItems(Request $request, $pcf_no)
+    {
+        if ($request->ajax()) {
+            $pcfListMandatoryItems = PCFRequestMandatoryItem::where('pcf_no', $pcf_no)->get();
+
+            return Datatables::of($pcfListMandatoryItems)
+                ->addColumn('item_code', function ($data) {
+                    return $data->mandatoryPeripheral->sources->item_code;
+                })
+                ->addColumn('item_description', function ($data) {
+                    return $data->mandatoryPeripheral->sources->description;
+                })
+                ->addColumn('quantity', function ($data) {
+                    return $data->pcfListItems->quantity * $data->mandatoryPeripheral->quantity;
+                })
+                ->addColumn('item_category', function ($data) {
+                    return $data->mandatoryPeripheral->mpItemCategories->mp_category;
+                })
+                ->make(true);
+        }
+    }
+
     public function checkIfItemIsExist(Request $request)
     {
         if ($request->ajax()) {
@@ -157,6 +188,24 @@ class PCFListController extends Controller
                     'message' => "Item already existed in current item list, Do you want to proceed?",
                 ]);
             }
+        }
+    }
+
+    public function getGrandTotalProfit(Request $request, $pcf_no)
+    {
+        if ($request->ajax() && $pcf_no) {
+            $sumTotalGrossProfit = 0.00;
+            $sumTotalCostPerYear = 0.00;
+            $sumTotalNetSales = 0.00;
+            $sumTotalGrossProfit = PCFList::where('pcf_no', $pcf_no)->sum('total_gross_profit');
+            $sumTotalCostPerYear = PCFInclusion::where('pcf_no', $pcf_no)->sum('cost_year');
+            $sumTotalNetSales = PCFList::where('pcf_no', $pcf_no)->sum('total_net_sales');
+            info($sumTotalNetSales);
+            return response()->json([
+                'sumTotalGrossProfit' => $sumTotalGrossProfit,
+                'sumTotalCostPerYear' => $sumTotalCostPerYear,
+                'sumTotalNetSales' => $sumTotalNetSales,
+            ]);
         }
     }
 }

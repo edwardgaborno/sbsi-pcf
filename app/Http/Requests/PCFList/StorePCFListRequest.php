@@ -27,6 +27,7 @@ class StorePCFListRequest extends FormRequest
             'pcf_no' => 'required|string',
             'rfq_no' => 'required|string',
             'source_id' => 'required',
+            'product_segment_id' => 'required',
             'quantity' => 'required|numeric',
             'sales' => 'required|numeric',
             'total_sales' => 'required|numeric',
@@ -36,6 +37,7 @@ class StorePCFListRequest extends FormRequest
             'total_gross_profit' => 'nullable|numeric',
             'total_net_sales' => 'nullable|numeric',
             'profit_rate' => 'nullable|numeric',
+            'p_c_f_request_id' => 'nullable|numeric'
         ];
     }
 
@@ -44,6 +46,7 @@ class StorePCFListRequest extends FormRequest
         return [
             'pcf_no.required' => 'This is a required field.',
             'source_id.required' => 'This is a required field.',
+            'product_segment_id.required' => 'This is a required field.',
             'quantity.required' => 'This is a required field.',
             'sales.required' => 'This is a required field.',
             'total_sales.required' => 'This is a required field.',

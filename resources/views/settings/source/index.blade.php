@@ -17,6 +17,28 @@
         .pull-right{
             float:right!important;
         }
+        .select2-selection ,
+        .select2-selection--single {
+            height: 38px !important;
+        }
+        .select2-container--default 
+        .select2-selection--single 
+        .select2-selection__rendered {
+            line-height: 38px !important;
+        }
+        .select2-selection,
+        .select2-selection--single,
+        .select2-selection--clearable {
+            height: 38px !important;
+        }
+        .select2-selection__clear > span {
+            line-height: 35px !important;
+        }
+        .select2-container--default,
+        .select2-selection--single,
+        .select2-selection__arrow {
+            height: 38px !important;
+        }
     </style>
 @endpush
 
@@ -125,8 +147,8 @@
         </div>
         <!-- End of Main Content -->
         <!-- Modal Component -->
-        @include('modals.source.edit')
         @include('modals.mandatory_peripherals.index')
+        @include('modals.source.edit')
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -311,69 +333,6 @@
             });
         });
 
-        let source_id;
-
-        $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
-            e.preventDefault();
-            source_id = $(this).data('id');
-            let unit_price = '';
-            let tp_php = '';
-            let tp_php_less_tax = '';
-            let cost_of_peripherals = '';
-            let standard_price = '';
-            if (source_id){
-                $.ajax({
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '/settings.source/get-details/source=' + source_id,
-                    contentType: "application/json; charset=utf-8",
-                    cache: false,
-                    dataType: 'json',
-                }).done(function(data) {
-                    var unit_price = data.unit_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    var tp_php = data.tp_php.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    var tp_php_less_tax = data.tp_php_less_tax.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    if (data.cost_of_peripherals) {
-                        var cost_of_peripherals = data.cost_of_peripherals.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    }
-                    var standard_price = data.standard_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    $('#editSourceModal').modal('show');
-                    $('#edit_source_id').val(data.id);
-                    $('#edit_supplier').val(data.supplier_id).select2({
-                        width: "100%",
-                        allowClear: true,
-                        placeholder: 'Supplier',
-                    });
-                    $('#edit_uom [value='+data.uom_id+']').prop('selected', true);
-                    $('#edit_item_code').val(data.item_code);
-                    $('#edit_description').val(data.description);
-                    $('#edit_unit_price').val(unit_price);
-                    $('#edit_currency_rate').val(data.currency_rate);
-                    $('#edit_tp_php').val(tp_php);
-                    $('#edit_tp_php_less_tax').val(tp_php_less_tax);
-                    // $('#edit_mandatory_peripherals').multiSelect('select', data.mandatory_peripherals);
-                    $('#edit_mandatory_peripherals').val(data.mandatory_peripherals_ids).select2({
-                        width: "100%",
-                        multiple:true,
-                        allowClear: true,
-                    });
-                    $('#edit_cost_of_peripherals').val(cost_of_peripherals);
-                    $('#edit_segment [value='+data.segment_id+']').prop('selected', true);
-                    $('#edit_item_category [value='+data.item_category_id+']').prop('selected', true);
-                    $('#edit_standard_price').val(standard_price);
-                    $('#edit_profitability').val(data.profitability);
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Oops! Something went wrong.',
-                        text: 'Please contact your system administrator.'
-                    })
-                });
-            }
-        })
-
         function getSuppliers() {
             $.ajax({
                     method: 'GET',
@@ -391,6 +350,7 @@
                         width: "100%",
                         allowClear: true,
                         placeholder: 'Supplier',
+                        dropdownParent: $("#editSourceModal"),
                     });
 
                     $("#supplier_filter").select2({
@@ -441,20 +401,139 @@
         getSuppliers();
         getMandatoryPeripherals();
 
+        let source_id;
+
+        $('#source_dataTable').on('click', '.editSourceDetails', function (e) {
+            e.preventDefault();
+            source_id = $(this).data('id');
+            let unit_price = '';
+            let tp_php = '';
+            let tp_php_less_tax = '';
+            let cost_of_peripherals = '';
+            let standard_price = '';
+            if (source_id){
+                $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/get-details/source=' + source_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(data) {
+                    var unit_price = data.unit_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    var tp_php = data.tp_php.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    var tp_php_less_tax = data.tp_php_less_tax.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    if (data.cost_of_peripherals) {
+                        var cost_of_peripherals = data.cost_of_peripherals.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                    var standard_price = data.standard_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    $('#editSourceModal').modal('show');
+                    $('#edit_source_id').val(data.id);
+                    $('#edit_supplier').val(data.supplier_id).select2({
+                        width: "100%",
+                        allowClear: true,
+                        placeholder: 'Supplier',
+                        dropdownParent: $("#editSourceModal"),
+                    });
+                    $('#edit_uom [value='+data.uom_id+']').prop('selected', true);
+                    $('#edit_item_code').val(data.item_code);
+                    $('#edit_description').val(data.description);
+                    $('#edit_unit_price').val(unit_price);
+                    $('#edit_currency_rate').val(data.currency_rate);
+                    $('#edit_tp_php').val(tp_php);
+                    $('#edit_tp_php_less_tax').val(tp_php_less_tax);
+                    $('#edit_mandatory_peripherals').val(data.mandatory_peripherals_ids).select2({
+                        width: "100%",
+                        multiple:true,
+                        allowClear: true,
+                    });
+                    $('#edit_cost_of_peripherals').val(cost_of_peripherals);
+                    $('#edit_segment [value='+data.segment_id+']').prop('selected', true);
+                    $('#edit_item_category [value='+data.item_category_id+']').prop('selected', true);
+                    $('#edit_standard_price').val(standard_price);
+                    $('#edit_profitability').val(data.profitability);
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Oops! Something went wrong.',
+                        text: 'Please contact your system administrator.'
+                    })
+                });
+            }
+        })
+
         const edit_element = document.querySelectorAll('#edit_unit_price, #edit_currency_rate, #edit_cost_of_peripherals');
         edit_element.forEach(j => {
             j.addEventListener('input', function() {
                 editCalculateTP();
+                editCalculateTPpHpLessTax();
                 editCalculateStandardPrice();
             });
         });
 
-        $("#edit_item_category").change(function(){
-            editCalculateStandardPrice();
-            document.getElementById("edit_item_category").value !== "MACHINE"
-                ? document.getElementById("edit_profitability").value = "50%"
-                : document.getElementById("edit_profitability").value = "30%"
+        $('#edit_mandatory_peripherals').on('change', function (e) {
+            let mp_ids = $(this).val();
+            if (mp_ids.length > 0) {
+                $.ajax({
+                    method: 'get',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        "ids": mp_ids
+                    },
+                    url: '/settings.source/ajax/get-cost-peripherals-total/',
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    document.getElementById("edit_cost_of_peripherals").value = res.totalCostPeripherals.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    editCalculateTP();
+                    editCalculateTPpHpLessTax();
+                    editCalculateStandardPrice();
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'Somethin went wrong!',
+                        jqXHR.responseJSON.message,
+                        'error'
+                    )
+                });
+            } else {
+                document.getElementById("edit_cost_of_peripherals").value = '';
+                editCalculateTP();
+                editCalculateTPpHpLessTax();
+                editCalculateStandardPrice();
+            }
         });
+
+        $("#edit_item_category").change(function(){
+            let item_category_id = document.getElementById("edit_item_category").value
+            getItemCategory(item_category_id);
+            editCalculateStandardPrice();
+        });
+
+        function getItemCategory(item_category_id) {
+            $.ajax({
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/settings.source/ajax/get-profit-rate-percentage/' + item_category_id,
+                    contentType: "application/json; charset=utf-8",
+                    cache: false,
+                    dataType: 'json',
+                }).done(function(res) {
+                    document.getElementById("edit_profitability").value = res.percentage;
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(
+                        'No profit rate percentage',
+                        jqXHR.responseJSON.message,
+                        'error'
+                    )
+                });
+        }
 
         function editCalculateTP()
         {
@@ -468,40 +547,64 @@
             }
         }
 
+        function editCalculateTPpHpLessTax() {
+            const unit_price = parseFloat(document.getElementById("edit_unit_price").value.replace(/,/g, ''));
+            const currency_rate = parseFloat(document.getElementById("edit_currency_rate").value.replace(/,/g, ''));
+            const tp_price = parseFloat(document.getElementById("edit_tp_php").value.replace(/,/g, ''));
+
+            if (!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price)) {
+                document.getElementById("edit_tp_php_less_tax").value = (tp_price / 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            } else {
+                document.getElementById("edit_tp_php_less_tax").value = '';
+            }
+        }
+
+        function roundUpHundred(number){
+            const standard_price = document.getElementById("edit_standard_price");
+            standard_price.value = (Math.ceil(number / 100) * 100).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+        }
+
         function editCalculateStandardPrice()
         {
             const currency_rate = parseFloat(document.getElementById("edit_currency_rate").value.replace(/,/g, ''));
-            const tp_php = parseFloat(document.getElementById("edit_tp_php").value.replace(/,/g, ''));
+            const tp_php_less_tax = parseFloat(document.getElementById("edit_tp_php_less_tax").value.replace(/,/g, ''));
             const cost_of_peripherals = parseFloat(document.getElementById("edit_cost_of_peripherals").value.replace(/,/g, ''));
-            const item_category = document.getElementById("edit_item_category").value;
-            const standard_price = document.getElementById("edit_standard_price");
-
-            if (currency_rate === 1) {
-                if (!isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            const item_category = $( "#edit_item_category option:selected" ).text();
+            
+            if (currency_rate == 1) {
+                if (!isNaN(cost_of_peripherals) && item_category == "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category == "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
             }
             else {
-                if (!isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                if (!isNaN(cost_of_peripherals) && item_category == "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + cost_of_peripherals) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category === "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category == "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + 0) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (!isNaN(cost_of_peripherals) && item_category !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + cost_of_peripherals) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINE") {
-                    standard_price.value = ((((tp_php * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + 0) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
             }
         }

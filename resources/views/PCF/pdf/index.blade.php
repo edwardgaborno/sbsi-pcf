@@ -150,79 +150,79 @@
             </tr>
             <tr>
                 <th style="width: 30%;">DATE:</th>
-                <td style="width: 40%;"><center>{{ Carbon\Carbon::parse($get_pcf_list[0]->date)->format('F d, Y') }}</center></td>
+                <td style="width: 40%;"><center>{{ Carbon\Carbon::parse($pcf_request->date)->format('F d, Y') }}</center></td>
             </tr>
             <tr>
                 <th>INSTITUTION:</th>
-                <td><center>{{ $get_pcf_list[0]->institution }}</center></td>
+                <td><center>{{ $pcf_request->institutions->institution }}</center></td>
             </tr>
             <tr>
                 <th>ADDRESS:</th>
-                <td><center>{{ $get_pcf_list[0]->address }}</center></td>
+                <td><center>{{ $pcf_request->institutions->address }}</center></td>
             </tr>
             <tr>
                 <th>CONTACT PERSON:</th>
-                <td><center>{{ $get_pcf_list[0]->contact_person }}</center></td>
+                <td><center>{{ $pcf_request->contact_person }}</center></td>
             </tr>
             <tr>
                 <th>DESIGNATION:</th>
-                <td><center>{{ $get_pcf_list[0]->designation }}</center></td>
+                <td><center>{{ $pcf_request->designation }}</center></td>
             </tr>
             <tr>
                 <th>THRU DESIGNATION:</th>
-                <td><center>{{ $get_pcf_list[0]->thru_designation }}</center></td>
+                <td><center>{{ $pcf_request->thru_contact_person }}</center></td>
             </tr>
             <tr>
                 <th>SUPPLIER:</th>
-                <td><center>{{ $get_pcf_list[0]->supplier }}</center></td>
+                <td><center>{{ $pcf_request->supplier }}</center></td>
             </tr>
             <tr>
                 <th>TERMS:</th>
-                <td><center>{{ $get_pcf_list[0]->terms }}</center></td>
+                <td><center>{{ $pcf_request->terms }}</center></td>
             </tr>
             <tr>
                 <th>VALIDITY:</th>
-                <td><center>{{ $get_pcf_list[0]->validity }}</center></td>
+                <td><center>{{ $pcf_request->validity }}</center></td>
             </tr>
             <tr>
                 <th>DELIVERY:</th>
-                <td><center>{{ $get_pcf_list[0]->delivery }}</center></td>
+                <td><center>{{ $pcf_request->delivery }}</center></td>
             </tr>
             <tr>
                 <th>WARRANT (FOR MACHINES ONLY):</th>
-                <td><center>{{ $get_pcf_list[0]->warranty }}</center></td>
+                <td><center>{{ $pcf_request->warranty }}</center></td>
             </tr>
 
             <tr>
                 <th>DURATION OF CONTRACT (NO. OF YEARS):</th>
-                <td><center>{{ $get_pcf_list[0]->duration }}</center></td>
+                <td><center>{{ $pcf_request->duration }}</center></td>
             </tr>
             <tr>
                 <th>DATE OF BIDDING:</th>
-                @if($get_pcf_list[0]->date_bidding)
-                <td><center>{{ Carbon\Carbon::parse($get_pcf_list[0]->date_bidding)->format('F d, Y') }}</center></td>
+                @if($pcf_request->date_bidding)
+                    <td><center>{{ Carbon\Carbon::parse($pcf_request->date_bidding)->format('F d, Y') }}</center></td>
                 @endif
             </tr>
             <tr>
                 <th>BID DOCS PRICE:</th>
-                @if($get_pcf_list[0]->bid_docs_price)
-                <td><center>{{ number_format($get_pcf_list[0]->bid_docs_price, 2) }}</center></td>
+                @if($pcf_request->bid_docs_price)
+                    <td><center>{{ number_format($pcf_request->bid_docs_price, 2) }}</center></td>
                 @endif
             </tr>
             <tr>
                 <th>PSR and MANAGER:</th>
-                <td><center>{{ $get_pcf_list[0]->psr .', '. $get_pcf_list[0]->manager }}</center></td>
+                <td><center>{{ $pcf_request->user->name .', '. $pcf_request->manager }}</center></td>
             </tr>
             <tr>
                 <th>ANNUAL PROFIT:</th>
                 <td style="text-align: right; background-color: #fff200; font-weight: bold;">
-                    {{ number_format($get_pcf_list[0]->annual_profit,2) }}
+                    {{ number_format($pcf_request->annual_profit,2) }}
                 </td>
             </tr>
             <tr>
                 <th>ANNUAL PROFIT RATE:</th>
                 <td style="text-align: right; background-color: #fff200; font-weight: bold;">
-                    {{ $get_pcf_list[0]->annual_profit_rate.'%' }}
+                    {{ $pcf_request->annual_profit_rate.'%' }}
                 </td>
             </tr>
         </tbody>
@@ -233,7 +233,7 @@
                 <td style="width: 20%; font-weight: bold; background-color: #fff200">PCF NO.</td>
                 <td style="width: 40%; background-color: #fff200">
                     <center>
-                        {{ $pcf_no }}
+                        {{ $pcf_request->pcf_no }}
                     </center>
                 </td>
             </tr>
@@ -241,7 +241,7 @@
                 <td style="width: 20%; font-weight: bold; background-color: #fff200">RFQ NO:</td>
                 <td style="width: 40%; background-color: #fff200">
                     <center>
-                        {{ $pcf_no }}
+                        {{ $pcf_request->rfq_no }}
                     </center>
                 </td>
             </tr>
@@ -266,15 +266,15 @@
             @php
                 $grand_total_sales = 0;
             @endphp
-            @foreach ($get_pcf_list as $request)
+            @foreach ($pcf_item_lists as $pcf_item_list)
             <tr>
-                <td>{{ $request->item_code }}</td>
-                <td>{{ $request->description }}</td>
-                <td>{{ $request->quantity }}</td>
-                <td>{{ number_format($request->sales,2) }}</td>
-                <td>{{ number_format($request->total_sales,2) }}</td>
-                <td>{{ $request->above_standard_price }}</td>
-            @foreach ($itemBundles as $bundle)
+                <td>{{ $pcf_item_list->sources->item_code }}</td>
+                <td>{{ $pcf_item_list->sources->description }}</td>
+                <td>{{ $pcf_item_list->quantity }}</td>
+                <td>{{ number_format($pcf_item_list->sales,2) }}</td>
+                <td>{{ number_format($pcf_item_list->total_sales,2) }}</td>
+                <td>{{ $pcf_item_list->above_standard_price }}</td>
+            {{-- @foreach ($itemBundles as $bundle)
                 <tr>
                     <td>{{ $bundle->item_code }}</td>
                     <td>{{ $bundle->description }}</td>
@@ -283,10 +283,10 @@
                     <td></td>
                     <td></td>
                 </tr>
-            @endforeach
+            @endforeach --}}
             </tr>
             @php
-                $grand_total_sales += $request->total_sales; 
+                $grand_total_sales += $pcf_item_list->total_sales; 
             @endphp
             @endforeach
             <tr style="font-weight: bold;">
@@ -310,15 +310,15 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($get_pcf_inclusions as $request)
+            @foreach ($pcf_request_inclusions as $pcf_request_inclusion)
                 <tr>
-                    <td>{{ $request->item_code }}</td>
-                    <td>{{ $request->description }}</td>
-                    <td>{{ $request->serial_no }}</td>
-                    <td>{{ $request->type }}</td>
-                    <td>{{ $request->quantity }}</td>
+                    <td>{{ $pcf_request_inclusion->item_code }}</td>
+                    <td>{{ $pcf_request_inclusion->description }}</td>
+                    <td>{{ $pcf_request_inclusion->serial_no }}</td>
+                    <td>{{ $pcf_request_inclusion->type }}</td>
+                    <td>{{ $pcf_request_inclusion->quantity }}</td>
                 </tr>
-                @foreach ($machineBundles as $bundle)
+                {{-- @foreach ($machineBundles as $bundle)
                 <tr>
                     <td>{{ $bundle->item_code }}</td>
                     <td>{{ $bundle->description }}</td>
@@ -326,26 +326,24 @@
                     <td></td>
                     <td>{{ $bundle->quantity }}</td>
                 </tr>
-                @endforeach
+                @endforeach --}}
             @endforeach
         </tbody>
     </table>
 
-    <table class="approvedByTable" style="width: 200px;">
+    <table class="approvedByTable" style="width: 220px;">
         <tbody>
             <tr>
                 <td style="text-align: left; font-weight: bold;">Approved by:</td>
-            @if(!empty($approver->name))
-                <td style="text-decoration: underline; text-align: center;">
-                    {{ $approver->name }}
+            @if($pcf_request->is_accounting_approved === 0)
+                <td style="text-align: center;">
+                    ROBERTO MANAOIS
                 </td>
-            @else
-                <td style="text-decoration: underline; text-align: center;"></td>
             @endif
             </tr>
             <tr>
-                <td></td>
-                <td style="text-align: center;">Accounting</td>
+                <td style="text-decoration: underline; text-align: center;"></td>
+                <td style="text-align: center; padding: 0px 30px; border-top: solid;">CEO</td>
             </tr>
         </tbody>
     </table>
@@ -364,13 +362,20 @@
         </tbody>
     </table>
 
-    @if(!empty($approver->name))
+    <div style="padding: 10px; margin: auto;">
+        
+    </div>
+
+    {{-- @if(!empty($approver->name))
     <div class="signed-note">
         <span>NOTE: THIS DOCUMENT HAS BEEN ELECTRONICALLY SIGNED BY THE APPROVER.</span>
     </div>
-    @endif
+    @endif --}}
     <div class="docs-note">
         <span>NOTE: NO PCF SHALL PROCEED TO BIDDING WITHOUT ACCOUNTING SIGNATURE.</span>
+    </div>
+    <div style="padding-top: 50px; text-align: center" class="accounting-signature-area">
+        <p>Validated By: <span style="text-decoration: underline; margin-left: 5px;">Mary Annie Santiago </span></p>
     </div>
 </body>
 

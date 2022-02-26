@@ -15,7 +15,7 @@ class FilepondController extends Controller
                 $folder = uniqid() . '-' .now()->timestamp;
                 $file->storeAs('pcf_rfq/tmp/' . $folder, $filename);
 
-                TemporaryFile::create([
+                $res = TemporaryFile::create([
                     'folder' => $folder,
                     'file_name' => $filename,
                 ]);

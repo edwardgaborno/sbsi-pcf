@@ -147,7 +147,7 @@ class UserController extends Controller
             return Datatables::of($users)
                 ->addIndexColumn()
                 ->addColumn('role', function ($data) {
-                    return '<span class="badge badge-light">' . $data->getRoleNames() . '</span>';
+                    return '<span class="btn btn-sm btn-light">' . $data->getRoleNames() . '</span>';
                 })
                 ->addColumn('department', function ($data) {
                     return $data->departments->department;
@@ -155,13 +155,13 @@ class UserController extends Controller
                 ->addColumn('status', function ($data) {
 
                     if ($data->status == 1 && $data->is_approved == 1) {
-                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-success">Approved</span>';
+                        $status = '<span class="btn btn-sm btn-success">Enabled</span> <span class="btn btn-sm btn-success">Approved</span>';
                     } else if ($data->status == 1 && $data->is_approved == 0) {
-                        $status = '<span class="badge badge-success">Enabled</span> <span class="badge badge-light">Pending for Approval</span>';
+                        $status = '<span class="btn btn-sm btn-success">Enabled</span> <span class="btn btn-sm btn-light">Pending for Approval</span>';
                     } else if ($data->status == 0 && $data->is_approved == 1) {
-                        $status = '<span class="badge badge-danger">Account Disabled</span> <span class="badge badge-success">Approved</span>';
+                        $status = '<span class="btn btn-sm btn-danger">Account Disabled</span> <span class="btn btn-sm btn-success">Approved</span>';
                     } else {
-                        $status = '<span class="badge badge-danger">Account Disabled</span> <span class="badge badge-light">Pending for Approval</span>';
+                        $status = '<span class="btn btn-sm btn-danger">Account Disabled</span> <span class="btn btn-sm btn-light">Pending for Approval</span>';
                     }
 
                     return $status;
@@ -169,26 +169,26 @@ class UserController extends Controller
                 ->addColumn('actions', function ($data) {
                     if($data->status == 0 && $data->is_approved == 0) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
+                        '<a href="javascript:void(0)" class="btn btn-sm btn-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
-                        <a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
                             <i class="far fa-check-circle"></i> Enable</a>';
                     } else if($data->status == 1 && $data->is_approved == 0) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
+                        '<a href="javascript:void(0)" class="btn btn-sm btn-success approveUser" data-id="' . $data->id . '" onclick="approveUser($(this))">
                             <i class="fas fa-thumbs-up"></i> Aprove</a>
-                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
                             <i class="fas fa-ban"></i> Disable</a>';
                     } else if($data->status == 0 && $data->is_approved == 1) {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
+                        '<a href="javascript:void(0)" class="btn btn-sm btn-success enableUser" data-id="' . $data->id . '" onclick="enableUser($(this))">
                             <i class="far fa-check-circle"></i> Enable</a>';
                     }
                     else {
                         return
-                        '<a href="javascript:void(0)" class="badge badge-info editUser" data-id="' . $data->id . '">
+                        '<a href="javascript:void(0)" class="btn btn-sm btn-info editUser" data-id="' . $data->id . '">
                             <i class="fas fa-user-edit"></i> Edit</a>
-                        <a href="javascript:void(0)" class="badge badge-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-danger disableUser" data-id="' . $data->id . '" onclick="disableUser($(this))">
                             <i class="fas fa-ban"></i> Disable</a>';
                     }
                 })

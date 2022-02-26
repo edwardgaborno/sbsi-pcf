@@ -18,8 +18,8 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.11.3/r-2.2.9/datatables.min.css"/>
         <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="{{ mix('js/api.js') }}" defer></script>
-        @stack('styles')
         <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+        @stack('styles')
     </head>
     <body id="page-top">
         @yield('content')
@@ -57,12 +57,12 @@
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/r-2.2.9/datatables.min.js"></script>
         <!-- Core plugin JavaScript-->
         <script src="{{ asset('dist/jquery-easing/jquery.easing.min.js') }}"></script>
-        @stack('scripts')
         <!-- Custom scripts for all pages-->
         <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
         <!-- Sweet alert 2 -->
         @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@11"])
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        @stack('scripts')
         @yield('scripts')
     </body>
 </html>

@@ -18,8 +18,8 @@ class UserSeeder extends Seeder
     {
         //Administrator User
         $super_admin = User::create([
-            'name' => 'Ardison Pagulayan',
-            'email' => 'ardi.pagulayan@sbsi.com.ph',
+            'name' => 'Super Admin',
+            'email' => 'admin.admin@sbsi.com.ph',
             'password' => Hash::make('admin'),
             'is_approved' => true,
             'status' => true,
@@ -27,12 +27,87 @@ class UserSeeder extends Seeder
             'email_verified_at' => Carbon::now()
         ]);
         $super_admin->assignRole('Super Administrator');
-        
-        //SALES 
+
+        #########################################
+        #       SALES                           #
+        #########################################
+        //NSM
+        $nsm = User::create([
+            'name' => 'Iryne De Leon',
+            'email' => 'iryne.deleon@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $nsm->assignRole('National Sales Manager');
+
+        //RSM
+        $rsm = User::create([
+            'name' => 'Rachell Sy',
+            'email' => 'rachell.sy@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $rsm->assignRole('Regional Sales Manager');
+
+        $rsm = User::create([
+            'name' => 'Gloria Cutang',
+            'email' => 'gloria.cutang@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $rsm->assignRole('Regional Sales Manager');
+
+        $rsm = User::create([
+            'name' => 'Gilbert Gravata',
+            'email' => 'gilbert.gravata@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $rsm->assignRole('Regional Sales Manager');
+
+        $asm = User::create([
+            'name' => 'Irene Ueginio',
+            'email' => 'irene.ueginio@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $asm->assignRole('Area Sales Manager');
+
+        $asm = User::create([
+            'name' => 'Erwin Repollo',
+            'email' => 'erwin.repollo@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $asm->assignRole('Area Sales Manager');
+
+        $asm = User::create([
+            'name' => 'Donna Cuyno',
+            'email' => 'donna.cuyno@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 1,
+        ]);
+        $asm->assignRole('Area Sales Manager');
+
+        //PSR
         $psr = User::create([
-            'name' => 'PSR',
-            'email' => 'psr@email.com',
-            'password' => Hash::make('12345'),
+            'name' => 'Ardison Pagulayan',
+            'email' => 'ardi.pagulayan@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 1,
@@ -40,97 +115,111 @@ class UserSeeder extends Seeder
         ]);
         $psr->assignRole('PSR');
 
-        $psr_mgr = User::create([
-            'name' => 'PSR Manager',
-            'email' => 'psr.manager@email.com',
-            'password' => Hash::make('12345'),
+        $psr = User::create([
+            'name' => 'Edward Gaborno',
+            'email' => 'edward.gaborno@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 1,
             'email_verified_at' => Carbon::now()
         ]);
-        $psr_mgr->assignRole('PSR Manager');
+        $psr->assignRole('PSR');
 
-        $nsm = User::create([
-            'name' => 'National Sales Manager',
-            'email' => 'nsm@email.com',
-            'password' => Hash::make('12345'),
+        $psr = User::create([
+            'name' => 'John Andrew',
+            'email' => 'john.andrew@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 1,
             'email_verified_at' => Carbon::now()
         ]);
-        $nsm->assignRole('National Sales Manager');
+        $psr->assignRole('PSR');
 
-        $sales_asst = User::create([
-            'name' => 'Sales Assistant',
-            'email' => 'sales.assistant@email.com',
-            'password' => Hash::make('12345'),
-            'is_approved' => true,
-            'status' => true,
-            'department_id' => 1,
-            'email_verified_at' => Carbon::now()
-        ]);
-
-        $sales_asst->assignRole('Sales Assistant');
-
-        //Marketing
-        $mktg = User::create([
-            'name' => 'Marketing1',
-            'email' => 'marketing1@email.com',
-            'password' => Hash::make('12345'),
+        ############################################## 
+        #       MARKETING                            #
+        ##############################################
+        //APM
+        $apm = User::create([
+            'name' => 'Allan Anaen',
+            'email' => 'allan.anaen@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 2,
             'email_verified_at' => Carbon::now()
         ]);
-        $mktg->assignRole('Marketing');
+        $apm->assignRole('Associate Product Manager');
 
-        $mktg = User::create([
-            'name' => 'Marketing2',
-            'email' => 'marketing2@email.com',
-            'password' => Hash::make('12345'),
+        $apm = User::create([
+            'name' => 'Kent',
+            'email' => 'kent@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 2,
             'email_verified_at' => Carbon::now()
         ]);
+        $apm->assignRole('Associate Product Manager');
 
-        $mktg->assignRole('Marketing');
+        $apm = User::create([
+            'name' => 'Allado',
+            'email' => 'allado@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 2,
+            'email_verified_at' => Carbon::now()
+        ]);
+        $apm->assignRole('Associate Product Manager');
 
-        //Accounting
-        $acct = User::create([
-            'name' => 'Accounting1',
-            'email' => 'accounting1@email.com',
-            'password' => Hash::make('12345'),
+        $apm = User::create([
+            'name' => 'Dyne',
+            'email' => 'dyne@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 2,
+            'email_verified_at' => Carbon::now()
+        ]);
+        $apm->assignRole('Associate Product Manager');
+
+        $apm = User::create([
+            'name' => 'Maricar',
+            'email' => 'maricar@sbsi.com.ph',
+            'password' => Hash::make('123'),
+            'is_approved' => true,
+            'status' => true,
+            'department_id' => 2,
+            'email_verified_at' => Carbon::now()
+        ]);
+        $apm->assignRole('Associate Product Manager');
+
+        #########################################
+        #       ACCOUNTING                      #
+        #########################################
+
+        $apm = User::create([
+            'name' => 'Annie',
+            'email' => 'annie@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 3,
             'email_verified_at' => Carbon::now()
         ]);
+        $apm->assignRole('Accounting Team Leader');
 
-        $acct->assignRole('Accounting');
-
-        $acct = User::create([
-            'name' => 'Accounting2',
-            'email' => 'accounting2@email.com',
-            'password' => Hash::make('12345'),
+        $apm = User::create([
+            'name' => 'Jade',
+            'email' => 'jade@sbsi.com.ph',
+            'password' => Hash::make('123'),
             'is_approved' => true,
             'status' => true,
             'department_id' => 3,
             'email_verified_at' => Carbon::now()
         ]);
-        $acct->assignRole('Accounting');
-
-        $cfo = User::create([
-            'name' => 'Chief Finance Officer',
-            'email' => 'cfo@email.com',
-            'password' => Hash::make('12345'),
-            'is_approved' => true,
-            'status' => true,
-            'department_id' => 3,
-            'email_verified_at' => Carbon::now()
-        ]);
-        $cfo->assignRole('Chief Finance Officer');
+        $apm->assignRole('Accounting Manager');
     }
 }

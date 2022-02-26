@@ -167,28 +167,28 @@
         </div>
         <br>
         <div class="quotation-date">
-            <p>{{ Carbon\Carbon::parse($pcfList[0]->created_at)->format('F d, Y') }}</p>
+            <p>{{ Carbon\Carbon::parse($pcf_request->created_at)->format('F d, Y') }}</p>
         </div>
         <br>
         <div class="quotation-title">
             <h1>Q U O T A T I O N</h1>
             <p>AS THE DISTRIBUTOR OF</p>
-            <p>{{ $pcfList[0]->supplier }}</p>
+            <p>{{ $pcf_request->supplier }}</p>
             <p>PRODUCT OF THE PHILIPPINES</p>
         </div>
         <br>
         <div class="institutions">
-            <h2>{{ $pcfList[0]->institution }}</h2>
-            <p>{{ $pcfList[0]->institution_address }}</p>
+            <h2>{{ $pcf_request->institution->institution }}</h2>
+            <p>{{ $pcf_request->institution->address }}</p>
         </div>
         <br>
         <div class="contact">
             <div class="attn">
-                <p>ATTN: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->contact_person }}</p>
-                <p>{{ $pcfList[0]->designation }}</p>
+                <p>ATTN: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->contact_person }}</p>
+                <p>{{ $pcf_request->designation }}</p>
             </div>
             <div class="thru">
-                <p>THRU: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->thru_designation }}</p>
+                <p>THRU: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->thru_contact_person }}</p>
             </div>
         </div>
         <div class="item-table-container">
@@ -203,23 +203,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pcfList as $request)
-                    <tr>
-                        <td>{{ $request->item_code }}</td>
-                        <td>{{ $request->description }}</td>
-                        <td>{{ $request->quantity }}</td>
-                        <td>{{ number_format($request->sales,2) }}</td>
-                        <td>{{ number_format($request->total_sales,2) }}</td>
-                    </tr>
-                        @foreach ($itemBundles as $bundle)
+                    @foreach ($pcf_item_lists as $request)
                         <tr>
-                            <td>{{ $bundle->item_code }}</td>
-                            <td>{{ $bundle->description }}</td>
-                            <td>{{ $bundle->quantity }}</td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $request->source->item_code }}</td>
+                            <td>{{ $request->source->description }}</td>
+                            <td>{{ $request->quantity }}</td>
+                            <td>{{ number_format($request->sales,2) }}</td>
+                            <td>{{ number_format($request->total_sales,2) }}</td>
                         </tr>
-                        @endforeach
                     @endforeach
                 </tbody>
             </table>
@@ -228,7 +219,7 @@
             <span><strong>PACKAGE INCLUSIONS</strong></span>
         </div>
         <br>
-        @foreach ($pcfInclusions as $inclusion)
+        @foreach ($pcf_request_inclusions as $inclusion)
             @if($inclusion)
             <div class="inclusion-container">
                 <table class="inclusionTable">
@@ -242,21 +233,12 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $inclusion->item_code }}</td>
-                            <td>{{ $inclusion->description }}</td>
+                            <td>{{ $inclusion->source->item_code }}</td>
+                            <td>{{ $inclusion->source->description }}</td>
                             <td>{{ $inclusion->serial_no }}</td>
                             <td>{{ $inclusion->type }}</td>
                             <td>{{ $inclusion->quantity }}</td>
                         </tr>
-                        @foreach ($machineBundles as $bundle)
-                            <tr>
-                                <td>{{ $bundle->item_code }}</td>
-                                <td>{{ $bundle->description }}</td>
-                                <td></td>
-                                <td></td>
-                                <td>{{ $bundle->quantity }}</td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -264,10 +246,10 @@
         @endforeach
         <br>
         <div class="agreements-container">
-            <p><span style="font-weight: bold;">TERMS:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->terms }}</p>
-            <p><span style="font-weight: bold;">VALIDITY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->validity }}</p>
-            <p><span style="font-weight: bold;">DELIVERY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->delivery }}</p>
-            <p><span style="font-weight: bold;">WARRANTY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcfList[0]->warranty }}</p>
+            <p><span style="font-weight: bold;">TERMS:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->terms }}</p>
+            <p><span style="font-weight: bold;">VALIDITY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->validity }}</p>
+            <p><span style="font-weight: bold;">DELIVERY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->delivery }}</p>
+            <p><span style="font-weight: bold;">WARRANTY:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $pcf_request->warranty }}</p>
         </div>
         <br>
         <div class="thanks-message">
@@ -286,7 +268,7 @@
         </div>
         <br>
         <div class="rfq-no">
-            <p>SAL - {{ $pcfList[0]->rfq_no }}</p>
+            <p>SAL - {{ $pcf_request->rfq_no }}</p>
             <p>IDDL/PAI/RASC/IE/MAFAB</p>
         </div>
         <div class="company-info">

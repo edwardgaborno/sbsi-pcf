@@ -167,7 +167,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="edit_mandatory_peripherals">Mandatory Peripherals</label>
-                                <select class="form-control select2 @error('mandatory_peripherals_ids') is-invalid @enderror" name="mandatory_peripherals_ids[]" multiple="multiple" id="edit_mandatory_peripherals" required>
+                                <select class="form-control select2 @error('mandatory_peripherals_ids') is-invalid @enderror" name="mandatory_peripherals_ids[]" multiple="multiple" id="edit_mandatory_peripherals">
                                 </select>
                                 @error('mandatory_peripherals_ids')
                                     <span class="invalid-feedback" role="alert">

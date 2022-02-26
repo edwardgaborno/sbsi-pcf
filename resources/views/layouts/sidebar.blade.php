@@ -90,11 +90,11 @@
                         <a class="collapse-item" href="{{ route('settings.source.index') }}">Source</a>
                     </div>
                 @endcan
-                @can('department_access')
+                {{-- @can('department_access')
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('settings.department.index') }}">Department</a>
                     </div>
-                @endcan
+                @endcan --}}
                 @can('price_management_access')
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('settings.profitability_percentage.index') }}">Profitability Percentage</a>

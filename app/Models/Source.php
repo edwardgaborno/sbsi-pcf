@@ -48,4 +48,9 @@ class Source extends Model
     public function sourceMandatoryPeripherals() { 
         return $this->hasMany(SourceMandatoryPeripheral::class, 'source_id', 'id');
     }
+
+    public function pcfMandatoryItems()
+    {
+        return $this->hasMany(PCFRequestMandatoryItem::class, 'id', 'source_id');
+    }
 }

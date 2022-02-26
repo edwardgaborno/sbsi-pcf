@@ -163,40 +163,42 @@
                     }
                 ],
             });
+
+            function getSources () {
+                $.ajax({
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '/settings.source/ajax/get-source-list',
+                        contentType: "application/json; charset=utf-8",
+                        cache: false,
+                        dataType: 'json',
+                    }).done(function(res) {
+                        data = res.data;
+                        $("#item_code").select2({
+                            data: data,
+                            width: "100%",
+                            allowClear: true,
+                            placeholder: 'Item code',
+                            dropdownParent: $("#add-mp-modal")
+                        });
+                        $("#edit_item_code").select2({
+                            data: data,
+                            width: "100%",
+                            allowClear: true,
+                            placeholder: 'Item code',
+                            dropdownParent: $("#edit-mp-modal")
+                        });
+
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    });
+            }
+
+            getSources();
+
         });
-
-        function getSources () {
-            $.ajax({
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '/settings.source/ajax/get-source-list',
-                    contentType: "application/json; charset=utf-8",
-                    cache: false,
-                    dataType: 'json',
-                }).done(function(res) {
-                    data = res.data;
-                    $("#item_code").select2({
-                        data: data,
-                        width: "100%",
-                        allowClear: true,
-                        placeholder: 'Item code',
-                    });
-                    
-                    $("#edit_item_code").select2({
-                        data: data,
-                        width: "100%",
-                        allowClear: true,
-                        placeholder: 'Item code',
-                    });
-
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                });
-        }
-
-        getSources();
 
         $('#item_code').on('select2:select', function (e) {
             var data = e.params.data;
@@ -228,6 +230,7 @@
                         width: "100%",
                         allowClear: true,
                         placeholder: 'Item Code',
+                        dropdownParent: $("#edit-mp-modal")
                     });
                     $('#edit_item_description').val(result[0].item_description);
                     $('#edit-quantity').val(data.editMp.quantity);

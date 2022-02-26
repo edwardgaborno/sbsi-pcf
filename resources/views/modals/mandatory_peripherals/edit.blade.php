@@ -17,6 +17,7 @@
                                 <label for="edit_item_code">Item Code<span style="color: red;"> *</span></label>
                                 <input type="hidden" name="mp_id" id="edit-mp-id" value="{{ old('mp_id') }}">
                                 <select name="source_id" id="edit_item_code" class="form-control @error('source_id') is-invalid @enderror select2" required>
+                                    <option value="" selected disabled></option>
                                 </select>
 
                                 @error('source_id')

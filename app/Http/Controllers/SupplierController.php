@@ -73,23 +73,23 @@ class SupplierController extends Controller
             return Datatables::of($suppliers)
                 ->addColumn('status', function ($data) {
                     if ($data->is_active == 1) {
-                        return '<span class="badge badge-success">Active</span>';
+                        return '<span class="btn btn-sm btn-success">Active</span>';
                     }
 
-                    return '<span class="badge badge-danger">Inactive</span>';
+                    return '<span class="btn btn-sm btn-danger">Inactive</span>';
                 })
                 ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('supplier_edit')) {
                         if ($data->is_active == 1) {
-                            return '<a href="javascript:void(0);" class="badge badge-info edit-supplier-modal" data-toggle="modal"
+                            return '<a href="javascript:void(0);" class="btn btn-sm btn-info edit-supplier-modal" data-toggle="modal"
                                         data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
-                                    <a href="javascript:void(0);" class="badge badge-danger disable-supplier"
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger disable-supplier"
                                         data-id="' . $data->id . '"><i class="fas fa-ban"></i> Disable</a>';
                         }
 
-                        return '<a href="javascript:void(0);" class="badge badge-info edit-supplier-modal" data-toggle="modal"
+                        return '<a href="javascript:void(0);" class="btn btn-sm btn-info edit-supplier-modal" data-toggle="modal"
                                         data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
-                                    <a href="javascript:void(0);" class="badge badge-success enable-supplier"
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-success enable-supplier"
                                         data-id="' . $data->id . '"><i class="far fa-check-circle"></i> Enable</a>';
                     }
                 })

@@ -33,7 +33,7 @@
                     <!-- Content Row -->
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card">
+                            <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); border-radius: 8px;">
                                 <div class="card-body">
                                     <form action="{{ route('users.store') }}" method="post">
                                         @csrf
@@ -136,7 +136,7 @@
                                                         <div class="form-group">
                                                             <label for="area_region">Area</label>
                                                             <select class="form-control @error('area_region') is-invalid @enderror" name="area_region" id="area_region">
-                                                                <option value="" selected disabled>Select user area</option>
+                                                                <option value="" selected>Select user area</option>
                                                                 <option value="Luzon" {{ (old('area_region') == 'Luzon' ? 'selected' : '') }}>Luzon</option>
                                                                 <option value="Visayas" {{ (old('area_region') == 'Visayas' ? 'selected' : '') }}>Visayas</option>
                                                                 <option value="Mindanao" {{ (old('area_region') == 'Mindanao' ? 'selected' : '') }}>Mindanao</option>

@@ -67,6 +67,9 @@ class SourceController extends Controller
                 ->addColumn('supplier', function ($data) {
                     return $data->suppliers->supplier_name;
                 })
+                ->addColumn('item_code', function ($data) {
+                    return '<span id="item'.$data->id.'">'.$data->item_code.'</span>';
+                })
                 ->addColumn('unit_price', fn($data) => $this->formatNumber($data->unit_price))
                 ->addColumn('tp_php', fn($data) => $this->formatNumber($data->tp_php))
                 ->addColumn('uom', function ($data) {
@@ -87,7 +90,7 @@ class SourceController extends Controller
                 ->addColumn('mandatory_peripherals', function ($data) {
                     if ($data->mandatory_peripherals_ids) {
                         $ids = implode(",", $data->mandatory_peripherals_ids);
-                        return '<a href="#" data-toggle="modal" data-target="#view_mandatory_peripherals_modal" class="badge badge-primary view-mp-details" data-mp_ids="'.$ids.'">View List</a>';
+                        return '<a href="#" data-toggle="modal" data-target="#view_mandatory_peripherals_modal" class="btn btn-sm btn-success view-mp-details" data-mp_ids="'.$ids.'">View List</a>';
                     }
                 })
                 ->addColumn('cost_of_peripherals', fn($data) => $this->formatNumber($data->cost_of_peripherals))
@@ -95,11 +98,15 @@ class SourceController extends Controller
                 ->addColumn('actions', function ($data) {
                     if(auth()->user()->can('source_edit')) {
                         return
-                        '<a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
+                        '<a href="javascript:void(0);" class="btn btn-sm btn-primary editSourceDetails" data-toggle="modal"
                             data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>';
                     }
                 })
-                ->rawColumns(['mandatory_peripherals','actions'])
+                ->addColumn('copy', function ($data) {
+                    return
+                    "<button class='btn btn-sm btn-success' id='".$data->id."' onclick=CopyToClipboard('item".$data->id."','".$data->id."')>Copy Item Code</button>";
+                })
+                ->rawColumns(['item_code','mandatory_peripherals','actions', 'copy'])
                 ->make(true);
         }
     }
@@ -122,7 +129,6 @@ class SourceController extends Controller
     public function store(StoreSourceRequest $request)
     {
         $this->authorize('source_store');
-        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -132,15 +138,6 @@ class SourceController extends Controller
                 'segment_id' => $request->segment_id,
                 'item_category_id' => $request->item_category_id
             ]);
-
-            // if ($request->mandatory_peripherals) {
-            //    foreach ($request->mandatory_peripherals as $mp) {
-            //         $saveSourceMandatoryPeripherals = new SourceMandatoryPeripheral;
-            //         $saveSourceMandatoryPeripherals->source_id = $saveSource->id;
-            //         $saveSourceMandatoryPeripherals->mandatory_peripheral_id = $mp;
-            //         $saveSourceMandatoryPeripherals->save();
-            //    }
-            // }
 
             DB::commit();
             Alert::success('Success', 'The source has been added');
@@ -160,7 +157,9 @@ class SourceController extends Controller
 
         try {
             $source = Source::findOrFail($request->source_id);
-            $source->update($request->validated());
+            $source->update($request->validated() + [
+                'mandatory_peripherals_ids' => $request->mandatory_peripherals_ids
+            ]);
 
             $joins = DB::table('sources')
                     ->join('p_c_f_lists', 'sources.id', '=', 'p_c_f_lists.source_id')
@@ -243,7 +242,7 @@ class SourceController extends Controller
                 ->addColumn('mandatory_peripherals', function ($data) {
                     if ($data->mandatory_peripherals_ids) {
                         $ids = implode(",", $data->mandatory_peripherals_ids);
-                        return '<a href="#" data-toggle="modal" data-target="#view_mandatory_peripherals_modal" class="badge badge-primary view-mp-details" data-mp_ids="'.$ids.'">View List</a>';
+                        return '<a href="#" data-toggle="modal" data-target="#view_mandatory_peripherals_modal" class="btn btn-sm btn-success view-mp-details" data-mp_ids="'.$ids.'">View List</a>';
                     }
                     return 'No mandatory peripherals';
                 })
@@ -252,7 +251,7 @@ class SourceController extends Controller
                 ->addColumn('actions', function ($data) {
                     if(auth()->user()->can('source_edit')) {
                         return
-                        '<a href="javascript:void(0);" class="badge badge-info editSourceDetails" data-toggle="modal"
+                        '<a href="javascript:void(0);" class="btn btn-sm btn-primary editSourceDetails" data-toggle="modal"
                             data-id="'. $data->id .'"><i class="far fa-edit"></i> Edit</a>';
                     }
                 })

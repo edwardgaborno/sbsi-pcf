@@ -88,23 +88,23 @@ class MandatoryPeripheralController extends Controller
                 })
                 ->addColumn('status', function ($data) {
                     if ($data->is_active == 1) {
-                        return '<span class="badge badge-success">Active</span>';
+                        return '<span class="btn btn-sm btn-success">Active</span>';
                     }
 
-                    return '<span class="badge badge-danger">Inactive</span>';
+                    return '<span class="btn btn-sm btn-danger">Inactive</span>';
                 })
                 ->addColumn('actions', function ($data) {
                     if (auth()->user()->can('mandatory_peripherals_edit')) {
                         if ($data->is_active == 1) {
-                            return '<a href="javascript:void(0);" class="badge badge-info edit-mp-modal" data-toggle="modal"
+                            return '<a href="javascript:void(0);" class="btn btn-sm btn-info edit-mp-modal" data-toggle="modal"
                                         data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
-                                    <a href="javascript:void(0);" class="badge badge-danger disable-mp"
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger disable-mp"
                                         data-id="' . $data->id . '"><i class="fas fa-ban"></i> Disable</a>';
                         }
 
-                        return '<a href="javascript:void(0);" class="badge badge-info edit-mp-modal" data-toggle="modal"
+                        return '<a href="javascript:void(0);" class="btn btn-sm btn-info edit-mp-modal" data-toggle="modal"
                                         data-id="' . $data->id . '"><i class="far fa-edit"></i> Edit</a>
-                                    <a href="javascript:void(0);" class="badge badge-success enable-mp"
+                                    <a href="javascript:void(0);" class="btn btn-sm btn-success enable-mp"
                                         data-id="' . $data->id . '"><i class="far fa-check-circle"></i> Enable</a>';
                     }
                 })
@@ -209,7 +209,7 @@ class MandatoryPeripheralController extends Controller
 
             return Datatables::of($sourceMandatoryPeripherals)
                 ->addColumn('item_code', function ($data) {
-                    return $data->item_code;
+                    return $data->sources->item_code;
                 })
                 ->addColumn('item_description', function ($data) {
                     return $data->item_description;   
@@ -231,7 +231,7 @@ class MandatoryPeripheralController extends Controller
         if ($request->ids) {
             foreach ($request->ids as $id) {
                 $getMandatoryUnitPrice = MandatoryPeripheral::where('id', $id)->first();
-                $totalCostPeripherals += $getMandatoryUnitPrice->sources->unit_price;
+                $totalCostPeripherals += $getMandatoryUnitPrice->quantity * $getMandatoryUnitPrice->sources->unit_price;
             }
             return response()->json(['totalCostPeripherals' => $totalCostPeripherals], 202);
         }

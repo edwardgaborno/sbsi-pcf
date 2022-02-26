@@ -26,13 +26,24 @@ class UpdateSourceRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        $this->merge([
-            'unit_price' =>  Str::replace(',', '', $this->unit_price),
-            'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
-            'tp_php' =>  Str::replace(',', '', $this->tp_php),
-            'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
-            'standard_price' =>  Str::replace(',', '', $this->standard_price),
-        ]);
+        if (empty($this->cost_of_peripherals)) {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'tp_php_less_tax' =>  Str::replace(',', '', $this->tp_php_less_tax),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        } else {
+            $this->merge([
+                'unit_price' =>  Str::replace(',', '', $this->unit_price),
+                'currency_rate' =>  Str::replace(',', '', $this->currency_rate),
+                'tp_php' =>  Str::replace(',', '', $this->tp_php),
+                'tp_php_less_tax' =>  Str::replace(',', '', $this->tp_php_less_tax),
+                'cost_of_peripherals' =>  Str::replace(',', '', $this->cost_of_peripherals),
+                'standard_price' =>  Str::replace(',', '', $this->standard_price),
+            ]);
+        }
     }
 
     /**
@@ -60,7 +71,7 @@ class UpdateSourceRequest extends FormRequest
             'cost_of_peripherals' => 'sometimes|nullable|numeric',
             'standard_price' => 'required|numeric',
             'profitability' => 'required|string',
-            'mandatory_peripherals_ids' => 'sometimes|nullable|array'
+            // 'mandatory_peripherals_ids' => 'sometimes|nullable|array'
         ];
     }
 

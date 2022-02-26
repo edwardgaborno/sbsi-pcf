@@ -25,4 +25,9 @@ class PCFList extends Model
     {
         return $this->belongsTo(Source::class, 'source_id', 'id');
     }
+
+    public function pcfMandatoryItems()
+    {
+        return $this->hasMany(PCFRequestMandatoryItem::class, 'item_id', 'id');
+    }
 }

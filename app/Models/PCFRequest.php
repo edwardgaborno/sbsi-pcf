@@ -20,6 +20,11 @@ class PCFRequest extends Model implements HasMedia
         return url($this->getFirstMediaUrl('approved_pcf_rfq'));
     }
 
+    // public function getPCFFileAttribute()
+    // {
+    //     return url($this->getFirstMediaUrl('pcf_approved_pdf'));
+    // }
+
     public function pcfList() 
     {
         return $this->belongsTo(PCFList::class);
@@ -37,6 +42,16 @@ class PCFRequest extends Model implements HasMedia
     public function institution()
     {
         return $this->belongsTo(PCFInstitution::class);
+    }
+
+    public function institutions()
+    {
+        return $this->belongsTo(PCFInstitution::class, 'institution_id', 'id');
+    }
+
+    public function pcfItemList()
+    {
+        return $this->hasMany(PCFList::class, 'p_c_f_request_id', 'id');
     }
 
     public function user()
@@ -63,5 +78,11 @@ class PCFRequest extends Model implements HasMedia
         foreach($data as $datum) {
             return $datum->above_standard_price;
         }
+    }
+
+    public function productSegments()
+    {
+        $productSegments = ProductSegment::where('is_active', 1)->orderBy('id','ASC')->get();
+        return $productSegments;
     }
 }

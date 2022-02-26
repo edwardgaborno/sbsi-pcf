@@ -60,9 +60,6 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_delete',
             'pcf_request_access',
             'pcf_source_access',
-            'psr_download_pcf',
-            'psr_view_pcf',
-            'psr_upload_pcf',
 
             'view_pcf',
             'download_pcf',
@@ -72,23 +69,6 @@ class RolesAndPermissionSeeder extends Seeder
             'view_quotation',
             'download_quotation',
             'view_approved_quotation',
-
-            'psr_mgr_approve_pcf',
-            'psr_mgr_reject_pcf',
-
-            'mktg_approve_pcf',
-            'mktg_reject_pcf',
-
-            'acct_approve_pcf',
-            'acct_reject_pcf',
-
-            'nsm_approve_pcf',
-            'nsm_reject_pcf',
-
-            'cfo_approve_pcf',
-            'cfo_reject_pcf',
-            'cfo_approve_quotation',
-            'cfo_reject_quotation',
 
             'institution_access',
             'institution_create',
@@ -139,187 +119,6 @@ class RolesAndPermissionSeeder extends Seeder
             ]);
         }
 
-        $psrRole = Role::create(['name' => 'PSR']);
-        $psrRole->givePermissionTo([
-            'pcf_request_create',
-            'pcf_request_delete',
-            'pcf_request_store',
-            'pcf_request_show',
-            'pcf_request_access',
-            'pcf_source_access',
-            'psr_download_pcf',
-            'psr_view_pcf',
-            'psr_upload_pcf',
-            'source_access',
-            'view_pcf',
-            'view_approved_pcf',
-            'settings_access',
-            'supplier_access',
-            'institution_access',
-            'business_partner_access'
-        ]);
-
-        $psrMgrRole = Role::create(['name' => 'PSR Manager']);
-        $psrMgrRole->givePermissionTo([
-            'pcf_request_access',
-            'pcf_request_store',
-            'pcf_request_delete',
-            'pcf_request_edit',
-            'pcf_request_update',
-            'view_pcf',
-            'psr_mgr_approve_pcf',
-            'psr_mgr_reject_pcf',
-            'settings_access',
-            'supplier_access',
-            'institution_access',
-            'business_partner_access'
-        ]);
-
-        $mkt_mgrRole = Role::create(['name' => 'Marketing']);
-        $mkt_mgrRole->givePermissionTo([
-            'pcf_request_access',
-            'pcf_request_store',
-            'pcf_request_delete',
-            'pcf_request_edit',
-            'pcf_request_update',
-            'view_pcf',
-            'mktg_approve_pcf',
-            'mktg_reject_pcf',
-            'settings_access',
-            'supplier_access',
-            'institution_access',
-            'business_partner_access'
-        ]);
-
-        $acctRole = Role::create(['name' => 'Accounting']);
-        $acctRole->givePermissionTo([
-            'pcf_request_access',
-            'view_pcf',
-            'acct_approve_pcf',
-            'acct_reject_pcf',
-            'price_management_access',
-            'price_management_create',
-            'price_management_store',
-            'price_management_edit',
-            'price_management_update',
-            'price_management_show',
-        ]);
-
-        $nsmRole = Role::create(['name' => 'National Sales Manager']);
-        $nsmRole->givePermissionTo([
-            'pcf_request_access',
-            'pcf_request_store',
-            'pcf_request_delete',
-            'pcf_request_edit',
-            'pcf_request_update',
-            'view_pcf',
-            'download_pcf',
-            'view_quotation',
-            'download_quotation',
-            'nsm_approve_pcf',
-            'nsm_reject_pcf',
-            'view_approved_pcf',
-            'view_approved_quotation',
-            'settings_access',
-            'supplier_access',
-            'institution_access',
-            'business_partner_access'
-        ]);
-
-        $cfoRole = Role::create(['name' => 'Chief Finance Officer']);
-        $cfoRole->givePermissionTo([
-            'pcf_request_access',
-            'view_pcf',
-            'download_pcf',
-            'view_quotation',
-            'download_quotation',
-            'cfo_approve_pcf',
-            'cfo_reject_pcf',
-            'cfo_approve_quotation',
-            'cfo_reject_quotation',
-            'view_approved_pcf',
-            'view_approved_quotation',
-            'price_management_access',
-            'price_management_create',
-            'price_management_store',
-            'price_management_edit',
-            'price_management_update',
-            'price_management_show',
-        ]);
-
-        $salesAssistRole = Role::create(['name' => 'Sales Assistant']);
-        $salesAssistRole->givePermissionTo([
-            'pcf_request_access',
-            'view_pcf',
-            'download_pcf',
-            'view_quotation',
-            'download_quotation',
-            'view_approved_pcf',
-            'view_approved_quotation',
-        ]);
-
-        $adminRole = Role::create(['name' => 'Administrator']);
-        $adminRole->givePermissionTo([
-            'pcf_request_create',
-            'pcf_request_store',
-            'pcf_request_edit',
-            'pcf_request_update',
-            'pcf_request_show',
-            'pcf_request_delete',
-            'pcf_request_access',
-            
-            'pcf_source_access',
-            'psr_view_pcf',
-            'download_pcf',
-            'upload_pcf',
-            'view_pcf',
-            
-            'source_create',
-            'source_store',
-            'source_edit',
-            'source_update',
-            'source_show',
-            'source_delete',
-            'source_access',
-
-            'institution_access',
-            'institution_create',
-            'institution_store',
-            'institution_edit',
-            'institution_update',
-            'institution_show',
-
-            'department_access',
-            'department_create',
-            'department_store',
-            'department_edit',
-            'department_update',
-            'department_show',
-
-            'price_management_access',
-            'price_management_create',
-            'price_management_store',
-            'price_management_edit',
-            'price_management_update',
-            'price_management_show',
-
-            'settings_access',
-            'supplier_access',
-            'business_partner_access',
-
-            'mandatory_peripherals_access',
-            'mandatory_peripherals_store',
-            'mandatory_peripherals_edit',
-            'mandatory_peripherals_update',
-            'mandatory_peripherals_show',
-
-            'profitability_percentages_access',
-            'profitability_percentages_store',
-            'profitability_percentages_update',
-            'profitability_percentages_show',
-            'profitability_percentages_edit',
-        ]);
-
         $superAdmin = Role::create(['name' => 'Super Administrator']);
         $superAdmin->givePermissionTo([
             'user_management_access',
@@ -361,9 +160,9 @@ class RolesAndPermissionSeeder extends Seeder
             'pcf_request_delete',
             'pcf_request_access',
             'pcf_source_access',
-            'psr_download_pcf',
-            'psr_view_pcf',
-            'psr_upload_pcf',
+            'download_pcf',
+            'view_pcf',
+            'upload_pcf',
 
             'view_pcf',
             'download_pcf',
@@ -373,23 +172,6 @@ class RolesAndPermissionSeeder extends Seeder
             'view_quotation',
             'download_quotation',
             'view_approved_quotation',
-
-            'psr_mgr_approve_pcf',
-            'psr_mgr_reject_pcf',
-
-            'mktg_approve_pcf',
-            'mktg_reject_pcf',
-
-            'acct_approve_pcf',
-            'acct_reject_pcf',
-
-            'nsm_approve_pcf',
-            'nsm_reject_pcf',
-
-            'cfo_approve_pcf',
-            'cfo_reject_pcf',
-            'cfo_approve_quotation',
-            'cfo_reject_quotation',
 
             'institution_access',
             'institution_create',
@@ -413,14 +195,13 @@ class RolesAndPermissionSeeder extends Seeder
             'price_management_show',
 
             'settings_access',
-            'institution_access',
             'business_partner_access',
 
             'supplier_access',
             'supplier_store',
-            'supplier_show',
-            'supplier_edit',
             'supplier_update',
+            'supplier_edit',
+            'supplier_show',
 
             'mandatory_peripherals_access',
             'mandatory_peripherals_store',
@@ -434,5 +215,571 @@ class RolesAndPermissionSeeder extends Seeder
             'profitability_percentages_show',
             'profitability_percentages_edit',
         ]);
+
+        $psrRole = Role::create(['name' => 'PSR']);
+        $psrRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $mkt_mgrRole = Role::create(['name' => 'Marketing']);
+        $mkt_mgrRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $acctRole = Role::create(['name' => 'Accounting']);
+        $acctRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $nsmRole = Role::create(['name' => 'National Sales Manager']);
+        $nsmRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $accountingTeamLeader = Role::create(['name' => 'Accounting Team Leader']);
+        $accountingTeamLeader->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $accountingManager = Role::create(['name' => 'Accounting Manager']);
+        $accountingManager->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+
+        $cfoRole = Role::create(['name' => 'Chief Finance Officer']);
+        $cfoRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $salesAssistRole = Role::create(['name' => 'Sales Assistant']);
+        $salesAssistRole->givePermissionTo([
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $apm = Role::create(['name' => 'Associate Product Manager']);
+        $apm->givePermissionTo([
+        
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $asr = Role::create(['name' => 'Area Sales Manager']);
+        $asr->givePermissionTo([
+        
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $ssr = Role::create(['name' => 'Senior Sales Representative']);
+        $ssr->givePermissionTo([
+        
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $rsm = Role::create(['name' => 'Regional Sales Manager']);
+        $rsm->givePermissionTo([
+        
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
+        $fsem = Role::create(['name' => 'Field Service Eng. Manager']);
+        $fsem->givePermissionTo([
+        
+            'user_show',
+            'user_access',
+
+            'source_create',
+            'source_show',
+            'source_access',
+
+            'pcf_request_create',
+            'pcf_request_store',
+            'pcf_request_edit',
+            'pcf_request_update',
+            'pcf_request_show',
+            'pcf_request_delete',
+            'pcf_request_access',
+            'pcf_source_access',
+
+            'view_pcf',
+            'download_pcf',
+            'upload_pcf',
+            'view_approved_pcf',
+
+            'view_quotation',
+            'download_quotation',
+            'view_approved_quotation',
+
+            'institution_access',
+            'institution_show',
+
+            'settings_access',
+            'business_partner_access',
+
+            'supplier_access',
+            'supplier_show',
+
+            'mandatory_peripherals_access',
+            'mandatory_peripherals_show',
+
+            'profitability_percentages_access',
+            'profitability_percentages_show',
+        ]);
+
     }
 }

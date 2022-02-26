@@ -18,6 +18,7 @@ use App\Http\Controllers\SourceMandatoryPeripheralController;
 use App\Http\Controllers\SupplierController;
 use App\Models\MandatoryPeripheral;
 use App\Models\PCFInstitution;
+use App\Models\PCFList;
 use App\Models\PCFRequest;
 use App\Models\Price;
 use App\Models\ProfitabilityPercentage;
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/ajax/disapprove-pcf-request', [PCFRequestController::class, 'disapprovePcfRequest'])->name('.disapprove_pcf_request');
             Route::get('/ajax/view-pcf-approvals/{id}', [PCFApproverController::class, 'index'])->name('.view_pcf_approvals');
             Route::get('/ajax/cancel-pcf-request/{id}', [PCFRequestController::class, 'cancelPcfRequest'])->name('.cancel_pcf_request');
+            Route::get('/ajax/approve-pcf-request-with-remarks/{id}', [PCFRequestController::class, 'approveAndReleaseQuotation'])->name('.approve_and_release_quotation');
+            // Route::get('/upload-approved-pcf-request', [PCFRequestController::class, 'uploadPcfRequestView'])->name('.upload_approved_pcf_request');
         });
     });
 
@@ -86,6 +89,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/ajax/check-item/{pcf_no?}/{rfq_no?}/{source_id?}', [PCFListController::class, 'checkIfItemIsExist'])->name('.check_if_item_exist');
             Route::post('/ajax/count/{pcf_no}', [PCFListController::class, 'pcfItemCount'])->name('.item_count');
             Route::post('/store-items', [PCFListController::class, 'store'])->name('.store_items');
+            Route::put('/update-pcf-request/{id}', [PCFRequestController::class, 'update'])->name('.update_pcf_request');
             Route::delete('/ajax/delete/pcf-list/{item_id}', [PCFListController::class, 'destroy'])->name('.destroy_item');
 
             Route::get('/ajax/foc-list/{pcf_no}', [PCFInclusionController::class, 'pcfFOCList'])->name('.foc_list');
@@ -99,6 +103,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/ajax/delete/bundled-item/{item_id}', [BundleProductController::class, 'destroy'])->name('.destroy_bundle');
 
             Route::get('/ajax/get-grand-total/{pcf_no}', [PCFRequestController::class, 'getGrandTotal'])->name('.get_grand_total');
+            Route::get('/ajax/get-pcf-list-mandatory-items/{pcf_no}', [PCFListController::class, 'getPcfListMandatoryItems'])->name('.get_pcf_list_mandatory_items');
+            Route::get('/ajax/get-grand-total-profit/{pcf_no}', [PCFListController::class, 'getGrandTotalProfit'])->name('.get_total_profit');
         });
     });
 
@@ -163,13 +169,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    //settings/department
-    Route::prefix('settings/department')->name('settings.department.')->group(function () {
-        Route::get('/', [DepartmentController::class, 'index'])->name('index');
-        Route::post('/', [DepartmentController::class, 'store'])->name('store');
-        Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
-    });
-
     //settings/profitablity-percentage
     Route::prefix('settings/profitability-percentage')->group(function () {
         Route::name('settings.profitability_percentage')->group(function () {
@@ -221,11 +220,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     //settings department
-    Route::prefix('settings/department')->name('settings.department.')->group(function () {
-        Route::get('/', [DepartmentController::class, 'index'])->name('index');
-        Route::post('/', [DepartmentController::class, 'store'])->name('store');
-        Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
-    });
+    // Route::prefix('settings/department')->name('settings.department.')->group(function () {
+    //     Route::get('/', [DepartmentController::class, 'index'])->name('index');
+    //     Route::post('/', [DepartmentController::class, 'store'])->name('store');
+    //     Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('show');
+    // });
 
 });
 

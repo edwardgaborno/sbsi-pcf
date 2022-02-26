@@ -36,7 +36,11 @@ class StorePCFRequestRequest extends FormRequest
             'bid_docs_price' => 'sometimes|nullable|numeric',
             'manager' => 'required|string',
             'annual_profit' => 'required|numeric',
-            'annual_profit_rate' => 'required|numeric'
+            'annual_profit_rate' => 'required|numeric',
+            'contact_person' => 'required|string',
+            'designation' => 'required|string',
+            'thru_contact_person' => 'nullable|string',
+            'thru_designation' => 'nullable|string',
         ];
     }
 
@@ -52,6 +56,8 @@ class StorePCFRequestRequest extends FormRequest
             'manager.required' => 'This is a required field.',
             'annual_profit.required' => 'This is a required field.',
             'annual_profit_rate.required' => 'This is a required field.',
+            'contact_person.required' => 'This is a required field.',
+            'designation.required' => 'This is a required field.',
         ];
     }
 }

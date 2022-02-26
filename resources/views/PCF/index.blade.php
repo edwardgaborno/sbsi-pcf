@@ -1,6 +1,11 @@
 @extends('layouts.app')
 @section('title','PCF - PCF Request')
 
+@push('styles')
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @section('content')
 <div id="wrapper">
 
@@ -76,6 +81,9 @@
         @include('modals.approvals.index')
         @include('modals.approvals.approve_pcf')
         @include('modals.approvals.disapprove_pcf')
+        @can('upload_pcf')
+            @include('modals.upload_approved_pcf_pdf.create')
+        @endcan
         <!-- End of Modal Component -->
         <!-- Footer -->
         @include('layouts.footer')
@@ -88,6 +96,27 @@
 
 @section('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputElement = document.querySelector('input[name="pcf_rfq"]');
+            var store = FilePond.create((inputElement),
+            {
+                labelIdle: `Drag & Drop document file or <span class="filepond--label-action">Browse</span>`,
+                imagePreviewHeight: 170,
+            });
+            
+            store.setOptions({
+                server: {
+                    url: "{{ route('store.pcf_document') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                },
+            });
+
+            store.onprocessfile = (error, file) => { 
+                $("#file_server_id").val(file.serverId);
+            };
+        });
         $(function() {
             $('#pcf_dataTable').DataTable({
                 "stripeClasses": [],
@@ -292,5 +321,104 @@
                 }
             })
         })
+
+        $('#pcf_dataTable').on('click', '.approvePcfRequestAndReleaseQuotation', function (e) {
+            e.preventDefault();
+            pcf_request_id = $(this).data('id');
+            Swal.fire({
+                title: 'Approve and Release Quotation',
+                text: "This request will be approved and PSR can now print the quotation.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'GET',
+                        url: '/PCF/ajax/approve-pcf-request-with-remarks/' + pcf_request_id,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    }).done(function(response) {
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Cancelled',
+                            text: 'PCF request has been cancelled successfully.'
+                        })
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
+                    });
+                }
+            })
+        })
     </script>
+    <script>
+        $('#pcf_dataTable').on('click', '.uploadApprovePcfRequest', function (e) {
+            e.preventDefault();
+            var pcf_request_id = $(this).data('id');
+            $("#pcf_request_id").val(pcf_request_id);
+            $("#upload_approved_pcf_modal").modal('show');
+        })
+    </script>
+
+    @can('upload_pcf')
+        <script>
+            $("#upload_pcf_request").on('submit', function(e){
+                e.preventDefault();
+                var id = $("#pcf_request_id").val();
+                var url = "{{ route('PCF.putFile',':id') }}";
+                var file_server_id = $("#file_server_id").val();
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: url.replace(':id', id),
+                    method:'POST',
+                    data: {
+                        '_method' : 'PUT',
+                        pcf_rfq: file_server_id
+                    },
+                    success: function(response) {
+                        clearFileUploadInputs();
+                        $("#upload_approved_pcf_modal").modal('hide');
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+    
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Approved PCF',
+                            text: 'Approved PCF has been uploaded.'
+                        })
+                    },
+                    error: function (response) {
+                        clearFileUploadInputs();
+                        $("#upload_approved_pcf_modal").modal('hide');
+                        $('#pcf_dataTable').DataTable().ajax.reload();
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Oops! Something went wrong.',
+                            text: 'Please contact your system administrator.'
+                        })
+                    },
+                });
+            });
+
+            function clearFileUploadInputs() {
+                $("#file_server_id").val('');
+                $("#pcf_request_id").val('');
+                $("#pcf_rfq").val('');
+            }
+        </script>
+    @endcan
+    @push('scripts')
+        <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @endpush
 @endsection

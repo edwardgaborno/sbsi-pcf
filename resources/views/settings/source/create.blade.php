@@ -14,6 +14,11 @@
         .select2-selection--single {
             height: 38px !important;
         }
+        .select2-container--default 
+        .select2-selection--single 
+        .select2-selection__rendered {
+            line-height: 38px !important;
+        }
         .select2-selection,
         .select2-selection--single,
         .select2-selection--clearable {
@@ -23,7 +28,7 @@
             line-height: 35px !important;
         }
         .select2-container--default,
-        .select2-selection--single
+        .select2-selection--single,
         .select2-selection__arrow {
             height: 38px !important;
         }
@@ -63,7 +68,7 @@
                     <!-- Content Row -->
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card">
+                            <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); border-radius: 8px;">
                                 <div class="card-body">
                                     <form action="{{ route('settings.source.store') }}" method="post">
                                         @csrf
@@ -371,6 +376,7 @@
 
         $('#mandatory_peripherals').on('change', function (e) {
             let mp_ids = $(this).val();
+            console.log(mp_ids);
             if (mp_ids.length > 0) {
                 $.ajax({
                     method: 'get',
@@ -385,7 +391,10 @@
                     cache: false,
                     dataType: 'json',
                 }).done(function(res) {
-                    document.getElementById("cost_of_peripherals").value = parseFloat(res.totalCostPeripherals).toFixed(2);
+                    document.getElementById("cost_of_peripherals").value = res.totalCostPeripherals.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    calculateTP();
+                    calculateTPpHpLessTax();
+                    calculateStandardPrice();
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Somethin went wrong!',
@@ -394,8 +403,10 @@
                     )
                 });
             } else {
-                console.log('walang laman');
-                document.getElementById("cost_of_peripherals").value = null;
+                document.getElementById("cost_of_peripherals").value = '';
+                calculateTP();
+                calculateTPpHpLessTax();
+                calculateStandardPrice();
             }
         });
 
@@ -443,11 +454,20 @@
             const currency_rate = parseFloat(document.getElementById("currency_rate").value.replace(/,/g, ''));
             const tp_price = parseFloat(document.getElementById("tp_php").value.replace(/,/g, ''));
 
-            if (!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price)) {
+            if (!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price) && currency_rate == 1) {
                 document.getElementById("tp_php_less_tax").value = (tp_price / 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            } else if(!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price) && currency_rate > 1) {
+                document.getElementById("tp_php_less_tax").value = tp_price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
             } else {
                 document.getElementById("tp_php_less_tax").value = '';
             }
+        }
+
+        function roundUpHundred(number){
+            const standard_price = document.getElementById("standard_price");
+            var calculated = number.toFixed(2); 
+            var a = (Math.round(calculated / 100) * 100);
+            standard_price.value = a.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         }
 
         function calculateStandardPrice()
@@ -456,33 +476,41 @@
             const tp_php_less_tax = parseFloat(document.getElementById("tp_php_less_tax").value.replace(/,/g, ''));
             const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value.replace(/,/g, ''));
             const item_category_name=  $( "#item_category option:selected" ).text();
-            const standard_price = document.getElementById("standard_price");
+
             if (currency_rate === 1) {
-                if (!isNaN(cost_of_peripherals) && item_category_name === "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                if (!isNaN(cost_of_peripherals) && item_category_name === "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category_name === "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category_name === "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.3)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (!isNaN(cost_of_peripherals) && item_category_name !== "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (!isNaN(cost_of_peripherals) && item_category_name !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + cost_of_peripherals) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category_name !== "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category_name !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.15) + 0) / (1 - 0.5)) * 1.12); 
+                    roundUpHundred(sp);
                 }
             }
             else {
-                if (!isNaN(cost_of_peripherals) && item_category_name === "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.3) + cost_of_peripherals) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                if (!isNaN(cost_of_peripherals) && item_category_name === "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + cost_of_peripherals) / (1 - 0.3)) * 1.12);
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category_name === "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.3) + 0) / (1 - 0.3)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category_name === "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + 0) / (1 - 0.3)) * 1.12);
+                    roundUpHundred(sp);
                 }
-                else if (!isNaN(cost_of_peripherals) && item_category_name !== "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.3) + cost_of_peripherals) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (!isNaN(cost_of_peripherals) && item_category_name !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + cost_of_peripherals) / (1 - 0.5)) * 1.12);
+                    roundUpHundred(sp);
                 }
-                else if (isNaN(cost_of_peripherals) && item_category_name !== "MACHINE") {
-                    standard_price.value = ((((tp_php_less_tax * 1.3) + 0) / (1 - 0.5)) * 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+                else if (isNaN(cost_of_peripherals) && item_category_name !== "MACHINES") {
+                    var sp = ((((tp_php_less_tax * 1.35) + 0) / (1 - 0.5)) * 1.12);
+                    roundUpHundred(sp);
                 }
             }
         }
