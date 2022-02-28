@@ -38,7 +38,7 @@
                             </span>
                         @enderror 
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label for="description">Item Description</label>
                         <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description_item"
                             placeholder="Description" readonly >
@@ -53,6 +53,7 @@
                         <input type="hidden" class="form-control" name="tp_php" id="tp_php_item" value="0.00">    
                         <input type="hidden" class="form-control" name="cost_of_peripherals" id="cost_of_peripherals_item" value="0.00">
                         <input type="hidden" class="form-control" name="opex" id="opex_item">
+                        <input type="hidden" class="form-control" name="opex" id="is_above_standard_price" value="0.00">
                         <input type="hidden" class="form-control" name="net_sales" id="net_sales_item" value="0.00">
                         <input type="hidden" class="form-control" name="gross_profit" id="gross_profit_item" value="0.00">
                         <input type="hidden" class="form-control" name="total_gross_profit" id="total_gross_profit_item" value="0.00">
@@ -87,6 +88,17 @@
                             value="{{ old('total_sales') }}" readonly required>
 
                         @error('total_sales')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label for="above_standard_price">APS</label>
+                        <input type="text" class="form-control @error('above_standard_price') is-invalid @enderror" name="above_standard_price" id="above_standard_price"
+                            value="{{ old('above_standard_price') }}" readonly>
+
+                        @error('above_standard_price')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

@@ -278,8 +278,8 @@
                                             </div>
                                         </div>
                                         <!-- End Right Element -->
-                                        <button type="submit" class="btn btn-primary float-right">{{ __('Add Source') }}</button>
-                                        <a href="{{ route('settings.source.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a>
+                                        <button type="submit" class="btn btn-primary float-right"><i class="far fa-save"></i> &nbsp;{{ __('Add Source') }}</button>
+                                        <a href="{{ route('settings.source.index') }}" class="btn btn-link float-right mr-2"><i class="fas fa-times"></i>&nbsp;{{ __('Cancel') }}</a>
                                     </form>
                                 </div>
                             </div>
@@ -474,6 +474,7 @@
         {
             const currency_rate = parseFloat(document.getElementById("currency_rate").value.replace(/,/g, ''));
             const tp_php_less_tax = parseFloat(document.getElementById("tp_php_less_tax").value.replace(/,/g, ''));
+            console.log(tp_php_less_tax);
             const cost_of_peripherals = parseFloat(document.getElementById("cost_of_peripherals").value.replace(/,/g, ''));
             const item_category_name=  $( "#item_category option:selected" ).text();
 

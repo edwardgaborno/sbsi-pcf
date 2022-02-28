@@ -34,8 +34,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-sm btn-success">Upload Approved PCF</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fas fa-times"></i> &nbsp;Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-upload"></i> &nbsp;Upload Approved PCF</button>
                 </div>
             </form>
         </div>

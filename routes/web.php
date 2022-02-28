@@ -62,6 +62,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{p_c_f_request}', [PCFRequestController::class, 'update'])->name('.update');
 
             Route::get('/ajax/list', [PCFRequestController::class, 'pcfRequestList'])->name('.list');
+            Route::get('/request/completed', [PCFRequestController::class, 'viewCompletedList'])->name('.completed_list_index');
+            Route::get('/ajax/completed-request-list', [PCFRequestController::class, 'pcfCompletedList'])->name('.completed_list');
+            Route::get('/request/cancelled', [PCFRequestController::class, 'viewCancelledList'])->name('.cancelled_list_index');
+            Route::get('/ajax/cancelled-request-list', [PCFRequestController::class, 'pcfCancelledList'])->name('.cancelled_list');
             Route::get('/ajax/items-list/{p_c_f_request}', [PCFListController::class, 'pcfRequestList'])->name('.items_list');
             Route::get('/ajax/inclusions-list/{p_c_f_request}', [PCFInclusionController::class, 'pcfRequestInclusion'])->name('.inclusions_list');
 

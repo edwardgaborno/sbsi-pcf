@@ -25,8 +25,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger form-control" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success form-control" id="submit">Disapprove PCF</button>
+                    <button type="button" class="btn btn-danger form-control" data-dismiss="modal"><i class="fas fa-times"></i> &nbsp;Cancel</button>
+                    <button type="submit" class="btn btn-success form-control" id="submit"><i class="fas fa-thumbs-down"></i> &nbsp;Disapprove PCF</button>
                 </div>
             </form>
         </div>

@@ -319,8 +319,8 @@
                                         </div>
                                     </div>
                                     <!-- End Right Element -->
-                                    <button type="submit" class="btn btn-primary float-right">{{ __('Update PCF Request') }}</button>
-                                    <a href="{{ route('PCF.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a>
+                                    {{-- <button type="submit" class="btn btn-primary float-right">{{ __('Update PCF Request') }}</button>
+                                    <a href="{{ route('PCF.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a> --}}
                                 </form>
                             </div>
                         </div>
@@ -330,6 +330,12 @@
                 <div class="accordion" id="accordionExample">
                     @include('PCF.sub.partials.edit_items')
                     @include('PCF.sub.partials.edit_machines')
+                </div>
+                <div class="row pt-2 pcf-submit">
+                    <div class="col-md-12">
+                        <button type="submit" id="submit_pcf_request" class="btn btn-primary form-control mt-2"><i class="far fa-save"></i> &nbsp;{{ __('Update PCF Request') }}</button>
+                        <a href="{{ route('PCF.index') }}" class="btn btn-danger form-control mt-2"><i class="fas fa-times"></i>&nbsp;{{ __('Cancel') }}</a>
+                    </div>
                 </div>
                 {{-- <button type="button" id="submit_pcf_request" class="btn btn-primary float-right">{{ __('Submit PCF Request') }}</button>
                 <a href="{{ route('PCF.index') }}" class="btn btn-link float-right mr-2">{{ __('Cancel') }}</a> --}}

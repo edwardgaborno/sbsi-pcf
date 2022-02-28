@@ -341,7 +341,7 @@ class SourceController extends Controller
     {
         $this->authorize('source_access');
         
-        $source = Source::select('item_code', 'description', 'currency_rate', 'tp_php', 'cost_of_peripherals')->find($source_id);
+        $source = Source::select('item_code', 'description', 'currency_rate', 'tp_php', 'cost_of_peripherals', 'standard_price')->find($source_id);
 
         if (!$source) {
             return response()->json(['message' => 'Not Found!'], 404);

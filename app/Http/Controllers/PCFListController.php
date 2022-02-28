@@ -52,7 +52,7 @@ class PCFListController extends Controller
                     ->get();
 
             foreach($joins as $join) {
-                $join->standard_price <= $join->unit_price ? $asp = 'YES' : $asp = 'NO';
+                $join->standard_price < $join->unit_price ? $asp = 'YES' : $asp = 'NO';
 
                 $pcfList->where('id', $pcfList->id)->update([
                     'above_standard_price' => $asp,

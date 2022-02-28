@@ -22,9 +22,22 @@
     <!-- Nav Item - PCF Request Menu -->
     @can('pcf_request_access')
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('PCF.index') }}">
+        <a href="#" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manage_pcf_request" aria-expanded="true"
+        aria-controls="managePcfRequest">
             <i class="fas fa-file-contract"></i>
-            <span>PCF Request</span></a>
+            <span>PCF Request</span>
+        </a>
+        <div id="manage_pcf_request" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('PCF.index') }}">Processing</a>
+            </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('PCF.completed_list_index') }}">Completed</a>
+            </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('PCF.cancelled_list_index') }}">Cancelled</a>
+            </div>
+        </div>
     </li>
     @endcan
     @can('user_management_access')

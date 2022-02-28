@@ -552,8 +552,10 @@
             const currency_rate = parseFloat(document.getElementById("edit_currency_rate").value.replace(/,/g, ''));
             const tp_price = parseFloat(document.getElementById("edit_tp_php").value.replace(/,/g, ''));
 
-            if (!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price)) {
+            if (!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price) && currency_rate == 1) {
                 document.getElementById("edit_tp_php_less_tax").value = (tp_price / 1.12).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            } else if(!isNaN(unit_price) && !isNaN(currency_rate) && !isNaN(tp_price) && currency_rate > 1) {
+                document.getElementById("edit_tp_php_less_tax").value = tp_price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
             } else {
                 document.getElementById("edit_tp_php_less_tax").value = '';
             }
@@ -561,13 +563,16 @@
 
         function roundUpHundred(number){
             const standard_price = document.getElementById("edit_standard_price");
-            standard_price.value = (Math.ceil(number / 100) * 100).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+            var calculated = number.toFixed(2); 
+            var a = (Math.round(calculated / 100) * 100);
+            standard_price.value = a.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         }
 
         function editCalculateStandardPrice()
         {
             const currency_rate = parseFloat(document.getElementById("edit_currency_rate").value.replace(/,/g, ''));
             const tp_php_less_tax = parseFloat(document.getElementById("edit_tp_php_less_tax").value.replace(/,/g, ''));
+            console.log(tp_php_less_tax);
             const cost_of_peripherals = parseFloat(document.getElementById("edit_cost_of_peripherals").value.replace(/,/g, ''));
             const item_category = $( "#edit_item_category option:selected" ).text();
             

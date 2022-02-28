@@ -29,22 +29,26 @@ class CreatePCFRequestsTable extends Migration
             $table->string('contract_duration')->nullable();
             $table->date('date_bidding')->nullable();
             $table->decimal('bid_docs_price')->nullable();
-            $table->boolean('is_rsm_approved')->nullable();
-            $table->boolean('is_apm_approved')->nullable();
-            $table->boolean('is_asm_approved')->nullable();
             $table->boolean('is_ssr_approved')->nullable();
             $table->boolean('is_fsem_approved')->nullable();
+            $table->boolean('is_asm_approved')->nullable();
+            $table->boolean('is_rsm_approved')->nullable();
+            $table->boolean('is_apm_approved')->nullable();
             $table->boolean('is_nsm_approved')->nullable();
-            $table->boolean('is_marketing_approved')->nullable();
-            $table->boolean('is_sales_assistant_approved')->nullable();
+            $table->boolean('is_nsm_approved_released_quotation')->nullable();
             $table->boolean('is_accounting_approved')->nullable();
             $table->boolean('is_cfo_approved')->nullable();
+            $table->boolean('is_sales_assistant_approved')->nullable();
             // $table->json('manager');
             $table->string('manager');
             $table->decimal('annual_profit', 12, 2)->default(0.00);
             $table->decimal('annual_profit_rate');
             $table->string('pcf_document')->nullable();
             $table->boolean('is_cancelled')->default(0);
+            $table->foreignId('cancelled_by') // user_id
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade');
             $table->string('contact_person');
             $table->string('designation');
             $table->string('thru_contact_person')->nullable();

@@ -6,7 +6,7 @@ use App\Models\PCFRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\PCFList;
-
+use App\Models\UserProductSegment;
 
 class HomeController extends Controller
 {
@@ -17,21 +17,76 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $pendingRequests = PCFRequest::with('status')
-        //             ->where('status_id', 1)
-        //             ->count();
+        if (auth()->user()->roles->pluck('name')->first() == 'PSR') {
 
-        // $approvedRequests = PCFRequest::with('status')
-        //             ->where('status_id', 6)
-        //             ->count();
+            $ongoingPcfRequest = PCFRequest::where('is_cfo_approved', '!=', 1)->where('created_by', auth()->user()->id)->count();
+            $completedPcfRequest = PCFRequest::where('is_cfo_approved', 1)->where('created_by', auth()->user()->id)->count();
+            $cancelledPcfRequest = PCFRequest::where('is_cancelled', 1)->where('created_by', auth()->user()->id)->count();
 
-        // $forApprovals = PCFRequest::with('status')
-        //             ->whereIn('status_id', [2, 3])
-        //             ->count();
+        } else if (auth()->user()->roles->pluck('name')->first() == 'Area Sales Manager' || auth()->user()->roles->pluck('name')->first() == 'Regional Sales Manager') {
+            $ongoingPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                        ->select('p_c_f_requests.*')
+                        ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                        ->where('users.area_region', auth()->user()->area_region)
+                        ->where('p_c_f_requests.is_cfo_approved', '!=', 1)
+                        ->count(); 
+
+            $completedPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                        ->select('p_c_f_requests.*')
+                        ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                        ->where('users.area_region', auth()->user()->area_region)
+                        ->where('p_c_f_requests.is_cfo_approved', 1)
+                        ->count(); 
+            
+            $cancelledPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                        ->select('p_c_f_requests.*')
+                        ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                        ->where('users.area_region', auth()->user()->area_region)
+                        ->where('p_c_f_requests.is_cancelled', 1)
+                        ->count(); 
+                        
+        }else if (auth()->user()->roles->pluck('name')->first() == 'Area Product Manager') {
+
+            $userSegments = UserProductSegment::where('user_id', auth()->user()->id)->pluck('product_segment_id');
+            $ongoingPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                            ->select('p_c_f_requests.*')
+                            ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                            ->leftJoin('p_c_f_lists', 'p_c_f_lists.pcf_no', 'p_c_f_requests.pcf_no')
+                            ->whereIn('p_c_f_lists.product_segment_id', $userSegments)
+                            ->where('is_cfo_approved','!=', 1)
+                            ->groupBy('p_c_f_requests.pcf_no')
+                            ->count();
+
+            $completedPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                            ->select('p_c_f_requests.*')
+                            ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                            ->leftJoin('p_c_f_lists', 'p_c_f_lists.pcf_no', 'p_c_f_requests.pcf_no')
+                            ->whereIn('p_c_f_lists.product_segment_id', $userSegments)
+                            ->where('is_cfo_approved', 1)
+                            ->groupBy('p_c_f_requests.pcf_no')
+                            ->count();
+
+            $cancelledPcfRequest = PCFRequest::with('pcfApprover', 'media')
+                            ->select('p_c_f_requests.*')
+                            ->leftJoin('users', 'users.id', 'p_c_f_requests.created_by')
+                            ->leftJoin('p_c_f_lists', 'p_c_f_lists.pcf_no', 'p_c_f_requests.pcf_no')
+                            ->whereIn('p_c_f_lists.product_segment_id', $userSegments)
+                            ->where('is_cancelled', 1)
+                            ->groupBy('p_c_f_requests.pcf_no')
+                            ->count();
+        } else {
+            $ongoingPcfRequest = PCFRequest::where('is_cfo_approved', '!=', 1)->count();
+            $completedPcfRequest = PCFRequest::where('is_cfo_approved', 1)->count();
+            $cancelledPcfRequest = PCFRequest::where('is_cancelled', 1)->count();
+        }
 
         // return view('home.index', compact('pendingRequests', 'approvedRequests', 'forApprovals'));
 
-        return view('home.index');
+        return view('home.index', [
+            'ongoingPcfRequest' => $ongoingPcfRequest,
+            'completedPcfRequest' => $completedPcfRequest,
+            'cancelledPcfRequest' => $cancelledPcfRequest
+        ]);
     }
 
     /**

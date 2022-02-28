@@ -114,7 +114,7 @@ class PCFRequestController extends Controller
         $pcfRequest = PCFRequest::findOrFail($pcf_request_id);
         $productSegments = ProductSegment::where('is_active', 1)->orderBy('id', 'ASC')->get();
 
-        return view('PCF.edits',[
+        return view('PCF.edit',[
             'pcfRequest' => $pcfRequest,
             'productSegments' => $productSegments,
             'p_c_f_request' => $pcfRequest
@@ -125,24 +125,21 @@ class PCFRequestController extends Controller
     public function update(UpdatePCFRequestRequest $request, $pcf_request_id)
     {
         $this->authorize('pcf_request_update');
-
         DB::beginTransaction();
-
         try {
-
             $updatePcfRequest = PCFRequest::findOrFail($pcf_request_id);
             //refresh approval status
-            if ($updatePcfRequest->is_asm_approved == 0) {
+            if ($updatePcfRequest->is_asm_approved === 0) {
                 $updatePcfRequest->is_asm_approved = null;
-            } else if ($updatePcfRequest->is_rsm_approved == 0) {
+            } else if ($updatePcfRequest->is_rsm_approved === 0) {
                 $updatePcfRequest->is_rsm_approved = null;
-            } else if ($updatePcfRequest->is_apm_approved == 0) {
+            } else if ($updatePcfRequest->is_apm_approved === 0) {
                 $updatePcfRequest->is_apm_approved = null;
-            } else if ($updatePcfRequest->is_nsm_approved == 0) {
+            } else if ($updatePcfRequest->is_nsm_approved === 0) {
                 $updatePcfRequest->is_nsm_approved = null;
-            } else if ($updatePcfRequest->is_accounting_approved == 0) {
+            } else if ($updatePcfRequest->is_accounting_approved === 0) {
                 $updatePcfRequest->is_accounting_approved = null;
-            } else if ( $updatePcfRequest->is_cfo_approved == 0) {
+            } else if ( $updatePcfRequest->is_cfo_approved === 0) {
                 $updatePcfRequest->is_cfo_approved = null;
             }
 
@@ -157,15 +154,12 @@ class PCFRequestController extends Controller
         catch (\Throwable $th) {
             DB::rollBack();
         }
-
         return redirect()->route('PCF.index');
-        
     }
 
     public function pcfRequestList(Request $request) 
     {
         $this->authorize('pcf_request_access');
-        
         if ($request->ajax()) {
 
             //SUPER ADMINISTRATOR
@@ -182,8 +176,13 @@ class PCFRequestController extends Controller
                         ->select('p_c_f_requests.*')
                         // ->where('p_c_f_requests.is_cancelled','!=', 1)
                         ->where('created_by', auth()->user()->id)
+                        ->where(function ($query){
+                            $query->where('p_c_f_requests.is_cfo_approved','=', null)
+                                  ->orWhere('p_c_f_requests.is_cfo_approved','=', 0);
+                        })
                         ->orderBy('pcf_no', 'DESC')
                         ->get();   
+                info($pcfRequest);
             }
             
              //AREA SALES MANAGER
@@ -300,140 +299,131 @@ class PCFRequestController extends Controller
                     return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">' . $getTotalApprove . ' Approved </span> View Approval</a>';
                 })
                 ->addColumn('actions', function ($data) {
-                    $buttons = '';
-                    $userApproved = PCFApprover::where('p_c_f_request_id', $data->id)->where('done_by', auth()->user()->id)->where('approval_status', 1)->max('id');
-                    $userDisapproved = PCFApprover::where('p_c_f_request_id', $data->id)->where('done_by', auth()->user()->id)->where('approval_status', 0)->max('id');
 
-                    $editPcf = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info"><i class="fas fa-edit"></i> Edit</a>';
-                    $cancelPcf = '<a target="_blank" href="#" class="badge badge-danger cancelPcfRequest" data-id="'.$data->id.'" rel="noopener noreferrer"> Cancel Request </a>';
-                    $approvePcf = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-up"></i> Approve</a>';
-                    $approveAndReleasePcf = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequestAndReleaseQuotation" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-up"></i> Approve & Release Quotation</a>';
-                    $rejectPcf = '<a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-down"></i> Reject</a>';
-                    $uploadApprovedPcf = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info"><i class="fas fa-upload"></i> Upload Approved PCF</a>';
-                    $viewPcf = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>';
-                    $viewApprovedUploadedPcf = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Approved PCF (PDF)</a>';
-                    $viewQuotationPcf = '<a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>';
+                    $buttons = '';
+                    $editPcf = '<a href="'. route('PCF.edit', [$data->id]) .'" class="badge badge-info"><i class="fas fa-edit"></i> Edit</a>&nbsp;';
+                    $cancelPcf = '<a target="_blank" href="#" class="badge badge-danger cancelPcfRequest" data-id="'.$data->id.'" rel="noopener noreferrer"> Cancel Request </a>&nbsp;';
+                    $approvePcf = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequest" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-up"></i> Approve</a>&nbsp;';
+                    $approveAndReleasePcfQuotation = '<a href="javascript:void(0);" class="badge badge-success approvePcfRequestAndReleaseQuotation" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-up"></i> Approve & Release Quotation</a>&nbsp;';
+                    $rejectPcf = '<a href="javascript:void(0);" class="badge badge-danger disapprovePcfRequest" data-id="' . $data->id . '" data-toggle="modal"><i class="far fa-thumbs-down"></i> Reject</a>&nbsp;';
+                    $uploadApprovedPcf = '<a href="#" data-id="'.$data->id.'" class="badge badge-info uploadApprovePcfRequest"> <i class="fas fa-upload"></i> Upload Approved PCF</a>&nbsp;';
+                    $viewPcf = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>&nbsp;';
+                    $viewApprovedUploadedPcf = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Approved PCF (PDF)</a>&nbsp;';
+                    $viewQuotationPcf = '<a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>&nbsp;';
 
                     if (!$data->is_cancelled) {
                         if (auth()->user()->roles->pluck('name')->first() == 'PSR') {
                             if (!empty($data->pcf_document)) {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$viewQuotationPcf
+                                
+                            } 
+                            else {
+
+                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
 
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
-                                    $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
                                 if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
                                     $buttons.= $editPcf
+                                            .$viewPcf
                                             .$uploadApprovedPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+                                
+                                if ($data->is_nsm_approved === ApprovalStatus::Approved) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+
+                                if ($data->is_nsm_approved === ApprovalStatus::Rejected) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+
+                                if ($data->is_apm_approved === ApprovalStatus::Approved) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+
+                                if ($data->is_apm_approved === ApprovalStatus::Rejected) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+
+                                return $buttons.= $editPcf
+                                               .$viewPcf
+                                               .$cancelPcf;
+                            }
+                        }
+
+                        if (auth()->user()->roles->pluck('name')->first() == 'Area Sales Manager') {
+                            if (!empty($data->pcf_document)) {
+                                if ($data->is_apm_approved === ApprovalStatus::Pending) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
+                                            .$cancelPcf;
+                                    return $buttons;
+                                }
+                                
+                                if ($data->is_asm_approved === ApprovalStatus::Pending) {
+                                    $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
                             } 
                             else {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
 
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
+                                if ($data->is_apm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
+                                            .$viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
+                                
+                                if ($data->is_asm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                            .$viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
                             }
                         }
 
-                        if (auth()->user()->roles->pluck('name')->first() == 'Area Sales Manager' || auth()->user()->roles->pluck('name')->first() == 'Regional Sales Manager') {
+                        if (auth()->user()->roles->pluck('name')->first() == 'Regional Sales Manager') {
                             if (!empty($data->pcf_document)) {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
+                                if ($data->is_rsm_approved === ApprovalStatus::Approved) {
                                     $buttons.= $viewPcf
                                             .$viewApprovedUploadedPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
+                                            .$viewPcf
+                                            .$viewQuotationPcf;
                                     return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
-                                    $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
-                                            .$cancelPcf;
                                 }
                             } 
                             else {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_asm_approved == ApprovalStatus::Pending) {
+                                if ($data->is_rsm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
                                             .$approvePcf
                                             .$rejectPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
-                                    $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
@@ -442,57 +432,20 @@ class PCFRequestController extends Controller
 
                         if (auth()->user()->roles->pluck('name')->first() == 'Associate Product Manager') {
                             if (!empty($data->pcf_document)) {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
+                                if ($data->is_apm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                            .$viewApprovedUploadedPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
                             } 
                             else {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
+                                if ($data->is_apm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
@@ -501,57 +454,24 @@ class PCFRequestController extends Controller
 
                         if (auth()->user()->roles->pluck('name')->first() == 'National Sales Manager') {
                             if (!empty($data->pcf_document)) {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
+                                if ($data->is_nsm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                            .$viewPcf
+                                            .$viewApprovedUploadedPcf
+                                            .$approveAndReleasePcfQuotation
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
                             } 
                             else {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Pending) {
+                                if ($data->is_nsm_approved === ApprovalStatus::Pending) {
                                     $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                            .$viewPcf
+                                            .$approveAndReleasePcfQuotation
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
@@ -560,57 +480,20 @@ class PCFRequestController extends Controller
 
                         if (auth()->user()->roles->pluck('name')->first() == 'Accounting Team Leader' || auth()->user()->roles->pluck('name')->first() == 'Accounting Manager') {
                             if (!empty($data->pcf_document)) {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewApprovedUploadedPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
 
                                 if ($data->is_accounting_approved === ApprovalStatus::Pending) {
-                                    $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                } 
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                    $buttons.= $viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
                             } 
                             else {
-                                if ($data->is_cfo_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$viewQuotationPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Approved) {
-                                    $buttons.= $viewPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
                                 if ($data->is_accounting_approved === ApprovalStatus::Pending) {
-                                    $buttons.= $editPcf
-                                            .$cancelPcf;
-                                    return $buttons;
-                                }
-
-                                if ($data->is_accounting_approved === ApprovalStatus::Rejected) {
-                                    $buttons.= $editPcf
-                                            .$uploadApprovedPcf
+                                    $buttons.= $viewPcf
+                                            .$approvePcf
+                                            .$rejectPcf
                                             .$cancelPcf;
                                     return $buttons;
                                 }
@@ -621,12 +504,16 @@ class PCFRequestController extends Controller
                             if (!empty($data->pcf_document)) {
                                 $buttons.= $viewPcf
                                         .$viewApprovedUploadedPcf
-                                        .$viewQuotationPcf;
+                                        .$approvePcf
+                                        .$rejectPcf
+                                        .$cancelPcf;
                                 return $buttons;
                             }
                             else {
                                 $buttons.= $viewPcf
-                                        .$viewQuotationPcf;
+                                        .$approvePcf
+                                        .$rejectPcf
+                                        .$cancelPcf;
                                 return $buttons;
                             }
                         }
@@ -641,9 +528,148 @@ class PCFRequestController extends Controller
         }
     }
 
-    public function getPcfRequestListForApm()
+    public function viewCompletedList()
     {
+        return view('PCF.completed_request.index');
+    }
+
+    public function viewCancelledList()
+    {
+        return view('PCF.cancelled_request.index');
+    }
+
+    public function pcfCompletedList(Request $request)
+    {
+        $this->authorize('pcf_request_access');
+        if ($request->ajax()) {
+            
+            $pcfRequest = PCFRequest::with('pcfApprover', 'media')
+                    ->select('p_c_f_requests.*')
+                    ->where('p_c_f_requests.is_cancelled','!=', 1)
+                    ->where('created_by', auth()->user()->id)
+                    ->where('p_c_f_requests.is_cfo_approved', 1)
+                    ->orderBy('pcf_no', 'DESC')
+                    ->get();   
         
+            return Datatables::of($pcfRequest)
+                ->addColumn('institution', function ($data) {
+                    return $data->institution->institution;
+                })
+                ->addColumn('psr', function ($data) {
+                    return $data->user->name;
+                })
+                ->addColumn('date_requested', function ($data) {
+                    return $data->created_at->isoFormat('MMMM DD, YYYY');
+                })
+                ->addColumn('annual_profit', function ($data) {
+                    return number_format($data->annual_profit, 2);
+                })
+                ->addColumn('updated_by', function ($data) {
+                    if ($data->updated_by !== null) {
+                        return $data->user->name. ' - ' .$data->updated_at->isoFormat('MMM DD, YYYY h:m A');
+                    }
+
+                    return '';
+                })
+                ->addColumn('status', function ($data) {
+                    return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">Completed</span> View Approval</a>';
+                })
+                ->addColumn('actions', function ($data) {
+
+                    $buttons = '';
+                    $viewPcf = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>&nbsp;';
+                    $viewApprovedUploadedPcf = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Approved PCF (PDF)</a>&nbsp;';
+                    $viewQuotationPcf = '<a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>&nbsp;';
+
+                    if (!empty($data->pcf_document)) {
+                        return $buttons.= $viewPcf
+                                       .$viewApprovedUploadedPcf
+                                       .$viewQuotationPcf;
+                    }
+
+                    return $buttons.=$viewPcf
+                                   .$viewQuotationPcf;
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+            
+        }
+    }
+
+    public function pcfCancelledList(Request $request)
+    {
+        $this->authorize('pcf_request_access');
+        if ($request->ajax()) {
+            
+            if (auth()->user()->roles->pluck('name')->first() == 'Super Administrator') {
+                $pcfRequest = PCFRequest::with('pcfApprover', 'media')
+                    ->select('p_c_f_requests.*')
+                    ->where('p_c_f_requests.is_cancelled','=', 1)
+                    ->orderBy('pcf_no', 'DESC')
+                    ->get(); 
+            }
+
+            if (auth()->user()->roles->pluck('name')->first() == 'PSR') {
+                $pcfRequest = PCFRequest::with('pcfApprover', 'media')
+                    ->select('p_c_f_requests.*')
+                    ->where('p_c_f_requests.is_cancelled','=', 1)
+                    ->where('created_by', auth()->user()->id)
+                    ->orderBy('pcf_no', 'DESC')
+                    ->get();   
+            }
+
+            if (auth()->user()->roles->pluck('name')->first() == 'Area Sales Manager' || auth()->user()->roles->pluck('name')->first() == 'Regional Sales Manager' || auth()->user()->roles->pluck('name')->first() == 'Associate Product Manager' || auth()->user()->roles->pluck('name')->first() == 'National Sales Manager' || auth()->user()->roles->pluck('name')->first() == 'Accounting Team Leader' || auth()->user()->roles->pluck('name')->first() == 'Accounting Manager' || auth()->user()->roles->pluck('name')->first() == 'Chief Finance Officer') {
+                $pcfRequest = PCFRequest::with('pcfApprover', 'media')
+                    ->select('p_c_f_requests.*')
+                    ->where('p_c_f_requests.is_cancelled','=', 1)
+                    ->where(function ($query){
+                        $query->where('cancelled_by', auth()->user()->id)
+                              ->orWhere('created_by', auth()->user()->id);
+                    })
+                    ->orderBy('pcf_no', 'DESC')
+                    ->get(); 
+            }
+        
+            return Datatables::of($pcfRequest)
+                ->addColumn('institution', function ($data) {
+                    return $data->institution->institution;
+                })
+                ->addColumn('psr', function ($data) {
+                    return $data->user->name;
+                })
+                ->addColumn('date_requested', function ($data) {
+                    return $data->created_at->isoFormat('MMMM DD, YYYY');
+                })
+                ->addColumn('annual_profit', function ($data) {
+                    return number_format($data->annual_profit, 2);
+                })
+                ->addColumn('updated_by', function ($data) {
+                    if ($data->updated_by !== null) {
+                        return $data->user->name. ' - ' .$data->updated_at->isoFormat('MMM DD, YYYY h:m A');
+                    }
+
+                    return '';
+                })
+                ->addColumn('status', function ($data) {
+                    return '<a href="#" data-toggle="modal" data-target="#view_approval_status_modal" class="badge badge-primary view-approval-details" data-pcf_request_id="'.$data->id.'"> <span class="badge badge-success">Completed</span> View Approval</a>';
+                })
+                ->addColumn('actions', function ($data) {
+
+                    $buttons = '';
+                    $viewPcf = '<a target="_blank" href="' . route('PCF.view_pdf', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View PCF (PDF)</a>&nbsp;';
+                    $viewApprovedUploadedPcf = '<a target="_blank" href="' . $data->path() .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Approved PCF (PDF)</a>&nbsp;';
+                    $viewQuotationPcf = '<a target="_blank" href="' . route('PCF.view_quotation', $data->pcf_no) .'" class="badge badge-light" rel="noopener noreferrer"><i class="far fa-file-pdf"></i> View Quotation (PDF)</a>&nbsp;';
+
+                    if (!empty($data->pcf_document)) {
+                        return $buttons.= $viewPcf;
+                    }
+
+                    return $buttons.=$viewPcf;
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+            
+        }
     }
 
     public function cancelPcfRequest($pcfRequestId)
@@ -666,6 +692,7 @@ class PCFRequestController extends Controller
             try {
                 $approvePcfRequest = PCFRequest::findOrFail($pcfRequestId);
                 $approvePcfRequest->is_nsm_approved = 1;
+                $approvePcfRequest->is_nsm_approved_released_quotation = 1;
                 $approvePcfRequest->save();
 
                 $addApproverWithRemarks = new PCFApprover;

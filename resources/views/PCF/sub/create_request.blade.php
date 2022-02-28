@@ -340,8 +340,8 @@
                 </div>
                 <div class="row pt-2 pcf-submit">
                     <div class="col-md-12">
-                        <button type="submit" id="submit_pcf_request" class="btn btn-primary form-control mt-2">{{ __('Submit PCF Request') }}</button>
-                        <a href="{{ route('PCF.index') }}" class="btn btn-danger form-control mt-2">{{ __('Cancel') }}</a>
+                        <button type="submit" id="submit_pcf_request" class="btn btn-primary form-control mt-2"><i class="far fa-save"></i> &nbsp;{{ __('Submit PCF Request') }}</button>
+                        <a href="{{ route('PCF.index') }}" class="btn btn-danger form-control mt-2"><i class="fas fa-times"></i>&nbsp;{{ __('Cancel') }}</a>
                     </div>
                 </div>
             </div>
@@ -615,11 +615,12 @@
                 cache: false,
                 dataType: 'json',
             }).done(function(data) {
+                console.log(data.standard_price);
                 document.getElementById("description_item").value = data.description;
                 document.getElementById("currency_rate_item").value = data.currency_rate;
                 document.getElementById("tp_php_item").value = data.tp_php;
+                document.getElementById("is_above_standard_price").value = data.standard_price;
                 document.getElementById("cost_of_peripherals_item").value = data.cost_of_peripherals;
-                
                 document.getElementById("quantity_item").disabled = false;
                 document.getElementById("unit_price_item").disabled = false;
                 document.getElementById("unit_price_item").disabled = false;
@@ -665,6 +666,7 @@
             calculateItemListOpex();
             calculateItemListNetSales();
             calculateItemListTotalSales();
+            calculateAboveStandardPrice();
             calculateItemListGrossProfit();
             calculateItemListTotalGrossProfit();
             calculateItemListTotalNetSales();
@@ -699,6 +701,17 @@
         var total_sales_item = unit_price_item * quantity_item;
 
         $("#total_sales_item").val(total_sales_item.toFixed(2));
+    }
+
+    function calculateAboveStandardPrice() {
+        var unit_price_item = $("#unit_price_item").val();
+        var standard_price = $("#is_above_standard_price").val();
+
+        if (parseInt(unit_price_item) > parseInt(standard_price)) {
+            $("#above_standard_price").val("Yes");
+        } else {
+            $("#above_standard_price").val("No");
+        }
     }
 
     function calculateItemListGrossProfit() {
